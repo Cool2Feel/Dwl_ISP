@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/UpgradeTool.App/UpgradeTool.App.csproj" />
+    <Project Path="src/UpgradeTool.Core/UpgradeTool.Core.csproj" />
+    <Project Path="src/MptoolFlashProbe/MptoolFlashProbe.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/UpgradeTool.Core.Tests/UpgradeTool.Core.Tests.csproj" />
+  </Folder>
+</Solution>

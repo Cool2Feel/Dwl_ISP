@@ -1,0 +1,634 @@
+﻿<Window x:Class="UpgradeTool.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MP 固件升级工具" Height="740" Width="840"
+        MinHeight="680" MinWidth="760"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BackgroundBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- 顶部标题栏 -->
+            <RowDefinition Height="Auto" />
+            <!-- 主体内容 -->
+            <RowDefinition Height="*" />
+            <!-- 底部信息栏 -->
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- ============================================================
+             顶部标题栏 (Header)
+             ============================================================ -->
+        <Border Grid.Row="0"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="20,10,20,10"
+                Effect="{StaticResource CardShadow}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- 标题与图标 -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="{StaticResource PrimaryLightBrush}"
+                            CornerRadius="6"
+                            Width="32" Height="32"
+                            VerticalAlignment="Center">
+                        <TextBlock Text="⚡"
+                                   FontSize="18"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Text="MP 固件升级工具"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}"
+                               Margin="10,0,0,0"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+
+                <!-- 版本号 -->
+                <TextBlock Grid.Column="2"
+                           Text="v1.1.0"
+                           FontSize="{StaticResource SmallFontSize}"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+
+        <!-- ============================================================
+             主体内容区 (Content)
+             ============================================================ -->
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Padding="20,5,20,5">
+            <StackPanel>
+
+                <!-- ============================================================
+                     设备卡片 (Device Card)
+                     ============================================================ -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <!-- 卡片头部 -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="📦"
+                                           FontSize="16"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Style="{StaticResource CardHeaderStyle}"
+                                           Text="设备"
+                                           Margin="6,0,0,0" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Button x:Name="BatchButton"
+                                        Content="⚡ 批量烧录"
+                                        Style="{StaticResource CompactButtonStyle}"
+                                        Margin="0,0,6,0" />
+                                <Button x:Name="RefreshButton"
+                                        Content="⟳ 刷新设备"
+                                        Style="{StaticResource CompactButtonStyle}"
+                                        Click="Refresh_Click" />
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- 设备列表 -->
+                        <ListBox x:Name="DeviceList"
+                                 MinHeight="160"
+                                 Margin="0,3,0,0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,3,0,3">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <!-- 状态行：状态点 + 设备名 + 状态文本 -->
+                                        <Grid Grid.Row="0" Margin="0,6,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Ellipse Grid.Column="0"
+                                                     Width="8" Height="8"
+                                                     Fill="{Binding StatusBrush}"
+                                                     Stretch="Uniform"
+                                                     VerticalAlignment="Center"
+                                                     SnapsToDevicePixels="True"
+                                                     Margin="0,0,6,0" />
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding DisplayName}"
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,4,0" />
+                                            <TextBlock Grid.Column="2"
+                                                       Text="{Binding StatusText}"
+                                                       FontSize="11"
+                                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                                       VerticalAlignment="Center"
+                                                       Margin="8,0,0,0" />
+                                        </Grid>
+
+                                        <!-- 进度条：填充随进度增长，工作时整条轨道流光走动形成动态运行背景 -->
+                                        <Grid Grid.Row="1" Height="5" Margin="14,6,10,0">
+                                            <!-- 轨道背景 -->
+                                            <Border Background="{StaticResource BorderLightBrush}"
+                                                    CornerRadius="3"
+                                                    SnapsToDevicePixels="True" />
+                                            <!-- 进度填充（颜色随设备状态变化：烧录橙 / 成功绿 / 失败红）。拉伸至轨道宽度后由 ScaleX=PercentScale 自左向右增长 -->
+                                            <Border Background="{Binding StatusBrush}"
+                                                    CornerRadius="3"
+                                                    ClipToBounds="True"
+                                                    SnapsToDevicePixels="True">
+                                                <Border.RenderTransform>
+                                                    <ScaleTransform ScaleX="{Binding PercentScale}"
+                                                                    ScaleY="1"
+                                                                    CenterX="0" CenterY="0" />
+                                                </Border.RenderTransform>
+                                            </Border>
+                                            <!-- 动态运行背景：整条轨道持续流光（宽度无关、无缝循环），直观显示设备正在烧录/导出 -->
+                                            <Border CornerRadius="3"
+                                                    ClipToBounds="True"
+                                                    Opacity="{Binding GlowOpacity}"
+                                                    IsHitTestVisible="False"
+                                                    SnapsToDevicePixels="True">
+                                                <Border.Background>
+                                                    <LinearGradientBrush x:Name="GlowBrush"
+                                                                         StartPoint="0,0" EndPoint="1,0"
+                                                                         SpreadMethod="Repeat">
+                                                        <GradientStop Color="#00FFFFFF" Offset="0" />
+                                                        <GradientStop Color="#B3FFFFFF" Offset="0.5" />
+                                                        <GradientStop Color="#00FFFFFF" Offset="1" />
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                                <Border.Triggers>
+                                                    <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                                                        <BeginStoryboard>
+                                                            <Storyboard RepeatBehavior="Forever">
+                                                                <PointAnimation Storyboard.TargetName="GlowBrush"
+                                                                                Storyboard.TargetProperty="StartPoint"
+                                                                                From="0,0" To="1,0"
+                                                                                Duration="0:0:1.6" />
+                                                                <PointAnimation Storyboard.TargetName="GlowBrush"
+                                                                                Storyboard.TargetProperty="EndPoint"
+                                                                                From="1,0" To="2,0"
+                                                                                Duration="0:0:1.6" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </EventTrigger>
+                                                </Border.Triggers>
+                                            </Border>
+                                        </Grid>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </Border>
+
+                <!-- ============================================================
+                     固件卡片 (Firmware Card)
+                     ============================================================ -->
+                <Border Style="{StaticResource CardStyle}" Margin="0,3,0,0">
+                    <StackPanel>
+                        <!-- 卡片头部 -->
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
+                            <TextBlock Text="📄"
+                                       FontSize="16"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Style="{StaticResource CardHeaderStyle}"
+                                       Text="固件"
+                                       Margin="6,0,0,0" />
+                        </StackPanel>
+
+                        <!-- 文件路径选择 -->
+                        <Grid Margin="0,0,0,3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox x:Name="FirmwarePathBox"
+                                      Grid.Column="0"
+                                      IsEditable="True"
+                                      ToolTip="选择固件文件 (.bin)，可从下拉列表选择最近使用过的文件" />
+                            <Button x:Name="BrowseButton"
+                                    Grid.Column="1"
+                                    Content="📂 浏览"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Width="90"
+                                    Margin="8,0,0,0"
+                                    Click="Browse_Click" />
+                        </Grid>
+
+                        <!-- 选项头部：标题 + 高级选项展开/收起 -->
+                        <Grid Margin="0,2,0,3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="烧录选项"
+                                       FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       VerticalAlignment="Center" />
+                            <Button x:Name="AdvancedToggleButton"
+                                    Grid.Column="1"
+                                    Content="高级选项 ▾"
+                                    Style="{StaticResource CompactButtonStyle}"
+                                    Width="90" Height="28"
+                                    FontSize="12"
+                                    Click="AdvancedToggle_Click" />
+                        </Grid>
+
+                        <!-- 常用选项（默认显示，对齐 MPTool AUTOSTART/AUTORESET/ERASEALL） -->
+                        <UniformGrid x:Name="OptionsPanel" Columns="2">
+
+                            <!-- 自动开始（对齐 MPTool AUTOSTART=1） -->
+                            <Border Style="{StaticResource OptionCardStyle}" ToolTip="对齐 MPTool AUTOSTART=1：设备接入时自动开始烧录">
+                                <CheckBox x:Name="AutoStartBox" VerticalAlignment="Center">
+                                    <StackPanel>
+                                        <TextBlock Text="自动开始" Style="{StaticResource OptionCardTitleStyle}" />
+                                        <TextBlock Text="设备接入时自动开始烧录" Style="{StaticResource OptionCardDescStyle}" />
+                                    </StackPanel>
+                                </CheckBox>
+                            </Border>
+
+                            <!-- 快速调试（跳过校验/容量检测，加快迭代） -->
+                            <Border Style="{StaticResource OptionCardStyle}" ToolTip="跳过回读校验与容量检测，加快开发迭代（谨慎用于生产）">
+                                <CheckBox x:Name="QuickDebugBox"
+                                          VerticalAlignment="Center"
+                                          Checked="QuickDebugBox_Checked"
+                                          Unchecked="QuickDebugBox_Unchecked">
+                                    <StackPanel>
+                                        <TextBlock Text="快速调试" Style="{StaticResource OptionCardTitleStyle}" Foreground="{StaticResource AccentBrush}" />
+                                        <TextBlock Text="跳过校验与容量检测，加速迭代" Style="{StaticResource OptionCardDescStyle}" />
+                                    </StackPanel>
+                                </CheckBox>
+                            </Border>
+
+                            <!-- 自动复位（对齐 MPTool AUTORESET=1，默认开启） -->
+                            <Border Style="{StaticResource OptionCardStyle}" ToolTip="对齐 MPTool AUTORESET=1：烧录完成后自动下发 0xDA 复位设备">
+                                <CheckBox x:Name="AutoResetBox" IsChecked="True" VerticalAlignment="Center">
+                                    <StackPanel>
+                                        <TextBlock Text="自动复位" Style="{StaticResource OptionCardTitleStyle}" />
+                                        <TextBlock Text="烧录完成后自动复位设备（0xDA）" Style="{StaticResource OptionCardDescStyle}" />
+                                    </StackPanel>
+                                </CheckBox>
+                            </Border>
+
+                            <!-- 整片擦除 -->
+                            <Border Style="{StaticResource OptionCardStyle}" ToolTip="对齐 MPTool mptool.ini ERASEALL=1：擦除区域扩展到全片">
+                                <CheckBox x:Name="EraseAllBox" VerticalAlignment="Center">
+                                    <StackPanel>
+                                        <TextBlock Text="整片擦除（ERASEALL）" Style="{StaticResource OptionCardTitleStyle}" />
+                                        <TextBlock Text="擦除区域扩展到全片，非仅固件覆盖区" Style="{StaticResource OptionCardDescStyle}" />
+                                    </StackPanel>
+                                </CheckBox>
+                            </Border>
+
+                        </UniformGrid>
+
+                        <!-- 高级选项（默认折叠，点击"高级选项"展开；独立容器，Collapsed 时不占布局空间） -->
+                        <UniformGrid x:Name="AdvancedOptionsPanel" Columns="2" Visibility="Collapsed" Margin="0,4,0,0">
+
+                            <!-- 回读校验 -->
+                            <Border Style="{StaticResource OptionCardStyle}">
+                                <CheckBox x:Name="VerifyBox" IsChecked="True" VerticalAlignment="Center">
+                                    <StackPanel>
+                                        <TextBlock Text="回读校验" Style="{StaticResource OptionCardTitleStyle}" />
+                                        <TextBlock Text="刷写后回读比对，确保数据一致" Style="{StaticResource OptionCardDescStyle}" />
+                                    </StackPanel>
+                                </CheckBox>
+                            </Border>
+
+                            <!-- 容量 pattern 检测 -->
+                            <Border Style="{StaticResource OptionCardStyle}" ToolTip="地址 0 写 0x5A、容量中点写 0xA5 并回读比对，识别物理容量不足的 Flash。注意：仅当同时勾选「整片擦除」时才会执行">
+                                <CheckBox x:Name="CapacityCheckBox" IsChecked="False" VerticalAlignment="Center">
+                                    <StackPanel>
+                                        <TextBlock Text="容量 pattern 检测" Style="{StaticResource OptionCardTitleStyle}" />
+                                        <TextBlock Text="防灰片：写入 0x5A/0xA5 回读比对，检测物理容量不足（需勾选整片擦除）" Style="{StaticResource OptionCardDescStyle}" />
+                                    </StackPanel>
+                                </CheckBox>
+                            </Border>
+
+                            <!-- 更新启动扇区校验和 -->
+                            <Border Style="{StaticResource OptionCardStyle}" ToolTip="重算 BLDR 头 byte8（扇区求和归零），对齐 MPTool 烧写行为">
+                                <CheckBox x:Name="BootChecksumBox" IsChecked="True" VerticalAlignment="Center">
+                                    <StackPanel>
+                                        <TextBlock Text="更新启动扇区校验和" Style="{StaticResource OptionCardTitleStyle}" />
+                                        <TextBlock Text="重算 BLDR 头 byte8，扇区求和归零" Style="{StaticResource OptionCardDescStyle}" />
+                                    </StackPanel>
+                                </CheckBox>
+                            </Border>
+
+                            <!-- 仅进入升级模式（特殊操作，警告色强调） -->
+                            <Border Style="{StaticResource OptionCardStyle}" ToolTip="只下发 0xDA 进入升级模式，不下载固件">
+                                <CheckBox x:Name="EnterOnlyBox" VerticalAlignment="Center">
+                                    <StackPanel>
+                                        <TextBlock Text="仅进入升级模式" Style="{StaticResource OptionCardTitleStyle}" Foreground="{StaticResource WarningBrush}" />
+                                        <TextBlock Text="不下载固件，仅复位到升级模式" Style="{StaticResource OptionCardDescStyle}" />
+                                    </StackPanel>
+                                </CheckBox>
+                            </Border>
+
+                        </UniformGrid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ============================================================
+                     操作卡片 (Operation Card)
+                     ============================================================ -->
+                <Border Style="{StaticResource CardStyle}" Margin="0,3,0,0">
+                    <StackPanel>
+                        <!-- 卡片头部 -->
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,12">
+                            <TextBlock Text="⚙️"
+                                       FontSize="16"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Style="{StaticResource CardHeaderStyle}"
+                                       Text="操作"
+                                       Margin="6,0,0,0" />
+                        </StackPanel>
+
+                        <!-- 状态与进度 -->
+                        <Grid Margin="0,0,0,12">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <!-- 状态行 -->
+                            <Grid Grid.Row="0" Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse x:Name="StatusDot"
+                                             Width="8" Height="8"
+                                             Fill="{StaticResource SuccessBrush}"
+                                             Stretch="Uniform"
+                                             VerticalAlignment="Center"
+                                             SnapsToDevicePixels="True" />
+                                    <TextBlock Text="状态:"
+                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               FontSize="{StaticResource SmallFontSize}"
+                                               Margin="8,0,4,0"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                                <TextBlock x:Name="StatusText"
+                                           Grid.Column="1"
+                                           Text="就绪"
+                                           FontSize="{StaticResource SmallFontSize}"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center" />
+                                <TextBlock x:Name="PercentText"
+                                           Grid.Column="2"
+                                           Text="0%"
+                                           FontSize="{StaticResource SmallFontSize}"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource PrimaryBrush}"
+                                           VerticalAlignment="Center" />
+                            </Grid>
+
+                            <!-- 进度条 -->
+                            <Border Grid.Row="1"
+                                    Background="{StaticResource BorderLightBrush}"
+                                    CornerRadius="4"
+                                    Height="8"
+                                    Margin="0,0,0,0">
+                                <Grid>
+                                    <Border x:Name="ProgressFill"
+                                            Background="{StaticResource PrimaryBrush}"
+                                            CornerRadius="4"
+                                            HorizontalAlignment="Stretch"
+                                            SnapsToDevicePixels="True">
+                                        <Border.RenderTransform>
+                                            <ScaleTransform ScaleX="0" ScaleY="1" CenterX="0" CenterY="0" />
+                                        </Border.RenderTransform>
+                                    </Border>
+                                </Grid>
+                            </Border>
+
+                            <!-- 隐藏的 WPF ProgressBar（用于绑定进度值，视觉上使用上面的自定义 Border） -->
+                            <ProgressBar x:Name="Progress"
+                                         Grid.Row="1"
+                                         Height="0"
+                                         Visibility="Collapsed"
+                                         Minimum="0"
+                                         Maximum="100" />
+                        </Grid>
+
+                        <!-- ============================================================
+                             错误卡片 (Error Card) — 初始隐藏，出错时显示
+                             ============================================================ -->
+                        <Border x:Name="ErrorCard"
+                                Visibility="Collapsed"
+                                Background="#FEF2F2"
+                                BorderBrush="{StaticResource ErrorBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="12,10"
+                                Margin="0,0,0,10">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- 错误图标 -->
+                                <TextBlock Grid.Row="0" Grid.Column="0"
+                                           Text="✕" FontSize="18"
+                                           Foreground="{StaticResource ErrorBrush}"
+                                           VerticalAlignment="Top" Margin="0,0,8,0" />
+
+                                <!-- 错误标题 -->
+                                <TextBlock x:Name="ErrorTitle"
+                                           Grid.Row="0" Grid.Column="1"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           Foreground="{StaticResource ErrorBrush}"
+                                           TextWrapping="Wrap" />
+
+                                <!-- 关闭按钮 -->
+                                <Button x:Name="DismissErrorButton"
+                                        Grid.Row="0" Grid.Column="2"
+                                        Content="✕" Width="20" Height="20"
+                                        Background="Transparent" BorderThickness="0"
+                                        Foreground="{StaticResource TextMutedBrush}"
+                                        Cursor="Hand"
+                                        Click="DismissError_Click" />
+
+                                <!-- 错误详情 -->
+                                <TextBlock x:Name="ErrorDetail"
+                                           Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                                           FontSize="12"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           TextWrapping="Wrap"
+                                           Margin="0,4,0,0" />
+
+                                <!-- 操作按钮 -->
+                                <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+                                            Orientation="Horizontal"
+                                            Margin="0,8,0,0">
+                                    <Button x:Name="RetryButton"
+                                            Content="⟳ 重试"
+                                            Style="{StaticResource PrimaryButtonStyle}"
+                                            Width="100" Height="30"
+                                            Margin="0,0,8,0"
+                                            FontSize="12"
+                                            Click="Start_Click" />
+                                    <Button Content="📋 查看日志"
+                                            Style="{StaticResource SecondaryButtonStyle}"
+                                            Width="100" Height="30"
+                                            FontSize="12"
+                                            Click="ScrollToLog" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- ============================================================
+                             操作按钮 (Operation Buttons)
+                             ============================================================ -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0"
+                                       Text="拖拽固件文件到路径框快速选择"
+                                       FontSize="11"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       VerticalAlignment="Center" />
+                            <Button x:Name="ExportButton"
+                                    Grid.Column="1"
+                                    Content="📤 导出固件"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Width="110"
+                                    Margin="0,0,8,0"
+                                    Click="Export_Click" />
+                            <Button x:Name="CancelButton"
+                                    Grid.Column="2"
+                                    Content="✕ 取消"
+                                    Style="{StaticResource DangerButtonStyle}"
+                                    Width="100"
+                                    Margin="0,0,8,0"
+                                    IsEnabled="False"
+                                    Click="Cancel_Click" />
+                            <Button x:Name="StartButton"
+                                    Grid.Column="3"
+                                    Content="⟫ 开始刷写"
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    Width="130"
+                                    Click="Start_Click" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ============================================================
+                     日志卡片 (Log Card)
+                     ============================================================ -->
+                <Border Style="{StaticResource CardStyle}" Margin="0,3,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!-- 日志头部 -->
+                        <Grid Grid.Row="0" Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="📋"
+                                           FontSize="14"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Style="{StaticResource CardHeaderStyle}"
+                                           Text="日志"
+                                           Margin="6,0,0,0" />
+                            </StackPanel>
+                            <Button x:Name="ClearLogButton"
+                                    Grid.Column="2"
+                                    Content="✕ 清空"
+                                    Style="{StaticResource CompactButtonStyle}"
+                                    Click="ClearLog_Click" />
+                        </Grid>
+
+                        <!-- 日志内容 -->
+                        <TextBox x:Name="LogBox"
+                                 Grid.Row="1"
+                                 Style="{StaticResource LogTextBoxStyle}"
+                                 MinHeight="140"
+                                 MaxHeight="220"
+                                 Text="欢迎使用 DC503J 固件刷写工具&#10;" />
+
+                        <!-- 底部信息 -->
+                        <TextBlock Grid.Row="2"
+                                   Text="智能扫描（空闲 2s→5s→10s 指数退避）· 设备变更事件即时触发 · 通过 SCSI Pass-Through 下发厂商命令完成刷写"
+                                   FontSize="11"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,6,0,0" />
+                    </Grid>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- ============================================================
+             底部状态栏 (Footer)
+             ============================================================ -->
+        <Border Grid.Row="2"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="20,8,20,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="●"
+                           FontSize="8"
+                           Foreground="{StaticResource SuccessBrush}"
+                           VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1"
+                           Text=" 检测就绪"
+                           FontSize="11"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           Margin="4,0,0,0"
+                           VerticalAlignment="Center" />
+                <TextBlock Grid.Column="2"
+                           Text="DC503J Firmware Tool"
+                           FontSize="11"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+
+    </Grid>
+</Window>

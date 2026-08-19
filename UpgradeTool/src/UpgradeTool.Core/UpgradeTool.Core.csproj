@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\AX3233.elf" />
+    <None Remove="Resources\AX3233AXIDE.elf" />
+    <None Remove="Resources\AX3233AXIDE_A2.elf" />
+    <None Remove="Resources\AX3233_A2.elf" />
+    <None Remove="Resources\AX3233_mpw.elf" />
+    <None Remove="Resources\AX326X.elf" />
+    <None Remove="Resources\AX327X.elf" />
+    <None Remove="Resources\AX327X_.elf" />
+    <None Remove="Resources\AXIDEsdspi.elf" />
+    <None Remove="Resources\AXIDEspi.elf" />
+    <None Remove="Resources\DeviceLib.ini" />
+    <None Remove="Resources\ThunderBD.elf" />
+    <None Remove="Resources\ThunderBDPlus.elf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="UpgradeTool.Core.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- AX329X SPI0 flash stub（or1k-elf-gcc 编译，随固件 build 同步更新） -->
+    <EmbeddedResource Include="..\..\stub\stub_flash.elf" Link="Resources\stub_flash.elf" />
+    <EmbeddedResource Include="Resources\AX3233.elf" />
+    <EmbeddedResource Include="Resources\AX3233AXIDE.elf" />
+    <EmbeddedResource Include="Resources\AX3233AXIDE_A2.elf" />
+    <EmbeddedResource Include="Resources\AX3233_A2.elf" />
+    <EmbeddedResource Include="Resources\AX3233_mpw.elf" />
+    <EmbeddedResource Include="Resources\AX326X.elf" />
+    <EmbeddedResource Include="Resources\AX327X.elf" />
+    <EmbeddedResource Include="Resources\AX327X_.elf" />
+    <EmbeddedResource Include="Resources\AXIDEsdspi.elf" />
+    <EmbeddedResource Include="Resources\AXIDEspi.elf" />
+    <EmbeddedResource Include="Resources\DeviceLib.ini" />
+    <EmbeddedResource Include="Resources\ThunderBD.elf" />
+    <EmbeddedResource Include="Resources\ThunderBDPlus.elf" />
+    <!-- Loader 模式 SPI 驱动（ThunderSE.elf，取自 MPTool setting，Loader/0xCD 通道使用） -->
+    <EmbeddedResource Include="Resources\ThunderSE.elf" />
+    <!-- FlashLib.ini 器件表（RDID 匹配 → 容量/指令集；对齐 MPTool FlashLib.ini） -->
+    <EmbeddedResource Include="Resources\FlashLib.ini" />
+  </ItemGroup>
+
+</Project>
