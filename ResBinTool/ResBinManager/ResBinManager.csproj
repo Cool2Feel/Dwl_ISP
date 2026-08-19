@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>net6.0-windows;net48</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>ResBinManager</RootNamespace>
+    <AssemblyName>DestBinManager</AssemblyName>
+    <Version>1.0.1.6</Version>
+    <Authors>JRX SDK Team</Authors>
+    <Description>Interactive DEST.BIN Resource Manager for AX329x SDK</Description>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+    <AssemblyVersion>1.0.1.6</AssemblyVersion>
+    <FileVersion>1.0.1.6</FileVersion>
+    <SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-windows'">7.0</SupportedOSPlatformVersion>
+    <Copyright>Copyright@JRX 2026</Copyright>
+    <PackageIcon>Resources.png</PackageIcon>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net48'">
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="ViewModels\BKMainViewModel - 副本.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Default_Config.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="favicon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Default_Config.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\..\..\..\Tools\Code\Resources.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Costura.Fody" Version="6.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime;compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="LibUsbDotNet" Version="2.5.14" />
+    <PackageReference Include="NAudio" Version="2.3.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" Condition="'$(TargetFramework)' == 'net6.0-windows'" />
+    <PackageReference Include="System.Text.Json" Version="6.0.0" Condition="'$(TargetFramework)' == 'net48'" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" Condition="'$(TargetFramework)' == 'net48'" />
+  </ItemGroup>
+
+</Project>

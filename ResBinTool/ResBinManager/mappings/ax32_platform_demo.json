@@ -1,0 +1,243 @@
+{
+  "version": "1.0",
+  "projectType": "ax32_platform_demo",
+  "projectName": "AX32 Platform Demo",
+  "description": "AX32平台演示项目配置映射 - 基于config.c userConfigReset()默认值",
+  "mappings": [
+    {
+      "index": 0,
+      "configName": "CONFIG_ID_YEAR",
+      "defaultValue": 2026,
+      "description": "年份"
+    },
+    {
+      "index": 1,
+      "configName": "CONFIG_ID_MONTH",
+      "defaultValue": 1,
+      "description": "月份"
+    },
+    {
+      "index": 2,
+      "configName": "CONFIG_ID_MDAY",
+      "defaultValue": 1,
+      "description": "日期"
+    },
+    {
+      "index": 3,
+      "configName": "CONFIG_ID_WDAY",
+      "defaultValue": 1,
+      "description": "星期"
+    },
+    {
+      "index": 4,
+      "configName": "CONFIG_ID_HOUR",
+      "defaultValue": 0,
+      "description": "小时"
+    },
+    {
+      "index": 5,
+      "configName": "CONFIG_ID_MIN",
+      "defaultValue": 0,
+      "description": "分钟"
+    },
+    {
+      "index": 6,
+      "configName": "CONFIG_ID_SEC",
+      "defaultValue": 0,
+      "description": "秒"
+    },
+    {
+      "index": 7,
+      "configName": "CONFIG_ID_LANGUAGE",
+      "defaultValue": "0x81000000",
+      "description": "语言 (英文)"
+    },
+    {
+      "index": 8,
+      "configName": "CONFIG_ID_LCD_BRIGHT",
+      "defaultValue": "0x81000027",
+      "description": "LCD亮度 (LEVEL_8)"
+    },
+    {
+      "index": 9,
+      "configName": "CONFIG_ID_AUTOOFF",
+      "defaultValue": "0x81000014",
+      "description": "自动关机 (关闭)"
+    },
+    {
+      "index": 10,
+      "configName": "CONFIG_ID_SCREENSAVE",
+      "defaultValue": "0x81000014",
+      "description": "屏保 (关闭)"
+    },
+    {
+      "index": 11,
+      "configName": "CONFIG_ID_FREQUNCY",
+      "defaultValue": "0x8100001D",
+      "description": "电源频率 (50Hz)"
+    },
+    {
+      "index": 12,
+      "configName": "CONFIG_ID_ROTATE",
+      "defaultValue": "0x81000014",
+      "description": "旋转 (关闭)"
+    },
+    {
+      "index": 13,
+      "configName": "CONFIG_ID_FILLIGHT",
+      "defaultValue": "0x81000014",
+      "description": "补光灯 (关闭)"
+    },
+    {
+      "index": 14,
+      "configName": "CONFIG_ID_RESOLUTION",
+      "defaultValue": "0x8100008A",
+      "description": "视频分辨率 (720P_SHORT)"
+    },
+    {
+      "index": 15,
+      "configName": "CONFIG_ID_TIMEPHOTO",
+      "defaultValue": "0x81000014",
+      "description": "定时拍照 (关闭)"
+    },
+    {
+      "index": 16,
+      "configName": "CONFIG_ID_TIMESTAMP",
+      "defaultValue": "0x81000015",
+      "description": "时间水印 (开启)"
+    },
+    {
+      "index": 17,
+      "configName": "CONFIG_ID_MOTIONDECTION",
+      "defaultValue": "0x81000014",
+      "description": "移动侦测 (关闭)"
+    },
+    {
+      "index": 18,
+      "configName": "CONFIG_ID_PARKMODE",
+      "defaultValue": "0x81000014",
+      "description": "停车模式 (关闭)"
+    },
+    {
+      "index": 19,
+      "configName": "CONFIG_ID_GSENSOR",
+      "defaultValue": "0x8100001B",
+      "description": "重力传感器灵敏度 (中等)"
+    },
+    {
+      "index": 20,
+      "configName": "CONFIG_ID_KEYSOUND",
+      "defaultValue": "0x81000015",
+      "description": "按键音 (开启)"
+    },
+    {
+      "index": 21,
+      "configName": "CONFIG_ID_IR_LED",
+      "defaultValue": "0x81000014",
+      "description": "红外灯 (关闭)"
+    },
+    {
+      "index": 22,
+      "configName": "CONFIG_ID_LOOPTIME",
+      "defaultValue": "0x81000036",
+      "description": "循环录像时间 (3分钟)"
+    },
+    {
+      "index": 23,
+      "configName": "CONFIG_ID_AUDIOREC",
+      "defaultValue": "0x81000015",
+      "description": "录音 (开启)"
+    },
+    {
+      "index": 24,
+      "configName": "CONFIG_ID_EV",
+      "defaultValue": "0x8100002D",
+      "description": "视频曝光补偿 (0.0)"
+    },
+    {
+      "index": 25,
+      "configName": "CONFIG_ID_WBLANCE",
+      "defaultValue": "0x810000AA",
+      "description": "白平衡 (自动)"
+    },
+    {
+      "index": 26,
+      "configName": "CONFIG_ID_PRESLUTION",
+      "defaultValue": "0x8100008D",
+      "description": "拍照分辨率 (VGA)"
+    },
+    {
+      "index": 27,
+      "configName": "CONFIG_ID_PFASTVIEW",
+      "defaultValue": "0x81000014",
+      "description": "快速预览 (关闭)"
+    },
+    {
+      "index": 28,
+      "configName": "CONFIG_ID_PTIMESTRAMP",
+      "defaultValue": "0x81000015",
+      "description": "拍照时间戳 (开启)"
+    },
+    {
+      "index": 29,
+      "configName": "CONFIG_ID_PEV",
+      "defaultValue": "0x8100002D",
+      "description": "拍照曝光补偿 (0.0)"
+    },
+    {
+      "index": 30,
+      "configName": "CONFIG_ID_VOLUME",
+      "defaultValue": "0x81000026",
+      "description": "音量 (LEVEL_7)"
+    },
+    {
+      "index": 31,
+      "configName": "CONFIG_ID_THUMBNAIL",
+      "defaultValue": "0x81000015",
+      "description": "缩略图 (开启)"
+    },
+    {
+      "index": 32,
+      "configName": "CONFIG_ID_GSENSORMODE",
+      "defaultValue": "0x81000015",
+      "description": "重力传感器模式 (开启)"
+    },
+    {
+      "index": 33,
+      "configName": "CONFIG_ID_FORMAT",
+      "defaultValue": "0x81000014",
+      "description": "格式化标志 (取消)"
+    },
+    {
+      "index": 34,
+      "configName": "CONFIG_ID_DEFUALT",
+      "defaultValue": "0x81000014",
+      "description": "默认配置标志 (取消)"
+    },
+    {
+      "index": 35,
+      "configName": "CONFIG_ID_VIDEORECEFFECT",
+      "defaultValue": "0x81000015",
+      "description": "视频录制效果 (开启)"
+    },
+    {
+      "index": 36,
+      "configName": "CONFIG_ID_REINIT",
+      "defaultValue": "0x81000015",
+      "description": "重新初始化标志 (开启)"
+    }
+  ],
+  "features": {
+    "hasPrinter": false,
+    "hasBattery": true,
+    "hasIrLed": true,
+    "hasGsensor": true,
+    "hasMotionDetection": true,
+    "hasParkMode": true,
+    "hasAudioRec": true,
+    "hasTimestamp": true,
+    "hasVideoResolution": true,
+    "hasPhotoResolution": true,
+    "hasLoopRecord": true
+  }
+}

@@ -1,0 +1,895 @@
+{
+  "version": "1.0",
+  "projectType": "HM020F",
+  "projectName": "HM020F",
+  "description": "HM020F项目配置映射 - 基于config.c userConfigReset()默认值",
+  "mappings": [
+    {
+      "index": 0,
+      "configName": "CONFIG_ID_YEAR",
+      "defaultValue": 2026,
+      "description": "年份",
+      "displayName": "年",
+      "category": "时间设置",
+      "type": "Time",
+      "options": [
+        { "value": 2020, "display": "2020" },
+        { "value": 2021, "display": "2021" },
+        { "value": 2022, "display": "2022" },
+        { "value": 2023, "display": "2023" },
+        { "value": 2024, "display": "2024" },
+        { "value": 2025, "display": "2025" },
+        { "value": 2026, "display": "2026" },
+        { "value": 2027, "display": "2027" },
+        { "value": 2028, "display": "2028" },
+        { "value": 2029, "display": "2029" },
+        { "value": 2030, "display": "2030" }
+      ]
+    },
+    {
+      "index": 1,
+      "configName": "CONFIG_ID_MONTH",
+      "defaultValue": 1,
+      "description": "月份",
+      "displayName": "月",
+      "category": "时间设置",
+      "type": "Time",
+      "options": [
+        { "value": 1, "display": "1" },
+        { "value": 2, "display": "2" },
+        { "value": 3, "display": "3" },
+        { "value": 4, "display": "4" },
+        { "value": 5, "display": "5" },
+        { "value": 6, "display": "6" },
+        { "value": 7, "display": "7" },
+        { "value": 8, "display": "8" },
+        { "value": 9, "display": "9" },
+        { "value": 10, "display": "10" },
+        { "value": 11, "display": "11" },
+        { "value": 12, "display": "12" }
+      ]
+    },
+    {
+      "index": 2,
+      "configName": "CONFIG_ID_MDAY",
+      "defaultValue": 1,
+      "description": "日期",
+      "displayName": "日",
+      "category": "时间设置",
+      "type": "Time",
+      "options": [
+        { "value": 1, "display": "1" },
+        { "value": 2, "display": "2" },
+        { "value": 3, "display": "3" },
+        { "value": 4, "display": "4" },
+        { "value": 5, "display": "5" },
+        { "value": 6, "display": "6" },
+        { "value": 7, "display": "7" },
+        { "value": 8, "display": "8" },
+        { "value": 9, "display": "9" },
+        { "value": 10, "display": "10" },
+        { "value": 11, "display": "11" },
+        { "value": 12, "display": "12" },
+        { "value": 13, "display": "13" },
+        { "value": 14, "display": "14" },
+        { "value": 15, "display": "15" },
+        { "value": 16, "display": "16" },
+        { "value": 17, "display": "17" },
+        { "value": 18, "display": "18" },
+        { "value": 19, "display": "19" },
+        { "value": 20, "display": "20" },
+        { "value": 21, "display": "21" },
+        { "value": 22, "display": "22" },
+        { "value": 23, "display": "23" },
+        { "value": 24, "display": "24" },
+        { "value": 25, "display": "25" },
+        { "value": 26, "display": "26" },
+        { "value": 27, "display": "27" },
+        { "value": 28, "display": "28" },
+        { "value": 29, "display": "29" },
+        { "value": 30, "display": "30" },
+        { "value": 31, "display": "31" }
+      ]
+    },
+    {
+      "index": 3,
+      "configName": "CONFIG_ID_WDAY",
+      "defaultValue": 1,
+      "description": "星期",
+      "displayName": "星期",
+      "category": "时间设置",
+      "type": "WeekDay",
+      "options": [
+        { "value": 0, "display": "星期日" },
+        { "value": 1, "display": "星期一" },
+        { "value": 2, "display": "星期二" },
+        { "value": 3, "display": "星期三" },
+        { "value": 4, "display": "星期四" },
+        { "value": 5, "display": "星期五" },
+        { "value": 6, "display": "星期六" }
+      ]
+    },
+    {
+      "index": 4,
+      "configName": "CONFIG_ID_HOUR",
+      "defaultValue": 0,
+      "description": "小时",
+      "displayName": "时",
+      "category": "时间设置",
+      "type": "Time",
+      "options": [
+        { "value": 0, "display": "0" },
+        { "value": 1, "display": "1" },
+        { "value": 2, "display": "2" },
+        { "value": 3, "display": "3" },
+        { "value": 4, "display": "4" },
+        { "value": 5, "display": "5" },
+        { "value": 6, "display": "6" },
+        { "value": 7, "display": "7" },
+        { "value": 8, "display": "8" },
+        { "value": 9, "display": "9" },
+        { "value": 10, "display": "10" },
+        { "value": 11, "display": "11" },
+        { "value": 12, "display": "12" },
+        { "value": 13, "display": "13" },
+        { "value": 14, "display": "14" },
+        { "value": 15, "display": "15" },
+        { "value": 16, "display": "16" },
+        { "value": 17, "display": "17" },
+        { "value": 18, "display": "18" },
+        { "value": 19, "display": "19" },
+        { "value": 20, "display": "20" },
+        { "value": 21, "display": "21" },
+        { "value": 22, "display": "22" },
+        { "value": 23, "display": "23" }
+      ]
+    },
+    {
+      "index": 5,
+      "configName": "CONFIG_ID_MIN",
+      "defaultValue": 0,
+      "description": "分钟",
+      "displayName": "分",
+      "category": "时间设置",
+      "type": "Time",
+      "options": [
+        { "value": 0, "display": "0" },
+        { "value": 1, "display": "1" },
+        { "value": 2, "display": "2" },
+        { "value": 3, "display": "3" },
+        { "value": 4, "display": "4" },
+        { "value": 5, "display": "5" },
+        { "value": 6, "display": "6" },
+        { "value": 7, "display": "7" },
+        { "value": 8, "display": "8" },
+        { "value": 9, "display": "9" },
+        { "value": 10, "display": "10" },
+        { "value": 11, "display": "11" },
+        { "value": 12, "display": "12" },
+        { "value": 13, "display": "13" },
+        { "value": 14, "display": "14" },
+        { "value": 15, "display": "15" },
+        { "value": 16, "display": "16" },
+        { "value": 17, "display": "17" },
+        { "value": 18, "display": "18" },
+        { "value": 19, "display": "19" },
+        { "value": 20, "display": "20" },
+        { "value": 21, "display": "21" },
+        { "value": 22, "display": "22" },
+        { "value": 23, "display": "23" },
+        { "value": 24, "display": "24" },
+        { "value": 25, "display": "25" },
+        { "value": 26, "display": "26" },
+        { "value": 27, "display": "27" },
+        { "value": 28, "display": "28" },
+        { "value": 29, "display": "29" },
+        { "value": 30, "display": "30" },
+        { "value": 31, "display": "31" },
+        { "value": 32, "display": "32" },
+        { "value": 33, "display": "33" },
+        { "value": 34, "display": "34" },
+        { "value": 35, "display": "35" },
+        { "value": 36, "display": "36" },
+        { "value": 37, "display": "37" },
+        { "value": 38, "display": "38" },
+        { "value": 39, "display": "39" },
+        { "value": 40, "display": "40" },
+        { "value": 41, "display": "41" },
+        { "value": 42, "display": "42" },
+        { "value": 43, "display": "43" },
+        { "value": 44, "display": "44" },
+        { "value": 45, "display": "45" },
+        { "value": 46, "display": "46" },
+        { "value": 47, "display": "47" },
+        { "value": 48, "display": "48" },
+        { "value": 49, "display": "49" },
+        { "value": 50, "display": "50" },
+        { "value": 51, "display": "51" },
+        { "value": 52, "display": "52" },
+        { "value": 53, "display": "53" },
+        { "value": 54, "display": "54" },
+        { "value": 55, "display": "55" },
+        { "value": 56, "display": "56" },
+        { "value": 57, "display": "57" },
+        { "value": 58, "display": "58" },
+        { "value": 59, "display": "59" }
+      ]
+    },
+    {
+      "index": 6,
+      "configName": "CONFIG_ID_SEC",
+      "defaultValue": 0,
+      "description": "秒",
+      "displayName": "秒",
+      "category": "时间设置",
+      "type": "Time",
+      "options": [
+        { "value": 0, "display": "0" },
+        { "value": 1, "display": "1" },
+        { "value": 2, "display": "2" },
+        { "value": 3, "display": "3" },
+        { "value": 4, "display": "4" },
+        { "value": 5, "display": "5" },
+        { "value": 6, "display": "6" },
+        { "value": 7, "display": "7" },
+        { "value": 8, "display": "8" },
+        { "value": 9, "display": "9" },
+        { "value": 10, "display": "10" },
+        { "value": 11, "display": "11" },
+        { "value": 12, "display": "12" },
+        { "value": 13, "display": "13" },
+        { "value": 14, "display": "14" },
+        { "value": 15, "display": "15" },
+        { "value": 16, "display": "16" },
+        { "value": 17, "display": "17" },
+        { "value": 18, "display": "18" },
+        { "value": 19, "display": "19" },
+        { "value": 20, "display": "20" },
+        { "value": 21, "display": "21" },
+        { "value": 22, "display": "22" },
+        { "value": 23, "display": "23" },
+        { "value": 24, "display": "24" },
+        { "value": 25, "display": "25" },
+        { "value": 26, "display": "26" },
+        { "value": 27, "display": "27" },
+        { "value": 28, "display": "28" },
+        { "value": 29, "display": "29" },
+        { "value": 30, "display": "30" },
+        { "value": 31, "display": "31" },
+        { "value": 32, "display": "32" },
+        { "value": 33, "display": "33" },
+        { "value": 34, "display": "34" },
+        { "value": 35, "display": "35" },
+        { "value": 36, "display": "36" },
+        { "value": 37, "display": "37" },
+        { "value": 38, "display": "38" },
+        { "value": 39, "display": "39" },
+        { "value": 40, "display": "40" },
+        { "value": 41, "display": "41" },
+        { "value": 42, "display": "42" },
+        { "value": 43, "display": "43" },
+        { "value": 44, "display": "44" },
+        { "value": 45, "display": "45" },
+        { "value": 46, "display": "46" },
+        { "value": 47, "display": "47" },
+        { "value": 48, "display": "48" },
+        { "value": 49, "display": "49" },
+        { "value": 50, "display": "50" },
+        { "value": 51, "display": "51" },
+        { "value": 52, "display": "52" },
+        { "value": 53, "display": "53" },
+        { "value": 54, "display": "54" },
+        { "value": 55, "display": "55" },
+        { "value": 56, "display": "56" },
+        { "value": 57, "display": "57" },
+        { "value": 58, "display": "58" },
+        { "value": 59, "display": "59" }
+      ]
+    },
+    {
+      "index": 7,
+      "configName": "CONFIG_ID_LANGUAGE",
+      "defaultValue": 0x81000000,
+      "description": "语言 (英文)",
+      "displayName": "默认语言",
+      "category": "系统设置",
+      "type": "Language",
+      "options": [
+        { "value": 0x81000000, "display": "English" },
+        { "value": 0x81000001, "display": "简体中文" },
+        { "value": 0x81000002, "display": "繁体中文" },
+        { "value": 0x81000003, "display": "日本语" },
+        { "value": 0x81000004, "display": "Deutsch" },
+        { "value": 0x81000005, "display": "Français" },
+        { "value": 0x81000006, "display": "Русский" },
+        { "value": 0x81000007, "display": "Italiano" },
+        { "value": 0x81000008, "display": "한국어" },
+        { "value": 0x81000009, "display": "ภาษาไทย" },
+        { "value": 0x8100000B, "display": "Nederlands" },
+        { "value": 0x8100000D, "display": "Español" },
+        { "value": 0x8100000E, "display": "Português" },
+        { "value": 0x8100000F, "display": "Polski" }
+      ]
+    },
+    {
+      "index": 8,
+      "configName": "CONFIG_ID_LCD_BRIGHT",
+      "defaultValue": 0x81000027,
+      "description": "LCD亮度 (LEVEL_8)",
+      "displayName": "LCD 亮度",
+      "category": "显示设置",
+      "type": "Level",
+      "options": [
+        { "value": 0x81000020, "display": "级别 1" },
+        { "value": 0x81000021, "display": "级别 2" },
+        { "value": 0x81000022, "display": "级别 3" },
+        { "value": 0x81000023, "display": "级别 4" },
+        { "value": 0x81000024, "display": "级别 5" },
+        { "value": 0x81000025, "display": "级别 6" },
+        { "value": 0x81000026, "display": "级别 7" },
+        { "value": 0x81000027, "display": "级别 8" }
+      ]
+    },
+    {
+      "index": 9,
+      "configName": "CONFIG_ID_AUTOOFF",
+      "defaultValue": 0x81000014,
+      "description": "自动关机 (关闭)",
+      "displayName": "自动关机",
+      "category": "系统设置",
+      "type": "AutoOffTime",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000034, "display": "1分钟" },
+        { "value": 0x81000036, "display": "3分钟" }
+      ]
+    },
+    {
+      "index": 10,
+      "configName": "CONFIG_ID_SCREENSAVE",
+      "defaultValue": 0x81000014,
+      "description": "屏保 (关闭)",
+      "displayName": "屏幕保护",
+      "category": "显示设置",
+      "type": "ScreenSaveTime",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000034, "display": "1分钟" },
+        { "value": 0x81000036, "display": "3分钟" }
+      ]
+    },
+    {
+      "index": 11,
+      "configName": "CONFIG_ID_FREQUNCY",
+      "defaultValue": 0x8100001D,
+      "description": "电源频率 (50Hz)",
+      "displayName": "电源频率",
+      "category": "系统设置",
+      "type": "Frequency",
+      "options": [
+        { "value": 0x8100001D, "display": "50Hz" },
+        { "value": 0x8100001E, "display": "60Hz" }
+      ]
+    },
+    {
+      "index": 12,
+      "configName": "CONFIG_ID_ROTATE",
+      "defaultValue": 0x81000014,
+      "description": "旋转 (关闭)",
+      "displayName": "旋转",
+      "category": "显示设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000015, "display": "开启" }
+      ]
+    },
+    {
+      "index": 13,
+      "configName": "CONFIG_ID_FILLIGHT",
+      "defaultValue": 0x81000014,
+      "description": "补光灯 (关闭)",
+      "displayName": "补光灯",
+      "category": "显示设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000015, "display": "开启" }
+      ]
+    },
+    {
+      "index": 14,
+      "configName": "CONFIG_ID_RESOLUTION",
+      "defaultValue": 0x8100008A,
+      "description": "视频分辨率 (720P_SHORT)",
+      "displayName": "视频分辨率",
+      "category": "录像设置",
+      "type": "Resolution",
+      "options": [
+        { "value": 0x8100008A, "display": "720P_SHORT" },
+        { "value": 0x8100008B, "display": "1080P_SHORT" }
+      ]
+    },
+    {
+      "index": 15,
+      "configName": "CONFIG_ID_TIMEPHOTO",
+      "defaultValue": 0x81000014,
+      "description": "定时拍照 (关闭)",
+      "displayName": "定时拍照",
+      "category": "拍照设置",
+      "type": "AutoOffTime",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x8100003A, "display": "3秒" },
+        { "value": 0x8100003B, "display": "5秒" },
+        { "value": 0x8100003C, "display": "10秒" }
+      ]
+    },
+    {
+      "index": 16,
+      "configName": "CONFIG_ID_TIMESTAMP",
+      "defaultValue": 0x81000015,
+      "description": "时间水印 (开启)",
+      "displayName": "时间戳",
+      "category": "录像设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000015, "display": "开启" }
+      ]
+    },
+    {
+      "index": 17,
+      "configName": "CONFIG_ID_MOTIONDECTION",
+      "defaultValue": 0x81000014,
+      "description": "移动侦测 (关闭)",
+      "displayName": "移动侦测",
+      "category": "录像设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000015, "display": "开启" }
+      ]
+    },
+    {
+      "index": 18,
+      "configName": "CONFIG_ID_PARKMODE",
+      "defaultValue": 0x81000014,
+      "description": "停车模式 (关闭)",
+      "displayName": "停车模式",
+      "category": "系统设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000015, "display": "开启" }
+      ]
+    },
+    {
+      "index": 19,
+      "configName": "CONFIG_ID_GSENSOR",
+      "defaultValue": 0x8100001B,
+      "description": "重力传感器灵敏度 (中等)",
+      "displayName": "G-Sensor",
+      "category": "系统设置",
+      "type": "Sensitivity",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x8100001A, "display": "低" },
+        { "value": 0x8100001B, "display": "中" },
+        { "value": 0x8100001C, "display": "高" }
+      ]
+    },
+    {
+      "index": 20,
+      "configName": "CONFIG_ID_KEYSOUND",
+      "defaultValue": 0x81000015,
+      "description": "按键音 (开启)",
+      "displayName": "按键声音",
+      "category": "声音设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000015, "display": "开启" }
+      ]
+    },
+    {
+      "index": 21,
+      "configName": "CONFIG_ID_IR_LED",
+      "defaultValue": 0x81000014,
+      "description": "红外灯 (关闭)",
+      "displayName": "红外灯",
+      "category": "显示设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000015, "display": "开启" }
+      ]
+    },
+    {
+      "index": 22,
+      "configName": "CONFIG_ID_LOOPTIME",
+      "defaultValue": 0x81000036,
+      "description": "循环录像时间 (3分钟)",
+      "displayName": "循环录像时间",
+      "category": "录像设置",
+      "type": "LoopTime",
+      "options": [
+        { "value": 0x81000036, "display": "3分钟" },
+        { "value": 0x81000037, "display": "5分钟" },
+        { "value": 0x81000038, "display": "10分钟" }
+      ]
+    },
+    {
+      "index": 23,
+      "configName": "CONFIG_ID_AUDIOREC",
+      "defaultValue": 0x81000015,
+      "description": "录音 (开启)",
+      "displayName": "录音",
+      "category": "录像设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000015, "display": "开启" }
+      ]
+    },
+    {
+      "index": 24,
+      "configName": "CONFIG_ID_EV",
+      "defaultValue": 0x8100002D,
+      "description": "视频曝光补偿 (0.0)",
+      "displayName": "曝光补偿",
+      "category": "录像设置",
+      "type": "ExposureValue",
+      "options": [
+        { "value": 0x8100002B, "display": "+2.0" },
+        { "value": 0x8100002C, "display": "+1.0" },
+        { "value": 0x8100002D, "display": "0.0" },
+        { "value": 0x8100002E, "display": "-1.0" },
+        { "value": 0x8100002F, "display": "-2.0" }
+      ]
+    },
+    {
+      "index": 25,
+      "configName": "CONFIG_ID_WBLANCE",
+      "defaultValue": 0x810000AA,
+      "description": "白平衡 (自动)",
+      "displayName": "白平衡",
+      "category": "录像设置",
+      "type": "WhiteBalance",
+      "options": [
+        { "value": 0x810000AA, "display": "自动" },
+        { "value": 0x810000AD, "display": "晴天" },
+        { "value": 0x810000AE, "display": "阴天" },
+        { "value": 0x810000AF, "display": "办公室" },
+        { "value": 0x810000B0, "display": "荧光灯" }
+      ]
+    },
+    {
+      "index": 26,
+      "configName": "CONFIG_ID_PRESLUTION",
+      "defaultValue": 0x8100008D,
+      "description": "拍照分辨率 (VGA - 默认值，菜单选项: 5M/3M/2M)",
+      "displayName": "拍照分辨率",
+      "category": "拍照设置",
+      "type": "Resolution",
+      "options": [
+        { "value": 0x81000099, "display": "5M" },
+        { "value": 0x8100009A, "display": "3M" },
+        { "value": 0x8100009B, "display": "2M" },
+        { "value": 0x8100008D, "display": "VGA (默认)" }
+      ]
+    },
+    {
+      "index": 27,
+      "configName": "CONFIG_ID_PFASTVIEW",
+      "defaultValue": 0x81000014,
+      "description": "快速预览 (关闭)",
+      "displayName": "快速预览",
+      "category": "拍照设置",
+      "type": "AutoOffTime",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000039, "display": "2秒" },
+        { "value": 0x8100003B, "display": "5秒" }
+      ]
+    },
+    {
+      "index": 28,
+      "configName": "CONFIG_ID_PTIMESTRAMP",
+      "defaultValue": 0x81000015,
+      "description": "拍照时间戳 (开启)",
+      "displayName": "照片时间戳",
+      "category": "拍照设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000015, "display": "开启" }
+      ]
+    },
+    {
+      "index": 29,
+      "configName": "CONFIG_ID_PEV",
+      "defaultValue": 0x8100002D,
+      "description": "拍照曝光补偿 (0.0)",
+      "displayName": "照片曝光补偿",
+      "category": "拍照设置",
+      "type": "ExposureValue",
+      "options": [
+        { "value": 0x8100002B, "display": "+2.0" },
+        { "value": 0x8100002C, "display": "+1.0" },
+        { "value": 0x8100002D, "display": "0.0" },
+        { "value": 0x8100002E, "display": "-1.0" },
+        { "value": 0x8100002F, "display": "-2.0" }
+      ]
+    },
+    {
+      "index": 30,
+      "configName": "CONFIG_ID_VOLUME",
+      "defaultValue": 0x81000026,
+      "description": "音量 (LEVEL_7)",
+      "displayName": "音量",
+      "category": "声音设置",
+      "type": "Level",
+      "options": [
+        { "value": 0x81000020, "display": "级别 1" },
+        { "value": 0x81000021, "display": "级别 2" },
+        { "value": 0x81000022, "display": "级别 3" },
+        { "value": 0x81000023, "display": "级别 4" },
+        { "value": 0x81000024, "display": "级别 5" },
+        { "value": 0x81000025, "display": "级别 6" },
+        { "value": 0x81000026, "display": "级别 7" },
+        { "value": 0x81000027, "display": "级别 8" }
+      ]
+    },
+    {
+      "index": 31,
+      "configName": "CONFIG_ID_THUMBNAIL",
+      "defaultValue": 0x81000015,
+      "description": "缩略图 (开启)",
+      "displayName": "缩略图",
+      "category": "系统设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000015, "display": "开启" }
+      ]
+    },
+    {
+      "index": 32,
+      "configName": "CONFIG_ID_GSENSORMODE",
+      "defaultValue": 0x81000015,
+      "description": "重力传感器模式 (开启)",
+      "displayName": "G-Sensor 模式",
+      "category": "系统设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000015, "display": "开启" }
+      ]
+    },
+    {
+      "index": 33,
+      "configName": "CONFIG_ID_FORMAT",
+      "defaultValue": 0x81000014,
+      "description": "格式化标志 (取消)",
+      "displayName": "格式化",
+      "category": "系统设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000014, "display": "取消" },
+        { "value": 0x81000016, "display": "确认" }
+      ]
+    },
+    {
+      "index": 34,
+      "configName": "CONFIG_ID_DEFUALT",
+      "defaultValue": 0x81000014,
+      "description": "默认配置标志 (取消)",
+      "displayName": "恢复默认",
+      "category": "系统设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000014, "display": "取消" },
+        { "value": 0x81000016, "display": "确认" }
+      ]
+    },
+    {
+      "index": 35,
+      "configName": "CONFIG_ID_VIDEORECEFFECT",
+      "defaultValue": 0x81000015,
+      "description": "视频录制效果 (开启)",
+      "displayName": "录像特效",
+      "category": "录像设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000015, "display": "开启" }
+      ]
+    },
+    {
+      "index": 36,
+      "configName": "CONFIG_ID_REINIT",
+      "defaultValue": 0x81000015,
+      "description": "重新初始化标志 (开启)",
+      "displayName": "重新初始化",
+      "category": "系统设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000015, "display": "开启" }
+      ]
+    },
+    {
+      "index": 37,
+      "configName": "CONFIG_ID_PRINTER_MODE",
+      "defaultValue": 0x81000054,
+      "description": "打印模式 (灰度)",
+      "displayName": "打印模式",
+      "category": "打印机设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000054, "display": "灰度" },
+        { "value": 0x81000055, "display": "点阵" }
+      ]
+    },
+    {
+      "index": 38,
+      "configName": "CONFIG_ID_PRINTER_NEARFAR",
+      "defaultValue": 0x810000C5,
+      "description": "打印远近 (近)",
+      "displayName": "打印远近",
+      "category": "打印机设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x810000C5, "display": "近" },
+        { "value": 0x81000015, "display": "远" }
+      ]
+    },
+    {
+      "index": 39,
+      "configName": "CONFIG_ID_PRINTER_DELAY",
+      "defaultValue": 0,
+      "description": "打印延迟时间",
+      "displayName": "打印延迟",
+      "category": "打印机设置",
+      "type": "Numeric"
+    },
+    {
+      "index": 40,
+      "configName": "CONFIG_ID_BAT_OLD",
+      "defaultValue": 0x81000024,
+      "description": "电池老化等级 (LEVEL_5)",
+      "displayName": "电池老化",
+      "category": "系统设置",
+      "type": "Level",
+      "options": [
+        { "value": 0x8100001F, "display": "级别 0" },
+        { "value": 0x81000020, "display": "级别 1" },
+        { "value": 0x81000021, "display": "级别 2" },
+        { "value": 0x81000022, "display": "级别 3" },
+        { "value": 0x81000023, "display": "级别 4" },
+        { "value": 0x81000024, "display": "级别 5" }
+      ]
+    },
+    {
+      "index": 41,
+      "configName": "CONFIG_ID_BAT_CHECK_FLAG",
+      "defaultValue": 0x81000014,
+      "description": "电池检测标志 (关闭)",
+      "displayName": "电池检测标志",
+      "category": "系统设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000015, "display": "开启" }
+      ]
+    },
+    {
+      "index": 42,
+      "configName": "CONFIG_ID_DEVICE_ID1",
+      "defaultValue": 0,
+      "description": "设备ID第1字节",
+      "displayName": "设备ID1",
+      "category": "系统设置",
+      "type": "Numeric"
+    },
+    {
+      "index": 43,
+      "configName": "CONFIG_ID_DEVICE_ID2",
+      "defaultValue": 0,
+      "description": "设备ID第2字节",
+      "displayName": "设备ID2",
+      "category": "系统设置",
+      "type": "Numeric"
+    },
+    {
+      "index": 44,
+      "configName": "CONFIG_ID_DEVICE_ID3",
+      "defaultValue": 0,
+      "description": "设备ID第3字节",
+      "displayName": "设备ID3",
+      "category": "系统设置",
+      "type": "Numeric"
+    },
+    {
+      "index": 45,
+      "configName": "CONFIG_ID_DEVICE_ID4",
+      "defaultValue": 0,
+      "description": "设备ID第4字节",
+      "displayName": "设备ID4",
+      "category": "系统设置",
+      "type": "Numeric"
+    },
+    {
+      "index": 46,
+      "configName": "CONFIG_ID_DEVICE_ID5",
+      "defaultValue": 0,
+      "description": "设备ID第5字节",
+      "displayName": "设备ID5",
+      "category": "系统设置",
+      "type": "Numeric"
+    },
+    {
+      "index": 47,
+      "configName": "CONFIG_ID_DEVICE_ID6",
+      "defaultValue": 0,
+      "description": "设备ID第6字节",
+      "displayName": "设备ID6",
+      "category": "系统设置",
+      "type": "Numeric"
+    },
+    {
+      "index": 48,
+      "configName": "CONFIG_ID_PRINTER_DENSITY_H",
+      "defaultValue": 0,
+      "description": "打印浓度高字节",
+      "displayName": "打印浓度H",
+      "category": "打印机设置",
+      "type": "Numeric"
+    },
+    {
+      "index": 49,
+      "configName": "CONFIG_ID_PRINTER_DENSITY_L",
+      "defaultValue": 75,
+      "description": "打印浓度低字节",
+      "displayName": "打印浓度L",
+      "category": "打印机设置",
+      "type": "Numeric"
+    },
+    {
+      "index": 50,
+      "configName": "CONFIG_ID_PRINTER_MOTE_SPEED",
+      "defaultValue": 23,
+      "description": "打印马达速度",
+      "displayName": "马达速度",
+      "category": "打印机设置",
+      "type": "Numeric"
+    },
+    {
+      "index": 51,
+      "configName": "CONFIG_ID_BT_LED",
+      "defaultValue": 0x81000014,
+      "description": "蓝牙LED指示灯 (关闭)",
+      "displayName": "蓝牙LED",
+      "category": "显示设置",
+      "type": "OnOff",
+      "options": [
+        { "value": 0x81000014, "display": "关闭" },
+        { "value": 0x81000015, "display": "开启" }
+      ]
+    }
+  ],
+  "features": {
+    "hasPrinter": true,
+    "hasBattery": true,
+    "hasIrLed": true,
+    "hasGsensor": true,
+    "hasMotionDetection": true,
+    "hasParkMode": true,
+    "hasAudioRec": true,
+    "hasTimestamp": true,
+    "hasVideoResolution": true,
+    "hasPhotoResolution": true,
+    "hasLoopRecord": true
+  }
+}

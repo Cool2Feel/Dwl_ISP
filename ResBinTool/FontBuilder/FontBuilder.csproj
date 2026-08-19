@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>net6.0-windows;net48</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>FontBuilder</RootNamespace>
+    <AssemblyName>FontBuilder</AssemblyName>
+    <Version>1.0.0.0</Version>
+    <Authors>JRX SDK Team</Authors>
+    <Description>Font binary builder for AX329x/HM020F SDK (fontSrc.exe + userStr.exe reimplementation)</Description>
+    <SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-windows'">7.0</SupportedOSPlatformVersion>
+    <Copyright>Copyright@JRX 2026</Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net48'">
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" Condition="'$(TargetFramework)' == 'net6.0-windows'" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+  </ItemGroup>
+
+</Project>

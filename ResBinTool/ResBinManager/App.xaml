@@ -1,0 +1,27 @@
+﻿<Application x:Class="ResBinManager.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:ResBinManager.Converters"
+             StartupUri="Views/MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- 现代设计系统样式 -->
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml"/>
+                <ResourceDictionary Source="Resources/Styles/ModernStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- 转换�?-->
+            <converters:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
+            <converters:BoolToStringConverter x:Key="BoolToStringConverter"/>
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
+            <!-- 修复 DataGrid �?ComboBoxItem 因虚拟化导致�?RelativeSource FindAncestor 绑定错误 -->
+            <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

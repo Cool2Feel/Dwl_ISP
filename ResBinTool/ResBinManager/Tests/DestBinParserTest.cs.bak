@@ -1,0 +1,170 @@
+using System;
+using System.IO;
+using ResBinManager.Core;
+
+namespace DestBinParserTest
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("=== DestBinParser 功能测试 ===\n");
+
+            // 测试文件路径
+            var destBinPath = @"d:\dwl\work\2026\JT\JX_SDK\JT529X\firmware\ax32_platform_demo\output\DestBin.bin";
+            var resBinPath = @"d:\dwl\work\2026\JT\JX_SDK\JT529X\firmware\ax32_platform_demo\output\res.bin";
+            var outputPath = @"d:\dwl\work\2026\JT\JX_SDK\JT529X\firmware\ax32_platform_demo\output\DestBin_test.bin";
+
+            if (!File.Exists(destBinPath))
+            {
+                Console.WriteLine($"错误: 找不到 DestBin.bin 文件: {destBinPath}");
+                return;
+            }
+
+            // 测试 1: 加载 DestBin.bin
+            Console.WriteLine("测试 1: 加载 DestBin.bin");
+            Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            
+            var parser = new DestBinParser();
+            if (!parser.Load(destBinPath))
+            {
+                Console.WriteLine($"✗ 加载失败: {parser.ErrorMessage}");
+                return;
+            }
+            
+            Console.WriteLine($"✓ 加载成功");
+            Console.WriteLine(parser.GetStructureInfo());
+            Console.WriteLine();
+
+            // 测试 2: 提取 RES.BIN
+            Console.WriteLine("测试 2: 提取 RES.BIN");
+            Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            
+            var extractedResBin = parser.ExtractResBin();
+            if (extractedResBin == null)
+            {
+                Console.WriteLine($"✗ 提取失败: {parser.ErrorMessage}");
+                return;
+            }
+            
+            Console.WriteLine($"✓ 提取成功: {extractedResBin.Length} bytes ({extractedResBin.Length / 1024.0:F2} KB)");
+            
+            // 保存到临时文件进行对比
+            var tempExtractedPath = Path.Combine(Path.GetTempPath(), "extracted_res.bin");
+            File.WriteAllBytes(tempExtractedPath, extractedResBin);
+            Console.WriteLine($"  已保存到: {tempExtractedPath}");
+            Console.WriteLine();
+
+            // 测试 3: 与原始 RES.BIN 对比
+            if (File.Exists(resBinPath))
+            {
+                Console.WriteLine("测试 3: 与原始 RES.BIN 对比");
+                Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+                
+                var originalResBin = File.ReadAllBytes(resBinPath);
+                
+                if (extractedResBin.Length == originalResBin.Length)
+                {
+                    Console.WriteLine($"✓ 大小一致: {extractedResBin.Length} bytes");
+                    
+                    // 对比内容
+                    bool identical = true;
+                    int mismatchCount = 0;
+                    for (int i = 0; i < Math.Min(extractedResBin.Length, 1024); i++)
+                    {
+                        if (extractedResBin[i] != originalResBin[i])
+                        {
+                            identical = false;
+                            mismatchCount++;
+                            if (mismatchCount <= 5)
+                            {
+                                Console.WriteLine($"  不匹配 at offset {i}: extracted=0x{extractedResBin[i]:X2}, original=0x{originalResBin[i]:X2}");
+                            }
+                        }
+                    }
+                    
+                    if (identical && mismatchCount == 0)
+                    {
+                        Console.WriteLine($"✓ 前 1024 字节完全一致");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"✗ 发现 {mismatchCount} 个不匹配");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"✗ 大小不一致: extracted={extractedResBin.Length}, original={originalResBin.Length}");
+                }
+                Console.WriteLine();
+            }
+
+            // 测试 4: 替换 RES.BIN（保持大小）
+            Console.WriteLine("测试 4: 替换 RES.BIN（保持大小）");
+            Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            
+            // 使用原始 RES.BIN 数据进行替换测试
+            if (File.Exists(resBinPath))
+            {
+                var testResBin = File.ReadAllBytes(resBinPath);
+                
+                if (parser.ReplaceResBin(testResBin, keepSize: true))
+                {
+                    Console.WriteLine($"✓ 替换成功");
+                    Console.WriteLine($"  原始大小: {parser.ResBinSize} bytes");
+                    Console.WriteLine($"  新数据大小: {testResBin.Length} bytes");
+                    Console.WriteLine($"  保持大小: {(testResBin.Length == parser.ResBinSize ? "是" : "否")}");
+                }
+                else
+                {
+                    Console.WriteLine($"✗ 替换失败: {parser.ErrorMessage}");
+                }
+                Console.WriteLine();
+            }
+
+            // 测试 5: 保存修改后的 DestBin.bin
+            Console.WriteLine("测试 5: 保存修改后的 DestBin.bin");
+            Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            
+            if (parser.Save(outputPath))
+            {
+                Console.WriteLine($"✓ 保存成功");
+                Console.WriteLine($"  输出文件: {outputPath}");
+                
+                var fileInfo = new FileInfo(outputPath);
+                Console.WriteLine($"  文件大小: {fileInfo.Length} bytes ({fileInfo.Length / 1024.0:F2} KB)");
+                
+                // 验证保存的文件
+                Console.WriteLine("\n验证保存的文件...");
+                var verifyParser = new DestBinParser();
+                if (verifyParser.Load(outputPath))
+                {
+                    Console.WriteLine($"✓ 验证通过: 可以重新加载");
+                    Console.WriteLine(verifyParser.GetStructureInfo());
+                    verifyParser.Dispose();
+                }
+                else
+                {
+                    Console.WriteLine($"✗ 验证失败: {verifyParser.ErrorMessage}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"✗ 保存失败: {parser.ErrorMessage}");
+            }
+            Console.WriteLine();
+
+            // 清理
+            parser.Dispose();
+            
+            if (File.Exists(tempExtractedPath))
+            {
+                File.Delete(tempExtractedPath);
+            }
+
+            Console.WriteLine("=== 测试完成 ===");
+            Console.WriteLine("\n按任意键退出...");
+            Console.ReadKey();
+        }
+    }
+}

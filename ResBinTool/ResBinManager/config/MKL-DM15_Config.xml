@@ -1,0 +1,861 @@
+﻿<ConfigDefinition>
+  <ProjectInfo>
+    <Id>ax32_platform_demo</Id>
+    <Name>ax32_platform_demo</Name>
+    <Description>基于config.c userConfigReset()默认值自动生成</Description>
+    <Version>1.0</Version>
+  </ProjectInfo>
+  <StringConstants base="0x81000000">
+    <Constant name="R_ID_STR_LAN_ENGLISH">0x81000000</Constant>
+    <Constant name="R_ID_STR_LAN_SCHINESE">0x81000001</Constant>
+    <Constant name="R_ID_STR_LAN_TCHINESE">0x81000002</Constant>
+    <Constant name="R_ID_STR_LAN_JAPANESE">0x81000003</Constant>
+    <Constant name="R_ID_STR_LAN_GERMAN">0x81000004</Constant>
+    <Constant name="R_ID_STR_LAN_FRECH">0x81000005</Constant>
+    <Constant name="R_ID_STR_LAN_RUSSIAN">0x81000006</Constant>
+    <Constant name="R_ID_STR_LAN_ITALIAN">0x81000007</Constant>
+    <Constant name="R_ID_STR_LAN_KOERA">0x81000008</Constant>
+    <Constant name="R_ID_STR_LAN_TAI">0x81000009</Constant>
+    <Constant name="R_ID_STR_LAN_HEBREW">0x8100000A</Constant>
+    <Constant name="R_ID_STR_LAN_DUTCH">0x8100000B</Constant>
+    <Constant name="R_ID_STR_LAN_UKRAINIAN">0x8100000C</Constant>
+    <Constant name="R_ID_STR_LAN_SPANISH">0x8100000D</Constant>
+    <Constant name="R_ID_STR_LAN_PORTUGUESE">0x8100000E</Constant>
+    <Constant name="R_ID_STR_LAN_POLISH">0x8100000F</Constant>
+    <Constant name="R_ID_STR_LAN_CZECH">0x81000010</Constant>
+    <Constant name="R_ID_STR_LAN_TURKEY">0x81000011</Constant>
+    <Constant name="R_ID_STR_UPDATE_START">0x81000012</Constant>
+    <Constant name="R_ID_STR_UPDATE_END">0x81000013</Constant>
+    <Constant name="R_ID_STR_COM_OFF">0x81000014</Constant>
+    <Constant name="R_ID_STR_COM_ON">0x81000015</Constant>
+    <Constant name="R_ID_STR_COM_OK">0x81000016</Constant>
+    <Constant name="R_ID_STR_COM_CANCEL">0x81000017</Constant>
+    <Constant name="R_ID_STR_COM_YES">0x81000018</Constant>
+    <Constant name="R_ID_STR_COM_NO">0x81000019</Constant>
+    <Constant name="R_ID_STR_COM_LOW">0x8100001A</Constant>
+    <Constant name="R_ID_STR_COM_MIDDLE">0x8100001B</Constant>
+    <Constant name="R_ID_STR_COM_HIGH">0x8100001C</Constant>
+    <Constant name="R_ID_STR_COM_WAITING">0x8100001D</Constant>
+    <Constant name="R_ID_STR_COM_50HZ">0x8100001E</Constant>
+    <Constant name="R_ID_STR_COM_60HZ">0x8100001F</Constant>
+    <Constant name="R_ID_STR_COM_P2_0">0x81000020</Constant>
+    <Constant name="R_ID_STR_COM_P1_0">0x81000021</Constant>
+    <Constant name="R_ID_STR_COM_P0_0">0x81000022</Constant>
+    <Constant name="R_ID_STR_COM_N1_0">0x81000023</Constant>
+    <Constant name="R_ID_STR_COM_N2_0">0x81000024</Constant>
+    <Constant name="R_ID_STR_COM_ALWAYSON">0x81000025</Constant>
+    <Constant name="R_ID_STR_COM_ECONOMIC">0x81000026</Constant>
+    <Constant name="R_ID_STR_COM_NORMAL">0x81000027</Constant>
+    <Constant name="R_ID_STR_COM_FINE">0x81000028</Constant>
+    <Constant name="R_ID_STR_TIM_1MIN">0x81000029</Constant>
+    <Constant name="R_ID_STR_TIM_2MIN">0x8100002A</Constant>
+    <Constant name="R_ID_STR_TIM_3MIN">0x8100002B</Constant>
+    <Constant name="R_ID_STR_TIM_5MIN">0x8100002C</Constant>
+    <Constant name="R_ID_STR_TIM_10MIN">0x8100002D</Constant>
+    <Constant name="R_ID_STR_TIM_1SEC">0x8100002E</Constant>
+    <Constant name="R_ID_STR_TIM_2SEC">0x8100002F</Constant>
+    <Constant name="R_ID_STR_TIM_3SEC">0x81000030</Constant>
+    <Constant name="R_ID_STR_TIM_5SEC">0x81000031</Constant>
+    <Constant name="R_ID_STR_TIM_10SEC">0x81000032</Constant>
+    <Constant name="R_ID_STR_TIM_30SEC">0x81000033</Constant>
+    <Constant name="R_ID_STR_SET_DATETIME">0x81000034</Constant>
+    <Constant name="R_ID_STR_SET_AUTOOFF">0x81000035</Constant>
+    <Constant name="R_ID_STR_SET_LANGUAGE">0x81000036</Constant>
+    <Constant name="R_ID_STR_SET_SCREENOFF">0x81000037</Constant>
+    <Constant name="R_ID_STR_SET_VIDEOROTATE">0x81000038</Constant>
+    <Constant name="R_ID_STR_SET_RESET">0x81000039</Constant>
+    <Constant name="R_ID_STR_SET_FORMAT">0x8100003A</Constant>
+    <Constant name="R_ID_STR_SET_VERSION">0x8100003B</Constant>
+    <Constant name="R_ID_STR_SET_RESOLUTION">0x8100003C</Constant>
+    <Constant name="R_ID_STR_SET_QUALITY">0x8100003D</Constant>
+    <Constant name="R_ID_STR_SET_LOOPRECORD">0x8100003E</Constant>
+    <Constant name="R_ID_STR_SET_MOTIONDET">0x8100003F</Constant>
+    <Constant name="R_ID_STR_SET_AUDIOREC">0x81000040</Constant>
+    <Constant name="R_ID_STR_SET_TIMESTRAMP">0x81000041</Constant>
+    <Constant name="R_ID_STR_SET_FILLIGHT">0x81000042</Constant>
+    <Constant name="R_ID_STR_IR_AUTO">0x81000043</Constant>
+    <Constant name="R_ID_STR_SET_GSENSOR">0x81000044</Constant>
+    <Constant name="R_ID_STR_SET_PARKMODE">0x81000045</Constant>
+    <Constant name="R_ID_STR_SET_FASTVIEW">0x81000046</Constant>
+    <Constant name="R_ID_STR_SET_DELETECUR">0x81000047</Constant>
+    <Constant name="R_ID_STR_SET_DELETEALL">0x81000048</Constant>
+    <Constant name="R_ID_STR_SET_LOCKCUR">0x81000049</Constant>
+    <Constant name="R_ID_STR_SET_LOCKALL">0x8100004A</Constant>
+    <Constant name="R_ID_STR_SET_UNLOCKCUR">0x8100004B</Constant>
+    <Constant name="R_ID_STR_SET_UNLOCKALL">0x8100004C</Constant>
+    <Constant name="R_ID_STR_SET_LOCKED">0x8100004D</Constant>
+    <Constant name="R_ID_STR_SET_LOCK">0x8100004E</Constant>
+    <Constant name="R_ID_STR_SET_DELETE">0x8100004F</Constant>
+    <Constant name="R_ID_STR_SET_PLAYMODE">0x81000050</Constant>
+    <Constant name="R_ID_STR_SET_REPEATALL">0x81000051</Constant>
+    <Constant name="R_ID_STR_SET_REPEATRAD">0x81000052</Constant>
+    <Constant name="R_ID_STR_SET_REPEATSIG">0x81000053</Constant>
+    <Constant name="R_ID_STR_SET_AUDIOPLAY">0x81000054</Constant>
+    <Constant name="R_ID_STR_SET_VOLUME">0x81000055</Constant>
+    <Constant name="R_ID_STR_SET_THUMBNAIL">0x81000056</Constant>
+    <Constant name="R_ID_STR_SET_SETTING">0x81000057</Constant>
+    <Constant name="R_ID_STR_SET_VIDEO">0x81000058</Constant>
+    <Constant name="R_ID_STR_SET_PHOTO">0x81000059</Constant>
+    <Constant name="R_ID_STR_SET_PLAY">0x8100005A</Constant>
+    <Constant name="R_ID_STR_SET_MUSIC">0x8100005B</Constant>
+    <Constant name="R_ID_STR_SET_AUDIOMODE">0x8100005C</Constant>
+    <Constant name="R_ID_STR_SET_USBMASS">0x8100005D</Constant>
+    <Constant name="R_ID_STR_SET_USBCAM">0x8100005E</Constant>
+    <Constant name="R_ID_STR_SET_BEEPSOUND">0x8100005F</Constant>
+    <Constant name="R_ID_STR_SET_FREQUENCY">0x81000060</Constant>
+    <Constant name="R_ID_STR_SET_PROMT">0x81000061</Constant>
+    <Constant name="R_ID_STR_RES_240P">0x81000062</Constant>
+    <Constant name="R_ID_STR_RES_480P">0x81000063</Constant>
+    <Constant name="R_ID_STR_RES_480FHD">0x81000064</Constant>
+    <Constant name="R_ID_STR_RES_720">0x81000065</Constant>
+    <Constant name="R_ID_STR_RES_720HD">0x81000066</Constant>
+    <Constant name="R_ID_STR_RES_1024P">0x81000067</Constant>
+    <Constant name="R_ID_STR_RES_1080">0x81000068</Constant>
+    <Constant name="R_ID_STR_RES_1080FHD">0x81000069</Constant>
+    <Constant name="R_ID_STR_RES_1440P">0x8100006A</Constant>
+    <Constant name="R_ID_STR_RES_3024P">0x8100006B</Constant>
+    <Constant name="R_ID_STR_RES_QVGA">0x8100006C</Constant>
+    <Constant name="R_ID_STR_RES_VGA">0x8100006D</Constant>
+    <Constant name="R_ID_STR_RES_720P">0x8100006E</Constant>
+    <Constant name="R_ID_STR_RES_1080P">0x8100006F</Constant>
+    <Constant name="R_ID_STR_RES_HD">0x81000070</Constant>
+    <Constant name="R_ID_STR_RES_FHD">0x81000071</Constant>
+    <Constant name="R_ID_STR_RES_12M">0x81000072</Constant>
+    <Constant name="R_ID_STR_RES_10M">0x81000073</Constant>
+    <Constant name="R_ID_STR_RES_8M">0x81000074</Constant>
+    <Constant name="R_ID_STR_RES_5M">0x81000075</Constant>
+    <Constant name="R_ID_STR_RES_3M">0x81000076</Constant>
+    <Constant name="R_ID_STR_RES_2M">0x81000077</Constant>
+    <Constant name="R_ID_STR_RES_1M">0x81000078</Constant>
+    <Constant name="R_ID_STR_SDC_NULL">0x81000079</Constant>
+    <Constant name="R_ID_STR_SDC_NULL1">0x8100007A</Constant>
+    <Constant name="R_ID_STR_SDC_FULL">0x8100007B</Constant>
+    <Constant name="R_ID_STR_SDC_ERROR">0x8100007C</Constant>
+    <Constant name="R_ID_STR_FIL_NULL">0x8100007D</Constant>
+    <Constant name="R_ID_STR_FIL_LOCKED">0x8100007E</Constant>
+    <Constant name="R_ID_STR_FMT_ING">0x8100007F</Constant>
+    <Constant name="R_ID_STR_FMT_SUCCESS">0x81000080</Constant>
+    <Constant name="R_ID_STR_FMT_FAIL">0x81000081</Constant>
+    <Constant name="R_ID_STR_FMT_RESET">0x81000082</Constant>
+    <Constant name="R_ID_STR_FMT_FORMAT">0x81000083</Constant>
+    <Constant name="R_ID_STR_FMT_DELETE">0x81000084</Constant>
+    <Constant name="R_ID_STR_PWR_LOW">0x81000085</Constant>
+    <Constant name="R_ID_STR_PWR_NO">0x81000086</Constant>
+    <Constant name="R_ID_STR_PWR_BACKLOW">0x81000087</Constant>
+    <Constant name="R_ID_STR_PWR_CHARGELOW">0x81000088</Constant>
+    <Constant name="R_ID_STR_ISP_WHITEBL">0x81000089</Constant>
+    <Constant name="R_ID_STR_ISP_ISO">0x8100008A</Constant>
+    <Constant name="R_ID_STR_ISP_ANTISHANK">0x8100008B</Constant>
+    <Constant name="R_ID_STR_ISP_AUTO">0x8100008C</Constant>
+    <Constant name="R_ID_STR_ISP_SOFT">0x8100008D</Constant>
+    <Constant name="R_ID_STR_ISP_STRONG">0x8100008E</Constant>
+    <Constant name="R_ID_STR_ISP_SUNLIGHT">0x8100008F</Constant>
+    <Constant name="R_ID_STR_ISP_CLOUDY">0x81000090</Constant>
+    <Constant name="R_ID_STR_ISP_TUNGSTEN">0x81000091</Constant>
+    <Constant name="R_ID_STR_ISP_FLUORESCENT">0x81000092</Constant>
+    <Constant name="R_ID_STR_ISP_BLACKWHITE">0x81000093</Constant>
+    <Constant name="R_ID_STR_ISP_SEPIA">0x81000094</Constant>
+    <Constant name="R_ID_STR_ISP_ISO100">0x81000095</Constant>
+    <Constant name="R_ID_STR_ISP_ISO200">0x81000096</Constant>
+    <Constant name="R_ID_STR_ISP_ISO400">0x81000097</Constant>
+    <Constant name="R_ID_STR_ISP_WDR">0x81000098</Constant>
+    <Constant name="R_ID_STR_ISP_EXPOSURE">0x81000099</Constant>
+    <Constant name="R_ID_STR_COM_SUCCESS">0x8100009A</Constant>
+    <Constant name="R_ID_STR_COM_FAILED">0x8100009B</Constant>
+    <Constant name="R_ID_STR_SET_ASSIST">0x8100009C</Constant>
+    <Constant name="R_ID_STR_SET_USBPHOTO">0x8100009D</Constant>
+    <Constant name="R_ID_STR_COM_DELUNLOCK">0x8100009E</Constant>
+    <Constant name="R_ID_STR_SET_ALLLOCKED">0x8100009F</Constant>
+  </StringConstants>
+  <ConfigItems>
+    <ConfigItem>
+      <Index>0</Index>
+      <ConfigName>CONFIG_ID_YEAR</ConfigName>
+      <DisplayName>年</DisplayName>
+      <Category>时间设置</Category>
+      <Type>Time</Type>
+      <Description></Description>
+      <DefaultValue>0</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="2020">2020</Option>
+        <Option value="2021">2021</Option>
+        <Option value="2022">2022</Option>
+        <Option value="2023">2023</Option>
+        <Option value="2024">2024</Option>
+        <Option value="2025">2025</Option>
+        <Option value="2026">2026</Option>
+        <Option value="2027">2027</Option>
+        <Option value="2028">2028</Option>
+        <Option value="2029">2029</Option>
+        <Option value="2030">2030</Option>
+        <Option value="2031">2031</Option>
+        <Option value="2032">2032</Option>
+        <Option value="2033">2033</Option>
+        <Option value="2034">2034</Option>
+        <Option value="2035">2035</Option>
+        <Option value="2036">2036</Option>
+        <Option value="2037">2037</Option>
+        <Option value="2038">2038</Option>
+        <Option value="2039">2039</Option>
+        <Option value="2040">2040</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>1</Index>
+      <ConfigName>CONFIG_ID_MONTH</ConfigName>
+      <DisplayName>月</DisplayName>
+      <Category>时间设置</Category>
+      <Type>Time</Type>
+      <Description></Description>
+      <DefaultValue>0</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="1">1</Option>
+        <Option value="2">2</Option>
+        <Option value="3">3</Option>
+        <Option value="4">4</Option>
+        <Option value="5">5</Option>
+        <Option value="6">6</Option>
+        <Option value="7">7</Option>
+        <Option value="8">8</Option>
+        <Option value="9">9</Option>
+        <Option value="10">10</Option>
+        <Option value="11">11</Option>
+        <Option value="12">12</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>2</Index>
+      <ConfigName>CONFIG_ID_MDAY</ConfigName>
+      <DisplayName>日</DisplayName>
+      <Category>时间设置</Category>
+      <Type>Time</Type>
+      <Description></Description>
+      <DefaultValue>0</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="1">1</Option>
+        <Option value="2">2</Option>
+        <Option value="3">3</Option>
+        <Option value="4">4</Option>
+        <Option value="5">5</Option>
+        <Option value="6">6</Option>
+        <Option value="7">7</Option>
+        <Option value="8">8</Option>
+        <Option value="9">9</Option>
+        <Option value="10">10</Option>
+        <Option value="11">11</Option>
+        <Option value="12">12</Option>
+        <Option value="13">13</Option>
+        <Option value="14">14</Option>
+        <Option value="15">15</Option>
+        <Option value="16">16</Option>
+        <Option value="17">17</Option>
+        <Option value="18">18</Option>
+        <Option value="19">19</Option>
+        <Option value="20">20</Option>
+        <Option value="21">21</Option>
+        <Option value="22">22</Option>
+        <Option value="23">23</Option>
+        <Option value="24">24</Option>
+        <Option value="25">25</Option>
+        <Option value="26">26</Option>
+        <Option value="27">27</Option>
+        <Option value="28">28</Option>
+        <Option value="29">29</Option>
+        <Option value="30">30</Option>
+        <Option value="31">31</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>3</Index>
+      <ConfigName>CONFIG_ID_WDAY</ConfigName>
+      <DisplayName>星期</DisplayName>
+      <Category>时间设置</Category>
+      <Type>Time</Type>
+      <Description></Description>
+      <DefaultValue>4</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0">星期日</Option>
+        <Option value="1">星期一</Option>
+        <Option value="2">星期二</Option>
+        <Option value="3">星期三</Option>
+        <Option value="4">星期四</Option>
+        <Option value="5">星期五</Option>
+        <Option value="6">星期六</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>4</Index>
+      <ConfigName>CONFIG_ID_HOUR</ConfigName>
+      <DisplayName>时</DisplayName>
+      <Category>时间设置</Category>
+      <Type>Time</Type>
+      <Description></Description>
+      <DefaultValue>0</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0">0</Option>
+        <Option value="1">1</Option>
+        <Option value="2">2</Option>
+        <Option value="3">3</Option>
+        <Option value="4">4</Option>
+        <Option value="5">5</Option>
+        <Option value="6">6</Option>
+        <Option value="7">7</Option>
+        <Option value="8">8</Option>
+        <Option value="9">9</Option>
+        <Option value="10">10</Option>
+        <Option value="11">11</Option>
+        <Option value="12">12</Option>
+        <Option value="13">13</Option>
+        <Option value="14">14</Option>
+        <Option value="15">15</Option>
+        <Option value="16">16</Option>
+        <Option value="17">17</Option>
+        <Option value="18">18</Option>
+        <Option value="19">19</Option>
+        <Option value="20">20</Option>
+        <Option value="21">21</Option>
+        <Option value="22">22</Option>
+        <Option value="23">23</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>5</Index>
+      <ConfigName>CONFIG_ID_MIN</ConfigName>
+      <DisplayName>分</DisplayName>
+      <Category>时间设置</Category>
+      <Type>Time</Type>
+      <Description></Description>
+      <DefaultValue>0</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0">0</Option>
+        <Option value="1">1</Option>
+        <Option value="2">2</Option>
+        <Option value="3">3</Option>
+        <Option value="4">4</Option>
+        <Option value="5">5</Option>
+        <Option value="6">6</Option>
+        <Option value="7">7</Option>
+        <Option value="8">8</Option>
+        <Option value="9">9</Option>
+        <Option value="10">10</Option>
+        <Option value="11">11</Option>
+        <Option value="12">12</Option>
+        <Option value="13">13</Option>
+        <Option value="14">14</Option>
+        <Option value="15">15</Option>
+        <Option value="16">16</Option>
+        <Option value="17">17</Option>
+        <Option value="18">18</Option>
+        <Option value="19">19</Option>
+        <Option value="20">20</Option>
+        <Option value="21">21</Option>
+        <Option value="22">22</Option>
+        <Option value="23">23</Option>
+        <Option value="24">24</Option>
+        <Option value="25">25</Option>
+        <Option value="26">26</Option>
+        <Option value="27">27</Option>
+        <Option value="28">28</Option>
+        <Option value="29">29</Option>
+        <Option value="30">30</Option>
+        <Option value="31">31</Option>
+        <Option value="32">32</Option>
+        <Option value="33">33</Option>
+        <Option value="34">34</Option>
+        <Option value="35">35</Option>
+        <Option value="36">36</Option>
+        <Option value="37">37</Option>
+        <Option value="38">38</Option>
+        <Option value="39">39</Option>
+        <Option value="40">40</Option>
+        <Option value="41">41</Option>
+        <Option value="42">42</Option>
+        <Option value="43">43</Option>
+        <Option value="44">44</Option>
+        <Option value="45">45</Option>
+        <Option value="46">46</Option>
+        <Option value="47">47</Option>
+        <Option value="48">48</Option>
+        <Option value="49">49</Option>
+        <Option value="50">50</Option>
+        <Option value="51">51</Option>
+        <Option value="52">52</Option>
+        <Option value="53">53</Option>
+        <Option value="54">54</Option>
+        <Option value="55">55</Option>
+        <Option value="56">56</Option>
+        <Option value="57">57</Option>
+        <Option value="58">58</Option>
+        <Option value="59">59</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>6</Index>
+      <ConfigName>CONFIG_ID_SEC</ConfigName>
+      <DisplayName>秒</DisplayName>
+      <Category>时间设置</Category>
+      <Type>Time</Type>
+      <Description></Description>
+      <DefaultValue>0</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0">0</Option>
+        <Option value="1">1</Option>
+        <Option value="2">2</Option>
+        <Option value="3">3</Option>
+        <Option value="4">4</Option>
+        <Option value="5">5</Option>
+        <Option value="6">6</Option>
+        <Option value="7">7</Option>
+        <Option value="8">8</Option>
+        <Option value="9">9</Option>
+        <Option value="10">10</Option>
+        <Option value="11">11</Option>
+        <Option value="12">12</Option>
+        <Option value="13">13</Option>
+        <Option value="14">14</Option>
+        <Option value="15">15</Option>
+        <Option value="16">16</Option>
+        <Option value="17">17</Option>
+        <Option value="18">18</Option>
+        <Option value="19">19</Option>
+        <Option value="20">20</Option>
+        <Option value="21">21</Option>
+        <Option value="22">22</Option>
+        <Option value="23">23</Option>
+        <Option value="24">24</Option>
+        <Option value="25">25</Option>
+        <Option value="26">26</Option>
+        <Option value="27">27</Option>
+        <Option value="28">28</Option>
+        <Option value="29">29</Option>
+        <Option value="30">30</Option>
+        <Option value="31">31</Option>
+        <Option value="32">32</Option>
+        <Option value="33">33</Option>
+        <Option value="34">34</Option>
+        <Option value="35">35</Option>
+        <Option value="36">36</Option>
+        <Option value="37">37</Option>
+        <Option value="38">38</Option>
+        <Option value="39">39</Option>
+        <Option value="40">40</Option>
+        <Option value="41">41</Option>
+        <Option value="42">42</Option>
+        <Option value="43">43</Option>
+        <Option value="44">44</Option>
+        <Option value="45">45</Option>
+        <Option value="46">46</Option>
+        <Option value="47">47</Option>
+        <Option value="48">48</Option>
+        <Option value="49">49</Option>
+        <Option value="50">50</Option>
+        <Option value="51">51</Option>
+        <Option value="52">52</Option>
+        <Option value="53">53</Option>
+        <Option value="54">54</Option>
+        <Option value="55">55</Option>
+        <Option value="56">56</Option>
+        <Option value="57">57</Option>
+        <Option value="58">58</Option>
+        <Option value="59">59</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>7</Index>
+      <ConfigName>CONFIG_ID_LANGUAGE</ConfigName>
+      <DisplayName>默认语言</DisplayName>
+      <Category>系统设置</Category>
+      <Type>Language</Type>
+      <Description></Description>
+      <DefaultValue>0x81000000</DefaultValue>
+      <Enabled>true</Enabled>
+      <Options>
+        <Option value="0x81000000">English</Option>
+        <Option value="0x81000002">繁体中文</Option>
+        <Option value="0x81000001">简体中文</Option>
+        <Option value="0x81000003">日本语</Option>
+        <Option value="0x81000005">Français</Option>
+        <Option value="0x81000004">Deutsch</Option>
+        <Option value="0x81000008">한국어</Option>
+        <Option value="0x81000007">Italiano</Option>
+        <Option value="0x8100000E">Português</Option>
+        <Option value="0x81000006">Русский</Option>
+        <Option value="0x8100000D">Español</Option>
+        <Option value="0x8100000F">Polski</Option>
+        <Option value="0x8100000A">עברית</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>8</Index>
+      <ConfigName>CONFIG_ID_AUTOOFF</ConfigName>
+      <DisplayName>自动关机</DisplayName>
+      <Category>系统设置</Category>
+      <Type>AutoOffTime</Type>
+      <Description></Description>
+      <DefaultValue>0x81000014</DefaultValue>
+      <Enabled>true</Enabled>
+      <Options>
+        <Option value="0x81000014">关闭</Option>
+        <Option value="0x81000029">1分钟</Option>
+        <Option value="0x8100002B">3分钟</Option>
+        <Option value="0x8100002D">10分钟</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>9</Index>
+      <ConfigName>CONFIG_ID_SCREENSAVE</ConfigName>
+      <DisplayName>屏幕保护</DisplayName>
+      <Category>显示设置</Category>
+      <Type>AutoOffTime</Type>
+      <Description></Description>
+      <DefaultValue>0x81000014</DefaultValue>
+      <Enabled>true</Enabled>
+      <Options>
+        <Option value="0x81000014">关闭</Option>
+        <Option value="0x8100002B">3分钟</Option>
+        <Option value="0x8100002C">5分钟</Option>
+        <Option value="0x8100002D">10分钟</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>10</Index>
+      <ConfigName>CONFIG_ID_FREQUNCY</ConfigName>
+      <DisplayName>光源频率</DisplayName>
+      <Category>系统设置</Category>
+      <Type>Frequency</Type>
+      <Description></Description>
+      <DefaultValue>0x8100001E</DefaultValue>
+      <Enabled>true</Enabled>
+      <Options>
+        <Option value="0x8100001E">50Hz</Option>
+        <Option value="0x8100001F">60Hz</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>11</Index>
+      <ConfigName>CONFIG_ID_ROTATE</ConfigName>
+      <DisplayName>图片旋转</DisplayName>
+      <Category>显示设置</Category>
+      <Type>OnOff</Type>
+      <Description></Description>
+      <DefaultValue>0x81000014</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0x81000014">关闭</Option>
+        <Option value="0x81000015">开启</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>12</Index>
+      <ConfigName>CONFIG_ID_FILLIGHT</ConfigName>
+      <DisplayName>补光灯</DisplayName>
+      <Category>显示设置</Category>
+      <Type>OnOff</Type>
+      <Description></Description>
+      <DefaultValue>0x81000014</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0x81000014">关闭</Option>
+        <Option value="0x81000015">开启</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>13</Index>
+      <ConfigName>CONFIG_ID_RESOLUTION</ConfigName>
+      <DisplayName>视频分辨率</DisplayName>
+      <Category>录像设置</Category>
+      <Type>Resolution</Type>
+      <Description></Description>
+      <DefaultValue>0x8100006F</DefaultValue>
+      <Enabled>true</Enabled>
+      <Options>
+        <Option value="0x8100006F">1080P</Option>
+        <Option value="0x8100006E">720P</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>14</Index>
+      <ConfigName>CONFIG_ID_TIMESTAMP</ConfigName>
+      <DisplayName>时间标志</DisplayName>
+      <Category>录像设置</Category>
+      <Type>OnOff</Type>
+      <Description></Description>
+      <DefaultValue>0x81000015</DefaultValue>
+      <Enabled>true</Enabled>
+      <Options>
+        <Option value="0x81000014">关闭</Option>
+        <Option value="0x81000015">开启</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>15</Index>
+      <ConfigName>CONFIG_ID_MOTIONDECTION</ConfigName>
+      <DisplayName>移动侦测</DisplayName>
+      <Category>录像设置</Category>
+      <Type>OnOff</Type>
+      <Description></Description>
+      <DefaultValue>0x81000014</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0x81000014">关闭</Option>
+        <Option value="0x81000015">开启</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>16</Index>
+      <ConfigName>CONFIG_ID_PARKMODE</ConfigName>
+      <DisplayName>停车模式</DisplayName>
+      <Category>系统设置</Category>
+      <Type>OnOff</Type>
+      <Description></Description>
+      <DefaultValue>0x81000014</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0x81000014">关闭</Option>
+        <Option value="0x81000015">开启</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>17</Index>
+      <ConfigName>CONFIG_ID_GSENSOR</ConfigName>
+      <DisplayName>G-Sensor</DisplayName>
+      <Category>系统设置</Category>
+      <Type>Sensitivity</Type>
+      <Description></Description>
+      <DefaultValue>0x8100001B</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0x81000014">关闭</Option>
+        <Option value="0x8100001A">低</Option>
+        <Option value="0x8100001B">中</Option>
+        <Option value="0x8100001C">高</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>18</Index>
+      <ConfigName>CONFIG_ID_KEYSOUND</ConfigName>
+      <DisplayName>按键声音</DisplayName>
+      <Category>系统设置</Category>
+      <Type>OnOff</Type>
+      <Description></Description>
+      <DefaultValue>0x81000015</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0x81000014">关闭</Option>
+        <Option value="0x81000015">开启</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>19</Index>
+      <ConfigName>CONFIG_ID_IR_LED</ConfigName>
+      <DisplayName>红外灯</DisplayName>
+      <Category>显示设置</Category>
+      <Type>OnOff</Type>
+      <Description></Description>
+      <DefaultValue>0x81000014</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0x81000014">关闭</Option>
+        <Option value="0x81000015">开启</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>20</Index>
+      <ConfigName>CONFIG_ID_LOOPTIME</ConfigName>
+      <DisplayName>循环录像时间</DisplayName>
+      <Category>录像设置</Category>
+      <Type>LoopTime</Type>
+      <Description></Description>
+      <DefaultValue>0x8100002C</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0x81000014">关闭</Option>
+        <Option value="0x81000015">开启</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>21</Index>
+      <ConfigName>CONFIG_ID_AUDIOREC</ConfigName>
+      <DisplayName>录音</DisplayName>
+      <Category>录像设置</Category>
+      <Type>OnOff</Type>
+      <Description></Description>
+      <DefaultValue>0x81000015</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0x81000014">关闭</Option>
+        <Option value="0x81000015">开启</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>22</Index>
+      <ConfigName>CONFIG_ID_EV</ConfigName>
+      <DisplayName>曝光补偿</DisplayName>
+      <Category>录像设置</Category>
+      <Type>ExposureValue</Type>
+      <Description></Description>
+      <DefaultValue>0x81000022</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0x81000020">+2.0</Option>
+        <Option value="0x81000021">+1.0</Option>
+        <Option value="0x81000022">0.0</Option>
+        <Option value="0x81000023">-1.0</Option>
+        <Option value="0x81000024">-2.0</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>23</Index>
+      <ConfigName>CONFIG_ID_WBLANCE</ConfigName>
+      <DisplayName>白平衡</DisplayName>
+      <Category>录像设置</Category>
+      <Type>WhiteBalance</Type>
+      <Description></Description>
+      <DefaultValue>0x8100008F</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0x8100008C">自动</Option>
+        <Option value="0x8100008F">晴天</Option>
+        <Option value="0x81000090">阴天</Option>
+        <Option value="0x81000091">办公室</Option>
+        <Option value="0x81000092">荧光灯</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>24</Index>
+      <ConfigName>CONFIG_ID_PRESLUTION</ConfigName>
+      <DisplayName>图片质量</DisplayName>
+      <Category>拍照设置</Category>
+      <Type>Resolution</Type>
+      <Description></Description>
+      <DefaultValue>0x81000069</DefaultValue>
+      <Enabled>true</Enabled>
+      <Options>
+        <Option value="0x81000066">720HD</Option>
+        <Option value="0x81000069">1080FHD</Option>
+        <Option value="0x81000073">10M</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>25</Index>
+      <ConfigName>CONFIG_ID_PFASTVIEW</ConfigName>
+      <DisplayName>快速预览</DisplayName>
+      <Category>拍照设置</Category>
+      <Type>AutoOffTime</Type>
+      <Description></Description>
+      <DefaultValue>0x81000014</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0x81000014">关闭</Option>
+        <Option value="0x81000015">开启</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>26</Index>
+      <ConfigName>CONFIG_ID_PTIMESTRAMP</ConfigName>
+      <DisplayName>照片时间戳</DisplayName>
+      <Category>其他设置</Category>
+      <Type>OnOff</Type>
+      <Description></Description>
+      <DefaultValue>0x81000015</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0x81000014">关闭</Option>
+        <Option value="0x81000015">开启</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>27</Index>
+      <ConfigName>CONFIG_ID_PEV</ConfigName>
+      <DisplayName>照片曝光补偿</DisplayName>
+      <Category>录像设置</Category>
+      <Type>ExposureValue</Type>
+      <Description></Description>
+      <DefaultValue>0x81000022</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0x81000020">+2.0</Option>
+        <Option value="0x81000021">+1.0</Option>
+        <Option value="0x81000022">0.0</Option>
+        <Option value="0x81000023">-1.0</Option>
+        <Option value="0x81000024">-2.0</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>28</Index>
+      <ConfigName>CONFIG_ID_VOLUME</ConfigName>
+      <DisplayName>音量</DisplayName>
+      <Category>声音设置</Category>
+      <Type>Level</Type>
+      <Description></Description>
+      <DefaultValue>0x8100001A</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0x8100001A">低</Option>
+        <Option value="0x8100001B">中</Option>
+        <Option value="0x8100001C">高</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>29</Index>
+      <ConfigName>CONFIG_ID_THUMBNAIL</ConfigName>
+      <DisplayName>缩略图</DisplayName>
+      <Category>系统设置</Category>
+      <Type>OnOff</Type>
+      <Description></Description>
+      <DefaultValue>0x81000015</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0x81000014">关闭</Option>
+        <Option value="0x81000015">开启</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>30</Index>
+      <ConfigName>CONFIG_ID_GSENSORMODE</ConfigName>
+      <DisplayName>G-Sensor 模式</DisplayName>
+      <Category>系统设置</Category>
+      <Type>Sensitivity</Type>
+      <Description></Description>
+      <DefaultValue>0x81000015</DefaultValue>
+      <Enabled>false</Enabled>
+      <Options>
+        <Option value="0x81000014">关闭</Option>
+        <Option value="0x81000015">开启</Option>
+      </Options>
+    </ConfigItem>
+    <ConfigItem>
+      <Index>31</Index>
+      <ConfigName>CONFIG_ID_LINEASSIST</ConfigName>
+      <DisplayName>辅助线</DisplayName>
+      <Category>拍照设置</Category>
+      <Type>OnOff</Type>
+      <Description></Description>
+      <DefaultValue>0x81000014</DefaultValue>
+      <Enabled>true</Enabled>
+      <Options>
+        <Option value="0x81000014">关闭</Option>
+        <Option value="0x81000015">开启</Option>
+      </Options>
+    </ConfigItem>
+  </ConfigItems>
+  <Features>
+    <Feature name="hasBattery">true</Feature>
+    <Feature name="hasIrLed">true</Feature>
+    <Feature name="hasGsensor">true</Feature>
+    <Feature name="hasMotionDetection">true</Feature>
+    <Feature name="hasParkMode">true</Feature>
+    <Feature name="hasAudioRec">true</Feature>
+    <Feature name="hasTimestamp">true</Feature>
+    <Feature name="hasVideoResolution">true</Feature>
+    <Feature name="hasPhotoResolution">true</Feature>
+    <Feature name="hasLoopRecord">true</Feature>
+  </Features>
+</ConfigDefinition>
