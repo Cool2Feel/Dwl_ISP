@@ -1,0 +1,331 @@
+<Window x:Class="ThunderSE.Ui.MainWindow.UvcWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:ThunderSE.Ui.MainWindow"
+        Title="Camera实时预览" Height="700" Width="1024" Loaded="Onloaded" Unloaded="OnUnloaded">
+    <Grid Margin="3">
+        <Grid.RowDefinitions>
+            <!-- 第1行：顶部 - 视频预览区域 + 设备信息面板 -->
+            <RowDefinition Height="*"/>
+            <!-- 第2行：中部 - 操作工具栏 -->
+            <RowDefinition Height="Auto"/>
+            <!-- 第3行：下部 - 状态信息区 -->
+            <RowDefinition Height="Auto"/>
+            <!-- 第4行：底部 - 状态栏 -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ==================== 第1行：顶部区域 ==================== -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="200"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧：视频预览区域 -->
+            <Border Grid.Column="0" BorderBrush="#FF0078D7" BorderThickness="1" Background="#FFF9F9F9">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 视频预览标题栏 -->
+                    <Border Grid.Row="0" Background="#FF0078D7" Padding="5">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📹 Camera实时视频预览" 
+                                       Foreground="White" FontWeight="Bold" FontSize="12"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtVideoStatus" Text="● 未连接" 
+                                       Foreground="#FFFF6B35" FontWeight="SemiBold" FontSize="11"
+                                       Margin="15,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 视频显示主体 -->
+                    <Border Grid.Row="1" Background="Black" Margin="5">
+                        <Grid>
+                            <Image x:Name="UvcImage" 
+                                   HorizontalAlignment="Stretch" 
+                                   VerticalAlignment="Stretch"
+                                   Stretch="Uniform"/>
+                            <!-- HGRM 画线覆盖层 -->
+                            <Canvas x:Name="HgrmCanvas" 
+                                    HorizontalAlignment="Stretch" 
+                                    VerticalAlignment="Stretch"
+                                    IsHitTestVisible="True"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- 视频状态提示栏 -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Background="#FFE0E0E0">
+                        <TextBlock Text="💡 提示: " VerticalAlignment="Center" Margin="0,0,3,0"/>
+                        <TextBlock Text="点击下方按钮截取当前帧 | 支持RAW/JPEG和RGB格式 | 实时预览无延迟" 
+                                   FontSize="11" Foreground="#666666" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 右侧：设备信息面板 -->
+            <Border Grid.Column="2" BorderBrush="#FF0078D7" BorderThickness="1" Background="#FFFAFAFA">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 面板标题 -->
+                    <Border Grid.Row="0" Background="#FF0078D7" Padding="5">
+                        <TextBlock Text="📷 摄像头设备信息" Foreground="White" FontWeight="Bold" FontSize="12"/>
+                    </Border>
+
+                    <!-- TabControl信息组 -->
+                    <TabControl Name="DeviceInfoTabs" Grid.Row="1" 
+                                Style="{DynamicResource TabControlStyle1}" 
+                                SelectedIndex="0" Background="Transparent" 
+                                BorderThickness="0" Margin="5">
+
+                        <!-- Tab 1: 设备参数 -->
+                        <TabItem Header="📐 设备参数">
+                            <StackPanel Background="Transparent">
+                                <TextBlock Text="视频分辨率配置" FontWeight="SemiBold" 
+                                           Margin="0,10,0,8" Foreground="#333333" FontSize="11"/>
+
+                                <Border Background="#FFFAFAFA" BorderBrush="#FFE0E0E0" 
+                                        BorderThickness="1" Padding="10" Margin="0,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="视频宽度:" FontWeight="SemiBold" 
+                                                   FontSize="11" Foreground="#333333" Margin="0,0,0,3"/>
+                                        <TextBlock x:Name="TxtVideoWidth" Text="--" 
+                                                   FontSize="14" Foreground="#0078D7" FontWeight="Bold"/>
+
+                                        <Separator Margin="0,10,0,10"/>
+
+                                        <TextBlock Text="视频高度:" FontWeight="SemiBold" 
+                                                   FontSize="11" Foreground="#333333" Margin="0,0,0,3"/>
+                                        <TextBlock x:Name="TxtVideoHeight" Text="--" 
+                                                   FontSize="14" Foreground="#0078D7" FontWeight="Bold"/>
+
+                                        <Separator Margin="0,10,0,10"/>
+
+                                        <TextBlock Text="像素格式:" FontWeight="SemiBold" 
+                                                   FontSize="11" Foreground="#333333" Margin="0,0,0,3"/>
+                                        <TextBlock x:Name="TxtPixelFormat" Text="--" 
+                                                   FontSize="14" Foreground="#0078D7" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Border>
+
+
+                                <TextBlock Text="显示控制" FontWeight="SemiBold" 
+                                           Margin="0,5,0,5" Foreground="#333333" FontSize="11"/>
+
+                                <Border Background="#FFFFF8E1" BorderBrush="#FFFFB300" 
+                                        BorderThickness="1" Padding="8" Margin="0,0,0,5">
+                                    <StackPanel>
+                                        <TextBlock Text="🎨 HGRM 画线" FontWeight="SemiBold" 
+                                                   FontSize="11" Foreground="#FF8F00" Margin="0,0,0,5"/>
+                                        <CheckBox x:Name="ChkShowHgrmLines" 
+                                                  Content="显示HGRM画线 (垂直/水平)"
+                                                  IsChecked="False"
+                                                  Checked="OnShowHgrmLinesChanged"
+                                                  Unchecked="OnShowHgrmLinesChanged"
+                                                  FontSize="10" Foreground="#666666"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Button Content="🎛️ 图像参数" Click="OnOpenProcAmpWindow"
+                                        HorizontalAlignment="Stretch" Margin="0,10,0,0" Padding="8,6"
+                                        FontWeight="SemiBold"
+                                        ToolTip="打开视频属性调节窗口 (Proc Amp)"/>
+
+                                <Button Content="📷 相机控制" Click="OnOpenCameraControlWindow"
+                                        HorizontalAlignment="Stretch" Margin="0,6,0,0" Padding="8,6"
+                                        FontWeight="SemiBold"
+                                        ToolTip="打开相机控制调节窗口 (Camera Control)"/>
+                                
+                                <Separator Margin="0,12,0,12"/>
+                                
+                                <TextBlock Text="设备状态" FontWeight="SemiBold" 
+                                           Margin="0,0,0,8" Foreground="#333333" FontSize="11"/>
+
+                                <Border Background="#FFF0F8FF" BorderBrush="#FF0078D7" 
+                                        BorderThickness="1" Padding="8">
+                                    <StackPanel>
+                                        <TextBlock Text="📊 连接状态" FontWeight="SemiBold" 
+                                                   FontSize="11" Foreground="#0078D7" Margin="0,0,0,5"/>
+                                        <TextBlock x:Name="TxtDeviceStatus" Text="等待连接..." 
+                                                   FontSize="10" Foreground="#666666" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+
+                            </StackPanel>
+                        </TabItem>
+
+                        <!-- Tab 2: 截图操作 -->
+                        <TabItem Header="📸 截图操作">
+                            <StackPanel Background="Transparent">
+                                <TextBlock Text="快速截图功能" FontWeight="SemiBold" 
+                                           Margin="0,10,0,8" Foreground="#333333" FontSize="11"/>
+
+                                <Button Content="📷 截取Raw图像" Click="OnCutRawClick" 
+                                        HorizontalAlignment="Stretch" Margin="0,0,0,0" Padding="8,6"
+                                        FontWeight="SemiBold"
+                                        ToolTip="截取当前帧为RAW或JPEG格式 (Ctrl+R)"/>
+
+                                <Separator Margin="0,12,0,12"/>
+
+                                <Button Content="🎨 截取RGB图像" Click="OnCutRgbClick" 
+                                        HorizontalAlignment="Stretch" Margin="0,0,0,0" Padding="8,6"
+                                        FontWeight="SemiBold"
+                                        ToolTip="截取当前帧为RGB格式文件 (Ctrl+G)"/>
+
+                                <Separator Margin="0,12,0,12"/>
+
+                                <!-- 操作历史记录 -->
+                                <Border Background="#FFFAFAFA" BorderBrush="#FFE0E0E0" 
+                                        BorderThickness="1" Padding="8">
+                                    <StackPanel>
+                                        <TextBlock Text="📋 最近操作" FontWeight="SemiBold" 
+                                                   FontSize="11" Foreground="#333333" Margin="0,0,0,5"/>
+                                        <TextBlock x:Name="TxtOperationHistory" Text="暂无操作记录" 
+                                                   FontSize="10" Foreground="#666666" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </TabItem>
+
+                        <!-- Tab 3: 图像参数 (Proc Amp) -->
+                        <TabItem Header="🎛️ 图像参数">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="视频属性调节 (Proc Amp)"
+                                           FontWeight="SemiBold" Margin="0,10,0,6"
+                                           Foreground="#333333" FontSize="11"/>
+                                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                    <local:ProcAmpPanel x:Name="ProcAmpPanel"/>
+                                </ScrollViewer>
+                            </Grid>
+                        </TabItem>
+
+                        <!-- Tab 4: 相机控制 (Camera Control) -->
+                        <TabItem Header="📷 相机控制">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="相机控制调节 (Camera Control)"
+                                           FontWeight="SemiBold" Margin="0,10,0,6"
+                                           Foreground="#333333" FontSize="11"/>
+                                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                    <local:CameraControlPanel x:Name="CameraControlPanel"/>
+                                </ScrollViewer>
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ==================== 第2行：中部操作工具栏 ==================== -->
+        <ToolBarPanel Grid.Row="1" Margin="0,5,0,5">
+            <ToolBarTray>
+                <ToolBar>
+                    <Button x:Name="BtnCutRaw" Content="📷 截取Raw" 
+                            Click="OnCutRawClick"
+                            ToolTip="截取当前帧为RAW/JPEG图像 (Ctrl+R)" Padding="4" MinWidth="110"
+                            FontWeight="SemiBold"/>
+                    <Separator/>
+                    <Button x:Name="BtnCutRgb" Content="🎨 截取RGB" 
+                            Click="OnCutRgbClick"
+                            ToolTip="截取当前帧为RGB格式文件 (Ctrl+G)" Padding="4" MinWidth="110"
+                            FontWeight="SemiBold"/>
+                    <Separator/>
+                    <CheckBox Content="🔲 连续截取" x:Name="ChkContinuousRaw" IsChecked="False" Click="ChkContinuousRaw_Click"
+                              ToolTip="点击启用连续截取图像模式" Padding="4" MinWidth="130"/>   
+                    <Separator/>
+                    <TextBox Text="1000" x:Name="TxtContinuousMax" Width="80" Margin="0,0,0,0" VerticalContentAlignment="Center"
+                             ToolTip="连续截取图像的数量" Padding="4">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox">
+                                <Setter Property="IsEnabled" Value="True"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=ChkContinuousRaw, Path=IsChecked}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                    <Label Content="(张)" VerticalAlignment="Center" FontSize="11" Foreground="#666666"/>
+                    <Separator Margin="10,0,0,0"/>
+                    <Button x:Name="BtnOpenFolder" Content="📂 打开截图目录"
+                            Click="OnOpenFolderClick"
+                            ToolTip="打开截图保存的文件夹 (Ctrl+O)" Padding="4" MinWidth="130"/>
+                    <Separator/>
+
+                    <!-- 状态指示器 -->
+                    <TextBlock x:Name="TxtOperationStatus" Text="就绪" 
+                               VerticalAlignment="Center" Margin="10,0,0,0" FontSize="11"
+                               Foreground="#666666"/>
+                </ToolBar>
+            </ToolBarTray>
+        </ToolBarPanel>
+
+        <!-- ==================== 第3行：下部状态信息区 ==================== -->
+        <Grid Grid.Row="2" Height="45">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="200"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧：导航链接区 -->
+            <Border Grid.Column="0" BorderBrush="#FFCCCCCC" BorderThickness="1" 
+                    Background="White" Padding="3">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="📍 导航: " VerticalAlignment="Center" 
+                               Foreground="#666666" Margin="0,0,8,0"/>
+                    <TextBlock Text="UVC模块 - USB摄像头实时预览与采集" 
+                               VerticalAlignment="Center" FontSize="11" 
+                               Foreground="#333333" FontStyle="Italic"/>
+                    <TextBlock Text=" | " VerticalAlignment="Center" 
+                               Foreground="#CCCCCC" Margin="5,0"/>
+                    <TextBlock x:Name="TxtModuleStatus" Text="预览模式" 
+                               VerticalAlignment="Center" FontSize="11" 
+                               Foreground="#0078D7" FontWeight="SemiBold"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 右侧：快速信息面板 -->
+            <Border Grid.Column="2" BorderBrush="#FF0078D7" BorderThickness="1" 
+                    Background="#FFF0F8FF" Padding="3">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="📊 帧率统计" FontWeight="SemiBold" FontSize="11" 
+                               Foreground="#0078D7" Margin="0,0,0,3"/>
+                    <TextBlock x:Name="TxtFrameRate" Text="FPS: -- | 帧数: 0" FontSize="10" 
+                               Foreground="#333333"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- ==================== 第4行：底部状态栏 ==================== -->
+        <StatusBar Grid.Row="3" Margin="0,0,0,0">
+            <StatusBarItem>
+                <TextBlock x:Name="StatusBarText" Text="就绪 - UVC摄像头预览工具已就绪"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock x:Name="TxtWindowSize" Text=""/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock Text="💡 提示: Ctrl+R截Raw | Ctrl+G截RGB | Ctrl+O打开目录"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>

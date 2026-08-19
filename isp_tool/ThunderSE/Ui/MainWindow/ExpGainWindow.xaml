@@ -1,0 +1,332 @@
+﻿<Window x:Class="ThunderSE.Ui.MainWindow.ExpGainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:commonControl="clr-namespace:ThunderSE.Ui.CommonCustomControl"
+        Title="曝光增益(ExpGain)计算" Width="1000" ResizeMode="NoResize" Height="700" Background="#FFE5E5E5" Loaded="OnLoaded" Unloaded="OnUnloaded">
+    <Grid Margin="3">
+        <Grid.RowDefinitions>
+            <!-- 第1行：顶部 - 图像预览区域 + 参数设置面板 -->
+            <RowDefinition Height="2*"/>
+            <!-- 第2行：中部 - 操作工具栏 -->
+            <RowDefinition Height="Auto"/>
+            <!-- 第3行：下部 - RGB均值显示区 -->
+            <RowDefinition Height="Auto"/>
+            <!-- 第4行：底部 - 状态栏 -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ==================== 第1行：顶部区域 ==================== -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3.5*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧：图像预览区域 -->
+            <Border Grid.Column="0" BorderBrush="#FF0078D7" BorderThickness="1" Background="#FFF9F9F9">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 图像预览标题栏 -->
+                    <Border Grid.Row="0" Background="#FF0078D7" Padding="5">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📹 UVC实时视频预览" 
+                                       Foreground="White" FontWeight="Bold" FontSize="12"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtVideoStatus" Text="● 未连接" 
+                                       Foreground="#FFFF6B35" FontWeight="SemiBold" FontSize="11"
+                                       Margin="25,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 图像显示主体（带选区功能） -->
+                    <commonControl:ImageWithRubberBandControl Grid.Row="1" x:Name="DisplayControl"
+                                                              IsEnabled="{Binding IsConnected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}"
+                                                              ToolTip="在此区域框选需要计算RGB均值的区域"/>
+
+                    <!-- 图像状态提示栏 -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Background="#FFE0E0E0">
+                        <TextBlock Text="💡 提示: " VerticalAlignment="Center" Margin="0,0,3,0"/>
+                        <TextBlock Text="在图像上框选矩形区域，自动计算该区域的RGB均值用于ExpGain参数调整" 
+                                   FontSize="11" Foreground="#666666" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 右侧：参数设置面板 -->
+            <Border Grid.Column="2" BorderBrush="#FF0078D7" BorderThickness="1" Background="#FFFAFAFA">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 面板标题 -->
+                    <Border Grid.Row="0" Background="#FF0078D7" Padding="5">
+                        <TextBlock Text="⚙️ 参数设置面板" Foreground="White" FontWeight="Bold" FontSize="12"/>
+                    </Border>
+
+                    <!-- TabControl参数组 -->
+                    <TabControl Name="ParamTabs" Grid.Row="1" 
+                                Style="{DynamicResource TabControlStyle1}" 
+                                SelectedIndex="0" Background="Transparent" 
+                                BorderThickness="0" Margin="5">
+
+                        <!-- Tab 1: ExpGain设置 -->
+                        <TabItem Header="🎚️ ExpGain设置">
+                            <StackPanel Background="Transparent">
+                                <TextBlock Text="曝光增益参数配置" FontWeight="SemiBold" 
+                                           Margin="0,10,0,8" Foreground="#333333" FontSize="11"/>
+
+                                <Border Background="#FFFAFAFA" BorderBrush="#FFE0E0E0" 
+                                        BorderThickness="1" Padding="10" Margin="0,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="当前Turn_Gain值:" FontWeight="SemiBold" 
+                                                   FontSize="11" Foreground="#333333" Margin="0,0,0,5"/>
+                                        <TextBox x:Name="TxtTurnGain" 
+                                                  Margin="0,2,0,2" Width="120" Height="24"
+                                                  VerticalAlignment="Center" 
+                                                  Text="{Binding TurnGain, Mode=TwoWay}"
+                                                  ToolTip="输入曝光增益值，按Enter确认 (Ctrl+Enter应用)">
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox">
+                                                    <EventSetter Event="KeyDown" Handler="TextBox_KeyDown" />
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
+
+                                        <TextBlock Text="当前Turn_Exp值:" FontWeight="SemiBold" 
+                                                FontSize="11" Foreground="#333333" Margin="0,0,0,5"/>
+                                        <TextBox x:Name="TxtTurnExp" 
+                                                  Margin="0,2,0,2" Width="120" Height="24"
+                                                  VerticalAlignment="Center" 
+                                                  Text="{Binding TurnExp, Mode=TwoWay}"
+                                                  ToolTip="输入曝光增益值，按Enter确认 (Ctrl+Enter应用)">
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox">
+                                                    <EventSetter Event="KeyDown" Handler="TextBox_KeyDown" />
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
+
+                                        <Separator Margin="0,12,0,12"/>
+
+                                        <Button Content="✅ 应用设置" Click="ApplyButton_Click" 
+                                                HorizontalAlignment="Stretch" Margin="30,0,30,0" Padding="8,6"
+                                                FontWeight="Bold"
+                                                ToolTip="应用当前的ExpGain设置 (Ctrl+Enter)"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Separator Margin="0,12,0,12"/>
+
+                                <!-- 处理状态指示器 -->
+                                <Border Background="#FFF0F8FF" BorderBrush="#FF0078D7" 
+                                        BorderThickness="1" Padding="8">
+                                    <StackPanel>
+                                        <TextBlock Text="📊 当前状态" FontWeight="SemiBold" 
+                                                   FontSize="11" Foreground="#0078D7" Margin="0,0,0,5"/>
+                                        <TextBlock x:Name="TxtProcessingStatus" Text="等待操作..." 
+                                                   FontSize="10" Foreground="#666666" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </TabItem>
+
+                        <!-- Tab 2: 选区操作 -->
+                        <TabItem Header="📍 选区操作">
+                            <StackPanel Background="Transparent">
+                                <TextBlock Text="区域选择与计算" FontWeight="SemiBold" 
+                                           Margin="0,10,0,8" Foreground="#333333" FontSize="11"/>
+
+                                <Button Content="↩️ 重新选取计算范围" Click="UndoButton_Click" 
+                                        HorizontalAlignment="Stretch" Margin="0,0,0,0" Padding="8,6"
+                                        IsEnabled="{Binding IsConnected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}"
+                                        ToolTip="撤销当前选区，重新选择计算范围 (Ctrl+Z)"/>
+
+                                <Separator Margin="0,12,0,12"/>
+
+                                <!-- 选区信息显示 -->
+                                <Border Background="#FFFAFAFA" BorderBrush="#FFE0E0E0" 
+                                        BorderThickness="1" Padding="8">
+                                    <StackPanel>
+                                        <TextBlock Text="📐 选区信息" FontWeight="SemiBold" 
+                                                   FontSize="11" Foreground="#333333" Margin="0,0,0,5"/>
+                                        <TextBlock x:Name="TxtSelectionInfo" Text="未选择区域" 
+                                                   FontSize="10" Foreground="#666666" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ==================== 第2行：中部操作工具栏 ==================== -->
+        <ToolBarPanel Grid.Row="1">
+            <ToolBarTray>
+                <ToolBar>
+                    <Button x:Name="BtnUndoSelect" Content="↩️ 撤销选区" 
+                            Click="UndoButton_Click"
+                            IsEnabled="{Binding IsConnected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}"
+                            ToolTip="撤销当前选中的矩形区域 (Ctrl+Z)" Padding="10,4" MinWidth="110"/>
+                    <Separator/>
+                    <Button x:Name="BtnApply" Content="✅ 应用设置" 
+                            Click="ApplyButton_Click"
+                            ToolTip="应用当前的ExpGain设置 (Ctrl+Enter)" Padding="10,4" MinWidth="110"
+                            FontWeight="Bold"/>
+                    <Separator/>
+
+                    <!-- 状态指示器 -->
+                    <TextBlock x:Name="TxtOperationStatus" Text="就绪" 
+                               VerticalAlignment="Center" Margin="10,0,0,0" FontSize="11"
+                               Foreground="#666666"/>
+                </ToolBar>
+            </ToolBarTray>
+        </ToolBarPanel>
+
+        <!-- ==================== 第3行：下部RGB均值显示区 ==================== -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3.5*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧：RGB均值显示 -->
+            <Border Grid.Column="0" BorderBrush="#FF0078D7" BorderThickness="1" 
+                    Background="#FFF9F9F9" Padding="3">
+                <StackPanel>
+                    <TextBlock Text="📊 RGB均值统计（选区像素平均值）" FontWeight="Bold" 
+                               FontSize="12" Foreground="#0078D7" Margin="10,0,0,10"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <!-- R通道 -->
+                        <Border Background="#FFFFEEEE" BorderBrush="#FFCC0000" Margin="25,0,25,3"
+                                BorderThickness="1" Padding="10,6" CornerRadius="3">
+                            <StackPanel>
+                                <TextBlock Text="R 红色通道" FontWeight="SemiBold"
+                                           FontSize="11" Foreground="#CC0000" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="TxtAvgR" Text="{Binding AvgR, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}" 
+                                           FontSize="20" Foreground="#CC0000" FontWeight="Bold" 
+                                           HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- G通道 -->
+                        <Border Background="#FFEEFFEE" BorderBrush="#FF00AA00" Margin="25,0,25,3"
+                                BorderThickness="1" Padding="10,6" CornerRadius="3">
+                            <StackPanel>
+                                <TextBlock Text="G 绿色通道" FontWeight="SemiBold" 
+                                           FontSize="11" Foreground="#00AA00" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="TxtAvgG" Text="{Binding AvgG, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}" 
+                                           FontSize="20" Foreground="#00AA00" FontWeight="Bold" 
+                                           HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- B通道 -->
+                        <Border Background="#FFEEEEFF" BorderBrush="#FF0000CC" Margin="25,0,25,3"
+                                BorderThickness="1" Padding="10,6" CornerRadius="3">
+                            <StackPanel>
+                                <TextBlock Text="B 蓝色通道" FontWeight="SemiBold" 
+                                           FontSize="11" Foreground="#0000CC" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="TxtAvgB" Text="{Binding AvgB, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}" 
+                                           FontSize="20" Foreground="#0000CC" FontWeight="Bold" 
+                                           HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Y亮度通道 -->
+                        <Border Name="TxtAvgYBorder" Background="#FFFFF8E1" BorderBrush="#FFB8860B" Margin="25,0,25,3"
+                                BorderThickness="1" Padding="10,6" CornerRadius="3">
+                            <StackPanel>
+                                <TextBlock Text="Y 亮度通道" FontWeight="SemiBold"
+                                           FontSize="11" Foreground="#B8860B" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="TxtAvgY" Text="{Binding AvgY, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}"
+                                           FontSize="20" Foreground="#B8860B" FontWeight="Bold"
+                                           HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- 右侧：快速信息面板 -->
+            <Border Grid.Column="2" BorderBrush="#FF0078D7" BorderThickness="1" 
+                    Background="#FFF0F8FF" Padding="3">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="🔧 模块状态" FontWeight="SemiBold" FontSize="11" 
+                               Foreground="#0078D7" Margin="0,0,0,5"/>
+                    <TextBlock x:Name="TxtModuleStatus" Text="等待连接..." FontSize="10" 
+                               Foreground="#333333"/>
+                    <Separator Margin="0,8,0,8"/>
+                    <TextBlock Text="💡 快捷键" FontWeight="SemiBold" FontSize="11" 
+                               Foreground="#0078D7" Margin="0,0,0,5"/>
+                    <TextBlock Text="Ctrl+Z撤销 | Ctrl+Enter应用" FontSize="10" 
+                               Foreground="#666666"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- ==================== 第4行：底部状态栏 ==================== -->
+        <StatusBar Grid.Row="3">
+            <StatusBarItem>
+                <TextBlock x:Name="StatusBarText" Text="就绪 - 曝光增益(ExpGain)计算工具已就绪"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock x:Name="TxtWindowSize" Text=""/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock Text="💡 提示: 在图像上框选区域 → 自动计算RGB均值 → 调整ExpGain值 → 应用设置"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+
+    <!--<Grid Margin="10,10,10,10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="580"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <commonControl:ImageWithRubberBandControl Grid.Row="0"  x:Name="DisplayControl"
+                                                  IsEnabled="{Binding IsConnected, RelativeSource={RelativeSource 
+                                                              Mode=FindAncestor, AncestorType=Window, AncestorLevel=1}}"/>
+        <StackPanel Grid.Row="1">
+            <Label>均值:</Label>
+            <StackPanel Orientation="Horizontal" Height="30" Margin="0,0,0,0">
+                <Label Content="R :" />
+                <Label Width="80" Content="{Binding AvgR, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}"
+                       HorizontalContentAlignment="Left"/>
+                <Label Margin="10,0,0,0" Content="G :" />
+                <Label Width="80" Content="{Binding AvgG, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}"
+                       HorizontalContentAlignment="Left"/>
+                <Label Margin="10,0,0,0" Content="B :" />
+                <Label Width="80" Content="{Binding AvgB, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}"
+                       HorizontalContentAlignment="Left"/>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                <Label Content="当前Exp__Gain：" />
+                <TextBox Margin="0,2,0,2" Width="100" VerticalAlignment="Center" Text="{Binding ExpGain, Mode=TwoWay}">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <EventSetter Event="KeyDown" Handler="TextBox_KeyDown" />
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+                <Label Content="Gain__Max：" Visibility="Collapsed"/>
+                <TextBox Margin="0,2,0,2" Width="100" VerticalAlignment="Center" Visibility="Collapsed" Text="{Binding GainMax, Mode=TwoWay}"></TextBox>
+                <Button Height="25" Width="60" Margin="15,0,0,0">应用</Button>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                <Button Height="25" Click="UndoButton_Click" Margin="5,15,0,0">重新选取计算范围</Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>-->
+</Window>

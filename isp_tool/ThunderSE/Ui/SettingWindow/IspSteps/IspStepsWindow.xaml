@@ -1,0 +1,668 @@
+﻿<Window x:Class="ThunderSE.Ui.SettingWindow.IspSteps.IspStepsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:isp="clr-namespace:ThunderSE.DeviceConfig.Isp"
+        xmlns:ispSteps="clr-namespace:ThunderSE.Ui.SettingWindow.IspSteps"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        Title="ISP 步骤配置" Height="540" Width="350" 
+        Background="#FFE5E5E5" Loaded="OnWindowLoaded" Closing="OnClosing">
+    <Window.Resources>
+        <ispSteps:OptionEnableConverter x:Key="optionEnableConverter"></ispSteps:OptionEnableConverter>
+        <ispSteps:NavigateCommandParamConverter x:Key="navigateCommandParamConverter"></ispSteps:NavigateCommandParamConverter>
+        <ispSteps:ModuleStatusConverter x:Key="moduleStatusConverter"></ispSteps:ModuleStatusConverter>
+
+        <Style x:Key="ToolbarButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="28"></Setter>
+            <Setter Property="Padding" Value="12,0"></Setter>
+            <Setter Property="Margin" Value="6,4"></Setter>
+            <Setter Property="Background" Value="#FFFFFFFF"></Setter>
+            <Setter Property="Foreground" Value="#FF333333"></Setter>
+            <Setter Property="BorderBrush" Value="#FFDDDDDD"></Setter>
+            <Setter Property="BorderThickness" Value="1"></Setter>
+            <Setter Property="Cursor" Value="Hand"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FFE8F4FD"></Setter>
+                                <Setter Property="BorderBrush" Value="#FF0078D7"></Setter>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#FFCCE8F5"></Setter>
+                                <Setter Property="BorderBrush" Value="#FF005A9E"></Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModuleItemStyle" TargetType="Border">
+            <Setter Property="Background" Value="#FFFFFFFF"></Setter>
+            <Setter Property="BorderBrush" Value="#FFE0E0E0"></Setter>
+            <Setter Property="BorderThickness" Value="1"></Setter>
+            <Setter Property="CornerRadius" Value="4"></Setter>
+            <Setter Property="Padding" Value="10,6"></Setter>
+            <Setter Property="Margin" Value="4,2"></Setter>
+        </Style>
+
+        <Style x:Key="ModuleCheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+            <Setter Property="Margin" Value="0,0,10,0"></Setter>
+            <Setter Property="Cursor" Value="Hand"></Setter>
+        </Style>
+
+        <Style x:Key="ModuleLinkStyle" TargetType="Label">
+            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+            <Setter Property="Foreground" Value="#FF0078D7"></Setter>
+            <Setter Property="FontWeight" Value="SemiBold"></Setter>
+            <Setter Property="Cursor" Value="Hand"></Setter>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="3">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#FF0078D7" CornerRadius="6,6,0,0" Padding="3">
+            <TextBlock Text="ISP 步骤配置" FontSize="14" FontWeight="Bold" Foreground="#FFFFFFFF"></TextBlock>
+        </Border>
+
+        <Border Grid.Row="1" Background="#FFFFFFFF" BorderBrush="#FFE0E0E0" BorderThickness="0,1,0,1" Padding="3">
+            <StackPanel Orientation="Horizontal">
+                <Button Style="{StaticResource ToolbarButtonStyle}" Click="OnSelectAll" ToolTip="选择所有模块 (Ctrl+A)">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="✓" Margin="0,0,6,0" FontWeight="Bold" Foreground="#FF107C10"></TextBlock>
+                        <TextBlock Text="全选"></TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarButtonStyle}" Click="OnUnSelectAll" ToolTip="取消所有模块 (Ctrl+D)">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="✗" Margin="0,0,6,0" FontWeight="Bold" Foreground="#FFD13438"></TextBlock>
+                        <TextBlock Text="全不选"></TextBlock>
+                    </StackPanel>
+                </Button>
+                <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed" Foreground="#FF666666" FontSize="11">
+                    <Run Text="快捷键: "></Run>
+                    <Run Text="Ctrl+A 全选 | Ctrl+D 取消" Foreground="#FF888888"></Run>
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" Background="#FFFFFFFF" CornerRadius="0,0,6,6" BorderBrush="#FFE0E0E0" BorderThickness="1,0,1,1" Padding="3">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ItemsControl Background="#FFF5F5F5">
+                    <ItemsControl.ItemContainerStyle>
+                        <Style>
+                            <Setter Property="FrameworkElement.Margin" Value="0,2"></Setter>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+
+                    <Border Style="{StaticResource ModuleItemStyle}">
+                        <Grid IsEnabled="{Binding CurrentSettingModule, Converter={StaticResource optionEnableConverter}, ConverterParameter='Blc'}">
+                            <Label Style="{StaticResource ModuleLinkStyle}" HorizontalAlignment="Left">
+                                <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                                          Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Blc}"
+                                          TextDecorations="None" Foreground="#FF0078D7">
+                                    <Hyperlink.Style>
+                                        <Style TargetType="Hyperlink">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Foreground" Value="#FF005A9E"></Setter>
+                                                <Setter Property="TextDecorations" Value="Underline"></Setter>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                        </Style>
+                                    </Hyperlink.Style>
+                                    <Run Text="Blc (黑电平校正)"></Run>
+                                </Hyperlink>
+                            </Label>
+                            <CheckBox Style="{StaticResource ModuleCheckBoxStyle}" HorizontalAlignment="Right" 
+                                     IsChecked="{Binding IsBlcSelected, Mode=TwoWay}" ToolTip="选择/取消 Blc 模块"></CheckBox>
+                            <Label HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Center" Foreground="#FF888888" FontSize="10">
+                                <Run Text="{Binding BlcStatus, Converter={StaticResource moduleStatusConverter},Mode=OneWay}"></Run>
+                            </Label>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource ModuleItemStyle}">
+                        <Grid IsEnabled="{Binding CurrentSettingModule, Converter={StaticResource optionEnableConverter}, ConverterParameter='Lsc'}">
+                            <Label Style="{StaticResource ModuleLinkStyle}" HorizontalAlignment="Left">
+                                <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                                          Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Lsc}"
+                                          TextDecorations="None" Foreground="#FF0078D7">
+                                    <Hyperlink.Style>
+                                        <Style TargetType="Hyperlink">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Foreground" Value="#FF005A9E"></Setter>
+                                                    <Setter Property="TextDecorations" Value="Underline"></Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Hyperlink.Style>
+                                    <Run Text="Lsc (镜头阴影校正)"></Run>
+                                </Hyperlink>
+                            </Label>
+                            <Label HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Center" Foreground="#FF888888" FontSize="10">
+                                <Run Text="{Binding LscStatus, Converter={StaticResource moduleStatusConverter}, Mode=OneWay}"></Run>
+                            </Label>
+                            <CheckBox Style="{StaticResource ModuleCheckBoxStyle}" HorizontalAlignment="Right" 
+                                     IsChecked="{Binding IsLscSelected, Mode=TwoWay}" ToolTip="选择/取消 Lsc 模块"></CheckBox>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource ModuleItemStyle}">
+                        <Grid IsEnabled="{Binding CurrentSettingModule, Converter={StaticResource optionEnableConverter}, ConverterParameter='Ddc'}">
+                            <Label Style="{StaticResource ModuleLinkStyle}" HorizontalAlignment="Left">
+                                <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                                          Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Ddc}"
+                                          TextDecorations="None" Foreground="#FF0078D7">
+                                    <Hyperlink.Style>
+                                        <Style TargetType="Hyperlink">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Foreground" Value="#FF005A9E"></Setter>
+                                                    <Setter Property="TextDecorations" Value="Underline"></Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Hyperlink.Style>
+                                    <Run Text="Ddc (坏点检测与校正)"></Run>
+                                </Hyperlink>
+                            </Label>
+                            <Label HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Center" Foreground="#FF888888" FontSize="10">
+                                <Run Text="{Binding DdcStatus, Converter={StaticResource moduleStatusConverter}, Mode=OneWay}"></Run>
+                            </Label>
+                            <CheckBox Style="{StaticResource ModuleCheckBoxStyle}" HorizontalAlignment="Right" 
+                                     IsChecked="{Binding IsDdcSelected, Mode=TwoWay}" ToolTip="选择/取消 Ddc 模块"></CheckBox>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource ModuleItemStyle}">
+                        <Grid IsEnabled="{Binding CurrentSettingModule, Converter={StaticResource optionEnableConverter}, ConverterParameter='Awb'}">
+                            <Label Style="{StaticResource ModuleLinkStyle}" HorizontalAlignment="Left">
+                                <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                                          Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Awb}"
+                                          TextDecorations="None" Foreground="#FF0078D7">
+                                    <Hyperlink.Style>
+                                        <Style TargetType="Hyperlink">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Foreground" Value="#FF005A9E"></Setter>
+                                                    <Setter Property="TextDecorations" Value="Underline"></Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Hyperlink.Style>
+                                    <Run Text="Awb (自动白平衡)"></Run>
+                                </Hyperlink>
+                            </Label>
+                            <Label HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Center" Foreground="#FF888888" FontSize="10">
+                                <Run Text="{Binding AwbStatus, Converter={StaticResource moduleStatusConverter}, Mode=OneWay}"></Run>
+                            </Label>
+                            <CheckBox Style="{StaticResource ModuleCheckBoxStyle}" HorizontalAlignment="Right" 
+                                     IsChecked="{Binding IsAwbSelected, Mode=TwoWay}" ToolTip="选择/取消 Awb 模块"></CheckBox>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource ModuleItemStyle}">
+                        <Grid IsEnabled="{Binding CurrentSettingModule, Converter={StaticResource optionEnableConverter}, ConverterParameter='Ccm'}">
+                            <Label Style="{StaticResource ModuleLinkStyle}" HorizontalAlignment="Left">
+                                <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                                          Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Ccm}"
+                                          TextDecorations="None" Foreground="#FF0078D7">
+                                    <Hyperlink.Style>
+                                        <Style TargetType="Hyperlink">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Foreground" Value="#FF005A9E"></Setter>
+                                                    <Setter Property="TextDecorations" Value="Underline"></Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Hyperlink.Style>
+                                    <Run Text="Ccm (色彩校正矩阵)"></Run>
+                                </Hyperlink>
+                            </Label>
+                            <Label HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Center" Foreground="#FF888888" FontSize="10">
+                                <Run Text="{Binding CcmStatus, Converter={StaticResource moduleStatusConverter}, Mode=OneWay}"></Run>
+                            </Label>
+                            <CheckBox Style="{StaticResource ModuleCheckBoxStyle}" HorizontalAlignment="Right" 
+                                     IsChecked="{Binding IsCcmSelected, Mode=TwoWay}" ToolTip="选择/取消 Ccm 模块"></CheckBox>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource ModuleItemStyle}">
+                        <Grid IsEnabled="{Binding CurrentSettingModule, Converter={StaticResource optionEnableConverter}, ConverterParameter='Dgain'}">
+                            <Label Style="{StaticResource ModuleLinkStyle}" HorizontalAlignment="Left">
+                                <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                                          Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Dgain}"
+                                          TextDecorations="None" Foreground="#FF0078D7">
+                                    <Hyperlink.Style>
+                                        <Style TargetType="Hyperlink">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Foreground" Value="#FF005A9E"></Setter>
+                                                    <Setter Property="TextDecorations" Value="Underline"></Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Hyperlink.Style>
+                                    <Run Text="Dgain (数字增益)"></Run>
+                                </Hyperlink>
+                            </Label>
+                            <Label HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Center" Foreground="#FF888888" FontSize="10">
+                                <Run Text="{Binding DgainStatus, Converter={StaticResource moduleStatusConverter}, Mode=OneWay}"></Run>
+                            </Label>
+                            <CheckBox Style="{StaticResource ModuleCheckBoxStyle}" HorizontalAlignment="Right" 
+                                     IsChecked="{Binding IsDgainSelected, Mode=TwoWay}" ToolTip="选择/取消 Dgain 模块"></CheckBox>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource ModuleItemStyle}">
+                        <Grid IsEnabled="{Binding CurrentSettingModule, Converter={StaticResource optionEnableConverter}, ConverterParameter='YGamma'}">
+                            <Label Style="{StaticResource ModuleLinkStyle}" HorizontalAlignment="Left">
+                                <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                                          Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.YGamma}"
+                                          TextDecorations="None" Foreground="#FF0078D7">
+                                    <Hyperlink.Style>
+                                        <Style TargetType="Hyperlink">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Foreground" Value="#FF005A9E"></Setter>
+                                                    <Setter Property="TextDecorations" Value="Underline"></Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Hyperlink.Style>
+                                    <Run Text="YGamma (Y伽马校正)"></Run>
+                                </Hyperlink>
+                            </Label>
+                            <Label HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Center" Foreground="#FF888888" FontSize="10">
+                                <Run Text="{Binding YGammaStatus, Converter={StaticResource moduleStatusConverter}, Mode=OneWay}"></Run>
+                            </Label>
+                            <CheckBox Style="{StaticResource ModuleCheckBoxStyle}" HorizontalAlignment="Right" 
+                                     IsChecked="{Binding IsYGammaSelected, Mode=TwoWay}" ToolTip="选择/取消 YGamma 模块"></CheckBox>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource ModuleItemStyle}">
+                        <Grid IsEnabled="{Binding CurrentSettingModule, Converter={StaticResource optionEnableConverter}, ConverterParameter='RgbGamma'}">
+                            <Label Style="{StaticResource ModuleLinkStyle}" HorizontalAlignment="Left">
+                                <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                                          Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.RgbGamma}"
+                                          TextDecorations="None" Foreground="#FF0078D7">
+                                    <Hyperlink.Style>
+                                        <Style TargetType="Hyperlink">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Foreground" Value="#FF005A9E"></Setter>
+                                                    <Setter Property="TextDecorations" Value="Underline"></Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Hyperlink.Style>
+                                    <Run Text="RgbGamma (RGB伽马)"></Run>
+                                </Hyperlink>
+                            </Label>
+                            <Label HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Center" Foreground="#FF888888" FontSize="10">
+                                <Run Text="{Binding RgbGammaStatus, Converter={StaticResource moduleStatusConverter}, Mode=OneWay}"></Run>
+                            </Label>
+                            <CheckBox Style="{StaticResource ModuleCheckBoxStyle}" HorizontalAlignment="Right" 
+                                     IsChecked="{Binding IsRgbGammaSelected, Mode=TwoWay}" ToolTip="选择/取消 RgbGamma 模块"></CheckBox>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource ModuleItemStyle}">
+                        <Grid IsEnabled="{Binding CurrentSettingModule, Converter={StaticResource optionEnableConverter}, ConverterParameter='Ch'}">
+                            <Label Style="{StaticResource ModuleLinkStyle}" HorizontalAlignment="Left">
+                                <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                                          Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Ch}"
+                                          TextDecorations="None" Foreground="#FF0078D7">
+                                    <Hyperlink.Style>
+                                        <Style TargetType="Hyperlink">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Foreground" Value="#FF005A9E"></Setter>
+                                                    <Setter Property="TextDecorations" Value="Underline"></Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Hyperlink.Style>
+                                    <Run Text="Ch (色调调整)"></Run>
+                                </Hyperlink>
+                            </Label>
+                            <Label HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Center" Foreground="#FF888888" FontSize="10">
+                                <Run Text="{Binding ChStatus, Converter={StaticResource moduleStatusConverter}, Mode=OneWay}"></Run>
+                            </Label>
+                            <CheckBox Style="{StaticResource ModuleCheckBoxStyle}" HorizontalAlignment="Right" 
+                                     IsChecked="{Binding IsChSelected, Mode=TwoWay}" ToolTip="选择/取消 Ch 模块"></CheckBox>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource ModuleItemStyle}">
+                        <Grid IsEnabled="{Binding CurrentSettingModule, Converter={StaticResource optionEnableConverter}, ConverterParameter='Vde'}">
+                            <Label Style="{StaticResource ModuleLinkStyle}" HorizontalAlignment="Left">
+                                <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                                          Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Vde}"
+                                          TextDecorations="None" Foreground="#FF0078D7">
+                                    <Hyperlink.Style>
+                                        <Style TargetType="Hyperlink">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Foreground" Value="#FF005A9E"></Setter>
+                                                    <Setter Property="TextDecorations" Value="Underline"></Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Hyperlink.Style>
+                                    <Run Text="Vde (视频细节增强)"></Run>
+                                </Hyperlink>
+                            </Label>
+                            <Label HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Center" Foreground="#FF888888" FontSize="10">
+                                <Run Text="{Binding VdeStatus, Converter={StaticResource moduleStatusConverter}, Mode=OneWay}"></Run>
+                            </Label>
+                            <CheckBox Style="{StaticResource ModuleCheckBoxStyle}" HorizontalAlignment="Right" 
+                                     IsChecked="{Binding IsVdeSelected, Mode=TwoWay}" ToolTip="选择/取消 Vde 模块"></CheckBox>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource ModuleItemStyle}">
+                        <Grid IsEnabled="{Binding CurrentSettingModule, Converter={StaticResource optionEnableConverter}, ConverterParameter='Ee'}">
+                            <Label Style="{StaticResource ModuleLinkStyle}" HorizontalAlignment="Left">
+                                <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                                          Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Ee}"
+                                          TextDecorations="None" Foreground="#FF0078D7">
+                                    <Hyperlink.Style>
+                                        <Style TargetType="Hyperlink">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Foreground" Value="#FF005A9E"></Setter>
+                                                    <Setter Property="TextDecorations" Value="Underline"></Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Hyperlink.Style>
+                                    <Run Text="Ee (边缘增强)"></Run>
+                                </Hyperlink>
+                            </Label>
+                            <Label HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Center" Foreground="#FF888888" FontSize="10">
+                                <Run Text="{Binding EeStatus, Converter={StaticResource moduleStatusConverter}, Mode=OneWay}"></Run>
+                            </Label>
+                            <CheckBox Style="{StaticResource ModuleCheckBoxStyle}" HorizontalAlignment="Right" 
+                                     IsChecked="{Binding IsEeSelected, Mode=TwoWay}" ToolTip="选择/取消 Ee 模块"></CheckBox>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource ModuleItemStyle}">
+                        <Grid IsEnabled="{Binding CurrentSettingModule, Converter={StaticResource optionEnableConverter}, ConverterParameter='Cfd'}">
+                            <Label Style="{StaticResource ModuleLinkStyle}" HorizontalAlignment="Left">
+                                <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                                          Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Cfd}"
+                                          TextDecorations="None" Foreground="#FF0078D7">
+                                    <Hyperlink.Style>
+                                        <Style TargetType="Hyperlink">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Foreground" Value="#FF005A9E"></Setter>
+                                                    <Setter Property="TextDecorations" Value="Underline"></Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Hyperlink.Style>
+                                    <Run Text="Cfd (色斑抑制)"></Run>
+                                </Hyperlink>
+                            </Label>
+                            <Label HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Center" Foreground="#FF888888" FontSize="10">
+                                <Run Text="{Binding CfdStatus, Converter={StaticResource moduleStatusConverter}, Mode=OneWay}"></Run>
+                            </Label>
+                            <CheckBox Style="{StaticResource ModuleCheckBoxStyle}" HorizontalAlignment="Right" 
+                                     IsChecked="{Binding IsCfdSelected, Mode=TwoWay}" ToolTip="选择/取消 Cfd 模块"></CheckBox>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource ModuleItemStyle}">
+                        <Grid IsEnabled="{Binding CurrentSettingModule, Converter={StaticResource optionEnableConverter}, ConverterParameter='Saj'}">
+                            <Label Style="{StaticResource ModuleLinkStyle}" HorizontalAlignment="Left">
+                                <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                                          Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Saj}"
+                                          TextDecorations="None" Foreground="#FF0078D7">
+                                    <Hyperlink.Style>
+                                        <Style TargetType="Hyperlink">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Foreground" Value="#FF005A9E"></Setter>
+                                                    <Setter Property="TextDecorations" Value="Underline"></Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Hyperlink.Style>
+                                    <Run Text="Saj (饱和度调整)"></Run>
+                                </Hyperlink>
+                            </Label>
+                            <Label HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Center" Foreground="#FF888888" FontSize="10">
+                                <Run Text="{Binding SajStatus, Converter={StaticResource moduleStatusConverter}, Mode=OneWay}"></Run>
+                            </Label>
+                            <CheckBox Style="{StaticResource ModuleCheckBoxStyle}" HorizontalAlignment="Right" 
+                                     IsChecked="{Binding IsSajSelected, Mode=TwoWay}" ToolTip="选择/取消 Saj 模块"></CheckBox>
+                        </Grid>
+                    </Border>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+
+        <Border Grid.Row="3" Background="#FFF8F9FA" BorderBrush="#FFE0E0E0" BorderThickness="0,1,0,0" Padding="10,8" CornerRadius="0,0,6,6">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Name="StatusText" Text="就绪" Foreground="#FF666666" FontSize="11" VerticalAlignment="Center"></TextBlock>
+                    <TextBlock Text=" | " Foreground="#FFCCCCCC" Margin="6,0" VerticalAlignment="Center"></TextBlock>
+                    <TextBlock Name="ModuleCountText" Text="共 13 个模块" Foreground="#FF888888" FontSize="11" VerticalAlignment="Center"></TextBlock>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Style="{StaticResource ToolbarButtonStyle}" Click="OnClose" ToolTip="关闭窗口 (Esc)" Width="70" Content="关闭"></Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+
+    <!--<Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
+            <StackPanel Orientation="Horizontal">
+                <Button Margin="10,2,0,2" Click="OnSelectAll">全选</Button>
+                <Button Margin="10,2,0,2" Click="OnUnSelectAll">全不选</Button>
+            </StackPanel>
+        </Border>
+        <ListView Grid.Row="1" Background="#FFE5E5E5">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListViewItem>
+                <Grid IsEnabled="{Binding CurrentSettingModule, 
+                    Converter={StaticResource optionEnableConverter}, 
+                    ConverterParameter=DeviceConfig.Isp.IspModule.Blc}">
+                    <Label HorizontalAlignment="Left">
+                        <Hyperlink 
+                        IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                        Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Blc}">
+                            Blc
+                        </Hyperlink>
+                    </Label>
+                    <CheckBox HorizontalAlignment="Right" IsChecked="{Binding IsBlcSelected, Mode=TwoWay}"></CheckBox>
+                </Grid>
+            </ListViewItem>
+            <ListViewItem>
+                <Grid IsEnabled="{Binding CurrentSettingModule, 
+                    Converter={StaticResource optionEnableConverter}, 
+                    ConverterParameter=DeviceConfig.Isp.IspModule.Lsc}">
+                    <Label HorizontalAlignment="Left">
+                        <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                        Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Lsc}">Lsc</Hyperlink>
+                    </Label>
+                    <CheckBox HorizontalAlignment="Right" IsChecked="{Binding IsLscSelected, Mode=TwoWay}"></CheckBox>
+                </Grid>
+            </ListViewItem>
+            <ListViewItem>
+                <Grid IsEnabled="{Binding CurrentSettingModule, 
+                    Converter={StaticResource optionEnableConverter}, 
+                    ConverterParameter=DeviceConfig.Isp.IspModule.Ddc}">
+                    <Label HorizontalAlignment="Left">
+                        <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                        Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Ddc}">Ddc</Hyperlink>
+                    </Label>
+                    <CheckBox HorizontalAlignment="Right" IsChecked="{Binding IsDdcSelected, Mode=TwoWay}"></CheckBox>
+                </Grid>
+            </ListViewItem>
+            <ListViewItem>
+                <Grid IsEnabled="{Binding CurrentSettingModule, 
+                    Converter={StaticResource optionEnableConverter}, 
+                    ConverterParameter=DeviceConfig.Isp.IspModule.Awb}">
+                    <Label HorizontalAlignment="Left">
+                        <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                               Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Awb}">
+                            Awb
+                        </Hyperlink>
+                    </Label>
+                    <CheckBox HorizontalAlignment="Right" IsChecked="{Binding IsAwbSelected, Mode=TwoWay}"></CheckBox>
+                </Grid>
+            </ListViewItem>
+            <ListViewItem>
+                <Grid IsEnabled="{Binding CurrentSettingModule, 
+                    Converter={StaticResource optionEnableConverter}, 
+                    ConverterParameter=DeviceConfig.Isp.IspModule.Ccm}">
+                    <Label HorizontalAlignment="Left">
+                        <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                               Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Ccm}">
+                            Ccm
+                        </Hyperlink>
+                    </Label>
+                    <CheckBox HorizontalAlignment="Right" IsChecked="{Binding IsCcmSelected, Mode=TwoWay}"></CheckBox>
+                </Grid>
+            </ListViewItem>
+            <ListViewItem>
+                <Grid IsEnabled="{Binding CurrentSettingModule, 
+                    Converter={StaticResource optionEnableConverter}, 
+                    ConverterParameter=DeviceConfig.Isp.IspModule.Dgain}">
+                    <Label HorizontalAlignment="Left">
+                        <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                               Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Dgain}">
+                            Dgain
+                        </Hyperlink>
+                    </Label>
+                    <CheckBox HorizontalAlignment="Right" IsChecked="{Binding IsDgainSelected, Mode=TwoWay}"></CheckBox>
+                </Grid>
+            </ListViewItem>
+            <ListViewItem>
+                <Grid IsEnabled="{Binding CurrentSettingModule, 
+                    Converter={StaticResource optionEnableConverter}, 
+                    ConverterParameter=DeviceConfig.Isp.IspModule.YGamma}">
+                    <Label HorizontalAlignment="Left">
+                        <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                               Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.YGamma}">
+                            YGamma
+                        </Hyperlink>
+                    </Label>
+                    <CheckBox HorizontalAlignment="Right" IsChecked="{Binding IsYGammaSelected, Mode=TwoWay}"></CheckBox>
+                </Grid>
+            </ListViewItem>
+            <ListViewItem>
+                <Grid IsEnabled="{Binding CurrentSettingModule, 
+                    Converter={StaticResource optionEnableConverter}, 
+                    ConverterParameter=DeviceConfig.Isp.IspModule.RgbGamma}">
+                    <Label HorizontalAlignment="Left">
+                        <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                               Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.RgbGamma}">
+                            RgbGamma
+                        </Hyperlink>
+                    </Label>
+                    <CheckBox HorizontalAlignment="Right" IsChecked="{Binding IsRgbGammaSelected, Mode=TwoWay}"></CheckBox>
+                </Grid>
+            </ListViewItem>
+            <ListViewItem>
+                <Grid IsEnabled="{Binding CurrentSettingModule, 
+                    Converter={StaticResource optionEnableConverter}, 
+                    ConverterParameter=DeviceConfig.Isp.IspModule.Ch}">
+                    <Label HorizontalAlignment="Left">
+                        <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                               Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Ch}">
+                            Ch
+                        </Hyperlink>
+                    </Label>
+                    <CheckBox HorizontalAlignment="Right" IsChecked="{Binding IsChSelected, Mode=TwoWay}"></CheckBox>
+                </Grid>
+            </ListViewItem>
+            <ListViewItem>
+                <Grid IsEnabled="{Binding CurrentSettingModule, 
+                    Converter={StaticResource optionEnableConverter}, 
+                    ConverterParameter=DeviceConfig.Isp.IspModule.Vde}">
+                    <Label HorizontalAlignment="Left">
+                        <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                               Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Vde}">
+                            Vde
+                        </Hyperlink>
+                    </Label>
+                    <CheckBox HorizontalAlignment="Right" IsChecked="{Binding IsVdeSelected, Mode=TwoWay}"></CheckBox>
+                </Grid>
+            </ListViewItem>
+            <ListViewItem>
+                <Grid IsEnabled="{Binding CurrentSettingModule, 
+                    Converter={StaticResource optionEnableConverter}, 
+                    ConverterParameter=DeviceConfig.Isp.IspModule.Ee}">
+                    <Label HorizontalAlignment="Left">
+                        <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                               Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Ee}">
+                            Ee
+                        </Hyperlink>
+                    </Label>
+                    <CheckBox HorizontalAlignment="Right" IsChecked="{Binding IsEeSelected, Mode=TwoWay}"></CheckBox>
+                </Grid>
+            </ListViewItem>
+            <ListViewItem>
+                <Grid IsEnabled="{Binding CurrentSettingModule, 
+                    Converter={StaticResource optionEnableConverter}, 
+                    ConverterParameter=DeviceConfig.Isp.IspModule.Cfd}">
+                    <Label HorizontalAlignment="Left">
+                        <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                               Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Cfd}">
+                            Cfd
+                        </Hyperlink>
+                    </Label>
+                    <CheckBox HorizontalAlignment="Right" IsChecked="{Binding IsCfdSelected, Mode=TwoWay}"></CheckBox>
+                </Grid>
+            </ListViewItem>
+            <ListViewItem>
+                <Grid IsEnabled="{Binding CurrentSettingModule, 
+                    Converter={StaticResource optionEnableConverter}, 
+                    ConverterParameter=DeviceConfig.Isp.IspModule.Saj}">
+                    <Label HorizontalAlignment="Left">
+                        <Hyperlink IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Label, AncestorLevel=1}, Path=IsEnabled}"
+                               Command="{Binding NavigateToModuleCommand}" CommandParameter="{x:Static isp:IspModule.Saj}">
+                            Saj
+                        </Hyperlink>
+                    </Label>
+                    <CheckBox HorizontalAlignment="Right" IsChecked="{Binding IsSajSelected, Mode=TwoWay}"></CheckBox>
+                </Grid>
+            </ListViewItem>
+        </ListView>
+    </Grid>-->
+</Window>

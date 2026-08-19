@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="ThunderSE.Ui.MainWindow.UserMode.CommonTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:input="clr-namespace:System.Windows.Input;assembly=PresentationCore"
+             xmlns:customControl="clr-namespace:ThunderSE.Ui.CommonCustomControl"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="500">
+    <Grid Background="#FFE5E5E5" Margin="30,10,30,10">
+        <StackPanel Orientation="Vertical" >
+            <StackPanel Orientation="Horizontal">
+                <Label Content="模组型号:" Width="70"/>
+                <TextBox Margin="0,2,0,2" Width="120" Text="{Binding Name, Mode=TwoWay}" 
+                                     IsReadOnly="True"></TextBox>
+                <Label Content="ID : " />
+                <TextBox Margin="0,2,0,2" Width="80" Text="{Binding Id, Mode=TwoWay}" 
+                                     IsReadOnly="True"></TextBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="分辨率 : " Width="80" HorizontalAlignment="Left"/>
+                <Label Content="宽 : " Width="55"/>
+                <TextBox Margin="0,2,0,2" Width="40" Text="{Binding ResolutionWidth, Mode=TwoWay}" IsReadOnly="True"></TextBox>
+                <Label Content="高 : " Width="55"/>
+                <TextBox Margin="0,2,0,2" Width="40" Text="{Binding ResolutionHeight, Mode=TwoWay}" IsReadOnly="True"></TextBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="PCLK数字滤波等级 :" HorizontalAlignment="Left"/>
+                <ComboBox Width="40" SelectedIndex="{Binding IsPclkFirEn, Mode=TwoWay}">
+                    <ComboBoxItem>0</ComboBoxItem>
+                    <ComboBoxItem>1</ComboBoxItem>
+                    <ComboBoxItem>2</ComboBoxItem>
+                    <ComboBoxItem>3</ComboBoxItem>
+                </ComboBox>
+                <Label Content="PCLK反相使能 :" HorizontalAlignment="Left"/>
+                <CheckBox Margin="0,2,0,2" HorizontalAlignment="Right" IsChecked="{Binding IsPclkInvEn, Mode=TwoWay}"/>
+                <Label Content="PCLK模拟滤波等级 : " HorizontalAlignment="Left"/>
+                <ComboBox Width="40" SelectedIndex="{Binding PclkFirClass, Mode=TwoWay}">
+                    <ComboBoxItem>0</ComboBoxItem>
+                    <ComboBoxItem>1</ComboBoxItem>
+                    <ComboBoxItem>2</ComboBoxItem>
+                    <ComboBoxItem>3</ComboBoxItem>
+                    <ComboBoxItem>4</ComboBoxItem>
+                    <ComboBoxItem>5</ComboBoxItem>
+                    <ComboBoxItem>6</ComboBoxItem>
+                    <ComboBoxItem>7</ComboBoxItem>
+                    <ComboBoxItem>8</ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

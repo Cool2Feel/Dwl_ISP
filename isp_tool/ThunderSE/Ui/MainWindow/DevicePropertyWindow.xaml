@@ -1,0 +1,120 @@
+<Window x:Class="ThunderSE.Ui.MainWindow.DevicePropertyWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:ThunderSE.Ui.MainWindow"
+        Title="设备属性设置" Width="540" Height="720" MinWidth="540" MinHeight="560"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResize" Background="#FFF5F5F5"
+        Loaded="OnLoaded" Closed="OnClosed">
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 顶部：设备信息条 -->
+        <Border Grid.Row="0" Background="#FFF0F8FF" BorderBrush="#FFB8D8F5" BorderThickness="1"
+                CornerRadius="4" Padding="9,3" Margin="0,0,0,6">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="📷 设备:" FontWeight="SemiBold" Foreground="#333333" FontSize="11" Margin="0,0,6,0"/>
+                <TextBlock x:Name="TxtDevice" Foreground="#0078D7" FontSize="11" FontWeight="SemiBold"
+                           TextTrimming="CharacterEllipsis" MaxWidth="360" VerticalAlignment="Center"
+                           ToolTip="当前正在控制的设备描述符"/>
+            </StackPanel>
+        </Border>
+
+        <!-- 属性设置：图像参数 + 相机控制 -->
+        <TabControl Grid.Row="1" x:Name="TabControl" Background="Transparent" BorderThickness="0">
+            <TabItem Header="🎛️ 图像参数">
+                <local:ProcAmpPanel x:Name="ProcAmpPanel"/>
+            </TabItem>
+            <TabItem Header="🎥 相机控制">
+                <local:CameraControlPanel x:Name="CameraControlPanel"/>
+            </TabItem>
+            <TabItem Header="📐 分辨率">
+                <TabItem.Resources>
+                    <SolidColorBrush x:Key="AccentBrush" Color="#FF0078D7"/>
+                    <SolidColorBrush x:Key="AccentLightBrush" Color="#FFEAF3FC"/>
+                    <SolidColorBrush x:Key="CardBorderBrush" Color="#FFE4E4E4"/>
+                </TabItem.Resources>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 标题栏：蓝色背景，与 ProcAmp / CameraControl 一致 -->
+                    <Border Grid.Row="0" Background="{StaticResource AccentBrush}" CornerRadius="5,5,0,0" Padding="10,7">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📐" FontSize="13" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock Text="分辨率" Foreground="White" FontWeight="Bold" FontSize="13" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 内容区 -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="2">
+                        <StackPanel Margin="0,6,0,0">
+
+                            <!-- 当前分辨率卡片 -->
+                            <Border Background="White" BorderBrush="{StaticResource CardBorderBrush}"
+                                    BorderThickness="1" CornerRadius="6" Padding="12,10" Margin="0,0,0,6">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="当前分辨率:" FontSize="12" FontWeight="SemiBold"
+                                               Foreground="#FF333333" VerticalAlignment="Center"/>
+                                    <Border Grid.Column="1" Background="{StaticResource AccentLightBrush}"
+                                            BorderBrush="#FFB8D8F5" BorderThickness="1" CornerRadius="3"
+                                            Padding="10,3" MinWidth="60" Margin="10,0,0,0">
+                                        <TextBlock x:Name="TxtCurrentResolution" Text="--" FontSize="12"
+                                                   FontWeight="SemiBold" Foreground="#FF005FB8"
+                                                   FontFamily="Consolas" HorizontalAlignment="Center"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+
+                            <!-- 分辨率列表卡片 -->
+                            <Border Background="White" BorderBrush="{StaticResource CardBorderBrush}"
+                                    BorderThickness="1" CornerRadius="6" Padding="12,10" Margin="0,0,0,6">
+                                <StackPanel>
+                                    <TextBlock Text="支持的分辨率 / 像素格式:" FontSize="12" FontWeight="SemiBold"
+                                               Foreground="#FF333333" Margin="0,0,0,6"/>
+                                    <ListBox x:Name="ListResolutions" Height="280"
+                                             BorderBrush="#FFC8C8C8" BorderThickness="1" FontSize="11"
+                                             SelectionMode="Single"/>
+                                    <TextBlock x:Name="TxtResolutionHint" Text="枚举自 DirectShow IAMStreamConfig，设备探测失败时不可用。"
+                                               FontSize="10" Foreground="#999999" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- 底部操作栏：保存 / 恢复 -->
+        <Border Grid.Row="2" Padding="0,10,0,0" BorderThickness="0,1,0,0" BorderBrush="#FFE0E0E0"
+                Background="#FFF8F8F8" Margin="-8,0,-8,5">
+            <StackPanel>
+                <TextBlock x:Name="TxtActionStatus" Text="" FontSize="10" Foreground="#FF666666"
+                           HorizontalAlignment="Center" Margin="0,0,0,4" Visibility="Collapsed"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="保存数据" Width="100" Height="30" Click="OnSaveClick"
+                            FontSize="12" FontWeight="SemiBold"
+                            Background="#FF0078D7" Foreground="White"
+                            BorderThickness="0" Cursor="Hand"
+                            ToolTip="将当前选项卡的参数设置保存到文件，下次打开设备时自动恢复"/>
+                    <Button Content="恢复数据" Width="100" Height="30" Margin="20,0,0,0" Click="OnLoadClick"
+                            FontSize="12" FontWeight="SemiBold"
+                            Background="#FFE8E8E8" Foreground="#FF333333"
+                            BorderThickness="1" BorderBrush="#FFC0C0C0" Cursor="Hand"
+                            ToolTip="从文件加载已保存的参数设置并应用到当前设备"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

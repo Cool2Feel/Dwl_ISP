@@ -1,0 +1,20 @@
+﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             x:Class="ThunderSE.Ui.MainWindow.UserMode.LcdTab" 
+             mc:Ignorable="d" 
+             d:DesignHeight="2000" d:DesignWidth="700" Loaded="OnLoaded" 
+             xmlns:LcdTabControl="clr-namespace:ThunderSE.Ui.MainWindow.UserMode.LcdTabControl"
+             DataContextChanged="OnDataContextChanged">
+    <ScrollViewer>
+        <StackPanel Orientation="Vertical" Background="#FFE5E5E5">
+            <LcdTabControl:LcdCommonArea x:Name="CommonPart" Margin="10,0,10,0" Padding="5"/>
+            <LcdTabControl:LcdVdeArea x:Name="VdePart" Margin="10,0,10,0" Padding="5"/>
+            <LcdTabControl:LcdGammaArea x:Name="GammaPart" Margin="10,0,10,0" Padding="5"/>
+            <LcdTabControl:LcdCcmArea x:Name="CcmPart" Margin="10,0,10,0" Padding="5"/>
+            <LcdTabControl:LcdSajArea x:Name="SajPart" Margin="10,0,10,0" Padding="5"/>
+            <LcdTabControl:LcdLsawtoothArea x:Name="LsawtoothPart" Margin="10,0,10,0" Padding="5"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

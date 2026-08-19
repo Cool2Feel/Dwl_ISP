@@ -1,0 +1,95 @@
+﻿<UserControl x:Class="ThunderSE.Ui.MainWindow.UserMode.LcdTabControl.LcdGammaArea"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:LcdTabControl="clr-namespace:ThunderSE.Ui.MainWindow.UserMode.LcdTabControl"
+             xmlns:input="clr-namespace:System.Windows.Input;assembly=PresentationCore"
+             xmlns:customControl="clr-namespace:ThunderSE.Ui.CommonCustomControl"
+             mc:Ignorable="d" 
+             d:DesignHeight="1000" d:DesignWidth="1000" Background="#FFE5E5E5">
+    <GroupBox Header="Gamma">
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Vertical" Margin="0,10,0,0">
+                <StackPanel Orientation="Horizontal">
+                    <Label>
+                        <TextBlock>红色 :</TextBlock>
+                    </Label>
+                    <Slider Orientation="Horizontal" VerticalAlignment="Center" Width="100" SmallChange="1" IsSnapToTickEnabled="True"
+                                Value="{Binding gamma_red}" Maximum="{Binding GammaMaxValue}" Minimum="{Binding GammaMinValue}"/>
+                    <TextBox Margin="10,0,0,0" DockPanel.Dock="Bottom" Height="20" Width="30"
+                             input:InputMethod.IsInputMethodEnabled="False" 
+                             customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                        <TextBox.Resources>
+                            <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                        </TextBox.Resources>
+                        <TextBox.Text>
+                            <Binding Path="gamma_red" >
+                                <Binding.ValidationRules>
+                                    <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                        <customControl:NumberRange.Wrapper>
+                                            <customControl:Wrapper MinValue="0"
+                                                                   MaxValue="{Binding Data.GammaMaxValue, Source={StaticResource proxy}}"/>
+                                        </customControl:NumberRange.Wrapper>
+                                    </customControl:NumberRange>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label>
+                        <TextBlock>绿色 :</TextBlock>
+                    </Label>
+                    <Slider Orientation="Horizontal" VerticalAlignment="Center" Width="100" SmallChange="1" IsSnapToTickEnabled="True"
+                                Value="{Binding gamma_green}" Maximum="{Binding GammaMaxValue}" Minimum="{Binding GammaMinValue}"/>
+                    <TextBox Margin="10,0,0,0" DockPanel.Dock="Bottom" Height="20" Width="30"
+                             input:InputMethod.IsInputMethodEnabled="False" 
+                             customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                        <TextBox.Resources>
+                            <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                        </TextBox.Resources>
+                        <TextBox.Text>
+                            <Binding Path="gamma_green" >
+                                <Binding.ValidationRules>
+                                    <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                        <customControl:NumberRange.Wrapper>
+                                            <customControl:Wrapper MinValue="0"
+                                                                   MaxValue="{Binding Data.GammaMaxValue, Source={StaticResource proxy}}"/>
+                                        </customControl:NumberRange.Wrapper>
+                                    </customControl:NumberRange>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label>
+                        <TextBlock>蓝色 :</TextBlock>
+                    </Label>
+                    <Slider Orientation="Horizontal" VerticalAlignment="Center" Width="100" SmallChange="1" IsSnapToTickEnabled="True"
+                                Value="{Binding gamma_blue}" Maximum="{Binding GammaMaxValue}" Minimum="{Binding GammaMinValue}"/>
+                    <TextBox Margin="10,0,0,0" DockPanel.Dock="Bottom" Height="20" Width="30"
+                             input:InputMethod.IsInputMethodEnabled="False" 
+                             customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                        <TextBox.Resources>
+                            <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                        </TextBox.Resources>
+                        <TextBox.Text>
+                            <Binding Path="gamma_blue" >
+                                <Binding.ValidationRules>
+                                    <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                        <customControl:NumberRange.Wrapper>
+                                            <customControl:Wrapper MinValue="0"
+                                                                   MaxValue="{Binding Data.GammaMaxValue, Source={StaticResource proxy}}"/>
+                                        </customControl:NumberRange.Wrapper>
+                                    </customControl:NumberRange>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </GroupBox>
+</UserControl>

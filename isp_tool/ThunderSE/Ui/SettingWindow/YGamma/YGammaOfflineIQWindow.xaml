@@ -1,0 +1,286 @@
+﻿<Window x:Class="ThunderSE.Ui.SettingWindow.YGamma.YGammaOfflineIQWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:commonCtrls="clr-namespace:ThunderSE.Ui.CommonCustomControl"
+        xmlns:datagridTookit="http://schemas.microsoft.com/wpf/2008/toolkit"
+        Title="YGamma离线IQ调试" Width="800" Height="600" WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResizeWithGrip" Background="#FFE5E5E5">
+    <Grid Margin="3">
+        <Grid.RowDefinitions>
+            <!-- 第1行：顶部 - 图像显示区域 + 操作控制面板 -->
+            <RowDefinition Height="*"/>
+            <!-- 第2行：中部 - 操作工具栏 -->
+            <RowDefinition Height="Auto"/>
+            <!-- 第3行：下部 - 状态信息区 -->
+            <RowDefinition Height="Auto"/>
+            <!-- 第4行：底部 - 状态栏 -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ==================== 第1行：顶部区域 ==================== -->
+        <Grid Grid.Row="0" Margin="0,0,0,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧：图像显示区域 -->
+            <Border Grid.Column="0" BorderBrush="#FF0078D7" BorderThickness="1" Background="#FFF9F9F9">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 图像显示标题栏 -->
+                    <Border Grid.Row="0" Background="#FF0078D7" Padding="5">
+                        <TextBlock Text="🖼️ 图像预览与处理结果" 
+                                   Foreground="White" FontWeight="Bold" FontSize="12"/>
+                    </Border>
+
+                    <!-- 图像显示主体（TabControl） -->
+                    <TabControl Name="ImgDisplayTab" Grid.Row="1" BorderThickness="0" 
+                                Style="{DynamicResource TabControlStyle1}" 
+                                Background="Transparent" Margin="5">
+
+                        <!-- Tab 1: 原图显示 -->
+                        <TabItem Header="📷 原图">
+                            <commonCtrls:ImageWithRubberBandControl x:Name="OriginImg"
+                                    IsEnabled="{Binding IsLoadImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}"
+                                    ToolTip="在此区域加载并选择RGB图像的处理区域"/>
+                        </TabItem>
+
+                        <!-- Tab 2: YGamma效果显示 -->
+                        <TabItem Header="🎨 YGamma效果">
+                            <Canvas Background="White">
+                                <Image Name="ProcessedImage"
+                                       Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Canvas}, Path=ActualHeight}"
+                                       Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Canvas}, Path=ActualWidth}"
+                                       TargetUpdated="OnProcessedImageUpdated"
+                                       ToolTip="显示YGamma处理后的图像效果"/>
+                            </Canvas>
+                        </TabItem>
+                    </TabControl>
+
+                    <!-- 图像状态提示栏 -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Background="#FFE0E0E0">
+                        <TextBlock Text="💡 提示: " VerticalAlignment="Center" Margin="0,0,3,0"/>
+                        <TextBlock x:Name="TxtImageHint" 
+                                   Text="请先加载RGB图像文件，然后在原图上框选处理区域" 
+                                   FontSize="11" Foreground="#666666" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 右侧：操作控制面板 -->
+            <Border Grid.Column="2" BorderBrush="#FF0078D7" BorderThickness="1" Background="#FFFAFAFA">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 面板标题 -->
+                    <Border Grid.Row="0" Background="#FF0078D7" Padding="5">
+                        <TextBlock Text="🎛️ 操作控制面板" Foreground="White" FontWeight="Bold" FontSize="12"/>
+                    </Border>
+
+                    <!-- TabControl按钮组 -->
+                    <TabControl Name="ButtonGroupTabs" Grid.Row="1" 
+                                Style="{DynamicResource TabControlStyle1}" 
+                                SelectedIndex="0" Background="Transparent" 
+                                BorderThickness="0" Margin="5">
+
+                        <!-- Tab 1: 文件操作 -->
+                        <TabItem Header="📁 文件操作">
+                            <StackPanel Background="Transparent">
+                                <TextBlock Text="图像文件管理" FontWeight="SemiBold" 
+                                           Margin="0,10,0,8" Foreground="#333333" FontSize="11"/>
+
+                                <Button Content="📂 选择Rgb文件" Click="OnLoadRgbButtonClick" 
+                                        HorizontalAlignment="Stretch" Margin="0,0,0,0" Padding="8,6"
+                                        FontWeight="SemiBold"
+                                        ToolTip="选择并加载RGB图像文件 (Ctrl+O)"/>
+
+                                <Separator Margin="0,12,0,12"/>
+
+                                <TextBlock Text="选区操作" FontWeight="SemiBold" 
+                                           Margin="0,0,0,8" Foreground="#333333" FontSize="11"/>
+
+                                <Button Content="↩️ 撤销选框" Click="OnUndoClick" 
+                                        HorizontalAlignment="Stretch" Margin="0,0,0,0" Padding="8,6"
+                                        IsEnabled="{Binding IsLoadImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}"
+                                        ToolTip="撤销当前选择的矩形区域 (Ctrl+Z)"/>
+
+                                <Separator Margin="0,12,0,12"/>
+
+                                <TextBlock Text="Image processing" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#333333" FontSize="11"/>
+                                
+                                <Button Content="⚙️ 计算处理" Click="OnCalcIQClick" 
+                                        HorizontalAlignment="Stretch" Margin="0,0,0,0" Padding="8,6"
+                                        IsEnabled="{Binding IsLoadImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}"
+                                        FontWeight="Bold"
+                                        ToolTip="执行YGamma离线IQ计算处理 (Ctrl+Enter)"/>
+
+                                <!-- 处理状态指示器 -->
+                                <Border Margin="0,15,0,0" Background="#FFF0F8FF" 
+                                        BorderBrush="#FF0078D7" BorderThickness="1" Padding="8">
+                                    <StackPanel>
+                                        <TextBlock Text="📊 处理状态" FontWeight="SemiBold" 
+                                                   FontSize="11" Foreground="#0078D7" Margin="0,0,0,5"/>
+                                        <TextBlock x:Name="TxtProcessingStatus" Text="等待加载图像..." 
+                                                   FontSize="10" Foreground="#666666" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </TabItem>
+
+                        <!-- Tab 2: 快捷操作 -->
+                        <TabItem Header="⚡ 快捷操作">
+                            <StackPanel Background="Transparent">
+                                <TextBlock Text="常用快捷功能" FontWeight="SemiBold" 
+                                           Margin="0,10,0,8" Foreground="#333333" FontSize="11"/>
+
+                                <Button Content="🔄 重置视图" Click="OnResetViewClick" 
+                                        HorizontalAlignment="Stretch" Margin="0,0,0,0" Padding="8,6"
+                                        ToolTip="重置图像视图到初始状态 (Ctrl+R)"/>
+
+                                <Separator Margin="0,12,0,12"/>
+
+                                <TextBlock Text="Image information" FontWeight="SemiBold" 
+                                           Margin="0,0,0,8" Foreground="#333333" FontSize="11"/>
+                                
+                                <Border Background="#FFFAFAFA" BorderBrush="#FFE0E0E0" 
+                                        BorderThickness="1" Padding="8" Margin="0,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="📐 图像信息" FontWeight="SemiBold" 
+                                                   FontSize="11" Foreground="#333333" Margin="0,0,0,5"/>
+                                        <TextBlock x:Name="TxtImageInfo" Text="未加载图像" 
+                                                   FontSize="10" Foreground="#666666" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ==================== 第2行：中部操作工具栏 ==================== -->
+        <ToolBarPanel Grid.Row="1" Margin="0,5,0,5">
+            <ToolBarTray>
+                <ToolBar>
+                    <Button x:Name="BtnLoadImage" Content="📂 加载图像" 
+                            Click="OnLoadRgbButtonClick"
+                            ToolTip="加载RGB图像文件 (Ctrl+O)" Padding="10,4" MinWidth="110"/>
+                    <Separator/>
+                    <Button x:Name="BtnUndoSelect" Content="↩️ 撤销选框" 
+                            Click="OnUndoClick"
+                            IsEnabled="{Binding IsLoadImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}"
+                            ToolTip="撤销当前选中的矩形区域 (Ctrl+Z)" Padding="10,4" MinWidth="110"/>
+                    <Separator/>
+                    <Button x:Name="BtnCalculate" Content="⚙️ 执行计算" 
+                            Click="OnCalcIQClick"
+                            IsEnabled="{Binding IsLoadImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}"
+                            ToolTip="执行YGamma离线IQ计算 (Ctrl+Enter)" 
+                            Padding="10,4" MinWidth="110" FontWeight="Bold"/>
+                    <Separator/>
+                    <Button x:Name="BtnResetView" Content="🔄 重置视图" 
+                            Click="OnResetViewClick"
+                            ToolTip="重置所有视图到初始状态 (Ctrl+R)" Padding="10,4" MinWidth="110"/>
+                    <Separator/>
+
+                    <!-- 状态指示器 -->
+                    <TextBlock x:Name="TxtOperationStatus" Text="就绪" 
+                               VerticalAlignment="Center" Margin="10,0,0,0" FontSize="11"
+                               Foreground="#666666"/>
+                </ToolBar>
+            </ToolBarTray>
+        </ToolBarPanel>
+
+        <!-- ==================== 第3行：下部状态信息区 ==================== -->
+        <Grid Grid.Row="2" Height="45">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧：导航链接区 -->
+            <Border Grid.Column="0" BorderBrush="#FFCCCCCC" BorderThickness="1" 
+                    Background="White" Padding="3">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="📍 导航: " VerticalAlignment="Center" 
+                               Foreground="#666666" Margin="0,0,8,0"/>
+                    <TextBlock Text="YGamma模块 - 离线IQ调试与验证" 
+                               VerticalAlignment="Center" FontSize="11" 
+                               Foreground="#333333" FontStyle="Italic"/>
+                    <TextBlock Text=" | " VerticalAlignment="Center" 
+                               Foreground="#CCCCCC" Margin="5,0"/>
+                    <TextBlock x:Name="TxtModuleStatus" Text="离线模式" 
+                               VerticalAlignment="Center" FontSize="11" 
+                               Foreground="#0078D7" FontWeight="SemiBold"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 右侧：快速信息面板 -->
+            <Border Grid.Column="2" BorderBrush="#FF0078D7" BorderThickness="1" 
+                    Background="#FFF0F8FF" Padding="3">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="📊 选区统计" FontWeight="SemiBold" FontSize="11" 
+                               Foreground="#0078D7" Margin="0,0,0,3"/>
+                    <TextBlock x:Name="TxtSelectionCount" Text="选区数量: 0" FontSize="10" 
+                               Foreground="#333333"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- ==================== 第4行：底部状态栏 ==================== -->
+        <StatusBar Grid.Row="3" Margin="0,3,0,0">
+            <StatusBarItem>
+                <TextBlock x:Name="StatusBarText" Text="就绪 - YGamma离线IQ调试工具已就绪"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock x:Name="TxtWindowSize" Text=""/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock Text="💡 提示: Ctrl+O加载 | Ctrl+Z撤销 | Ctrl+Enter计算"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+
+    <!--<Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="35" />
+        </Grid.RowDefinitions>
+        <TabControl Name="ImgDisplayTab" >
+            <TabItem Header="原图" >
+                <commonCtrls:ImageWithRubberBandControl x:Name="OriginImg"
+                        IsEnabled="{Binding IsLoadImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}"/>
+            </TabItem>
+            <TabItem Header="YGamma效果">
+                <Canvas Background="White">
+                    <Image Name="ProcessedImage"
+                           Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Canvas}, Path=ActualHeight}"
+                           Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Canvas}, Path=ActualWidth}"
+                           TargetUpdated="OnProcessedImageUpdated"/>
+                </Canvas>
+            </TabItem>
+        </TabControl>
+        <StackPanel Grid.Row="1" HorizontalAlignment="Left" Orientation="Horizontal">
+            <Button Width="60" Height="25" Click="OnLoadRgbButtonClick" Margin="20,0,0,0">选择Rgb</Button>
+            <Button Width="60" Height="25" 
+                        IsEnabled="{Binding IsLoadImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}"
+                        Click="OnUndoClick" Margin="10,0,0,0">撤销选框
+            </Button>
+            <Button Width="60" Height="25" 
+                        IsEnabled="{Binding IsLoadImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=Window}}"
+                        Click="OnCalcIQClick" Margin="10,0,50,0">计算
+            </Button>
+        </StackPanel>
+    </Grid>-->
+</Window>

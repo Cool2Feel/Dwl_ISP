@@ -1,0 +1,179 @@
+<Window x:Class="AnalyzeBrightest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="RAW 图像最亮位置分析工具" Height="900" Width="1400"
+        WindowStartupLocation="CenterScreen" Background="#FFE5E5E5">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 顶部控制栏 -->
+        <Border Grid.Row="0" Background="#FF0078D7" Padding="10" Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="🔍 RAW 图像最亮位置分析" Foreground="White" 
+                               FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Bayer 模式:" Foreground="White" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <ComboBox x:Name="CmbBayerMode" Width="100" Height="28" SelectedIndex="0"
+                              SelectionChanged="OnBayerModeChanged">
+                        <ComboBoxItem Content="RGRG"/>
+                        <ComboBoxItem Content="GRGR"/>
+                        <ComboBoxItem Content="BGBG"/>
+                        <ComboBoxItem Content="GBGB"/>
+                    </ComboBox>
+                    
+                    <TextBlock Text="搜索模式:" Foreground="White" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                    <ComboBox x:Name="CmbSearchMode" Width="80" Height="28" SelectedIndex="0">
+                        <ComboBoxItem Content="局部"/>
+                        <ComboBoxItem Content="全局"/>
+                    </ComboBox>
+                    
+                    <TextBlock Text="滤波半径:" Foreground="White" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                    <TextBox x:Name="TxtFilterRadius" Width="50" Height="28" Text="4" 
+                             VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    
+                    <TextBlock Text="阈值系数:" Foreground="White" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                    <TextBox x:Name="TxtThresholdRatio" Width="50" Height="28" Text="0.95" 
+                             VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    
+                    <Button x:Name="BtnLoadFile" Content="📂 加载 RAW 文件" 
+                            Click="OnLoadFileClick" Margin="10,0,0,0"
+                            Padding="15,5" Background="White" Foreground="#FF0078D7"
+                            FontWeight="Bold" BorderThickness="0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 主内容区 -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="350"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧：图像显示区 -->
+            <Border Grid.Column="0" BorderBrush="#FFCCCCCC" BorderThickness="1" 
+                    Background="White" Padding="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 图像信息栏 -->
+                    <Border Grid.Row="0" Background="#FFF0F8FF" Padding="8" Margin="0,0,0,5">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Name="TxtImageInfo" Text="未加载图像" 
+                                       FontWeight="SemiBold" Foreground="#0078D7"/>
+                            <TextBlock x:Name="TxtMousePos" Text="" Margin="20,0,0,0"
+                                       Foreground="#666666"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 图像画布 -->
+                    <Canvas x:Name="ImgCanvas" Grid.Row="1" Background="#FF333333"
+                            MouseMove="OnCanvasMouseMove" ClipToBounds="True">
+                        <Image x:Name="ImgDisplay" Stretch="Uniform"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                        <!-- 最亮点标记将动态添加到此 Canvas -->
+                    </Canvas>
+                </Grid>
+            </Border>
+
+            <!-- 右侧：分析结果面板 -->
+            <Border Grid.Column="2" BorderBrush="#FFCCCCCC" BorderThickness="1" 
+                    Background="White" Padding="10">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="📊 分析结果" FontSize="14" FontWeight="Bold" 
+                                   Foreground="#0078D7" Margin="0,0,0,10"/>
+
+                        <!-- 图像基本信息 -->
+                        <Border BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" Margin="0,0,0,10">
+                            <StackPanel>
+                                <TextBlock Text="图像信息" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                                <TextBlock x:Name="TxtResolution" Text="分辨率: -" Margin="0,2"/>
+                                <TextBlock x:Name="TxtFileSize" Text="文件大小: -" Margin="0,2"/>
+                                <TextBlock x:Name="TxtPixelRange" Text="像素范围: -" Margin="0,2"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 最亮位置列表 -->
+                        <Border BorderBrush="#FFE0E0E0" BorderThickness="1" Padding="10" Margin="0,0,0,10">
+                            <StackPanel>
+                                <TextBlock Text="Top 10 最亮位置" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                                <TextBlock x:Name="TxtYRange" Text="Y 亮度范围: -" Margin="0,2"
+                                           Foreground="#666666" FontSize="11"/>
+                                <ItemsControl x:Name="LstBrightestPositions" Margin="0,5,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border x:Name="ItemBorder" BorderBrush="#FFE8E8E8" BorderThickness="1"
+                                                    Padding="8" Margin="0,2" Background="#FFFAFAFA"
+                                                    Cursor="Hand"
+                                                    MouseLeftButtonDown="OnBrightestItemClick">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.Column="0" Text="{Binding Rank}"
+                                                               FontWeight="Bold" Foreground="#0078D7"
+                                                               Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                                    <StackPanel Grid.Column="1">
+                                                        <TextBlock Text="{Binding Position}" FontSize="11"/>
+                                                        <TextBlock Text="{Binding Info}" FontSize="10"
+                                                                   Foreground="#666666"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter TargetName="ItemBorder" Property="Background" Value="#FFE8F4FD"/>
+                                                    <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#FF0078D7"/>
+                                                    <Setter TargetName="ItemBorder" Property="BorderThickness" Value="2"/>
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 说明 -->
+                        <Border Background="#FFFFF8DC" BorderBrush="#FFE8E8E8" 
+                                BorderThickness="1" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="💡 说明" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                                <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="#333333">
+                                    • 加载 RAW10 格式图像<LineBreak/>
+                                    • 自动解码并转换为 RGB 显示<LineBreak/>
+                                    • 检测并标注 Top 10 最亮位置<LineBreak/>
+                                    • 同亮度时优先显示靠近中心的点<LineBreak/>
+                                    • 鼠标移动查看像素 RGB 值
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+
+        <!-- 底部状态栏 -->
+        <Border Grid.Row="2" Background="#FFF0F0F0" Padding="8" Margin="0,10,0,0">
+            <TextBlock x:Name="TxtStatus" Text="就绪 - 请加载 RAW 图像文件"/>
+        </Border>
+    </Grid>
+</Window>

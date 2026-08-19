@@ -1,0 +1,21 @@
+﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:EffectTabControl="clr-namespace:ThunderSE.Ui.MainWindow.UserMode.EffectTabControl" 
+             x:Class="ThunderSE.Ui.MainWindow.UserMode.EffectTab" 
+             mc:Ignorable="d" 
+             d:DesignHeight="2000" d:DesignWidth="740" Loaded="OnLoaded" 
+             DataContextChanged="OnDataContextChanged">
+    <ScrollViewer>
+        <StackPanel Orientation="Vertical" Background="#FFE5E5E5">
+            <EffectTabControl:VDEArea x:Name="VDEPart" Margin="10,0,10,0" Padding="5"/>
+            <EffectTabControl:AEArea x:Name="AEPart" Margin="10,0,10,0" Padding="5"/>
+            <EffectTabControl:EEArea x:Name="EEPart" Margin="10,0,10,0" Padding="5"/>
+            <EffectTabControl:CHArea x:Name="CHPart" Margin="10,0,10,0" Padding="5"/>
+            <EffectTabControl:SAJArea x:Name="SAJPart" Margin="10,0,10,0" Padding="5"/>
+            <EffectTabControl:CCMArea x:Name="CCMPart" Margin="10,0,10,0" Padding="5"/>
+            <EffectTabControl:DDCArea x:Name="DDCPart" Margin="10,0,10,0" Padding="5"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

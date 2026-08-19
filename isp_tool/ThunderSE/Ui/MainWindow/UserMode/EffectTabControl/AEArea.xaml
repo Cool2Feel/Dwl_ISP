@@ -1,0 +1,340 @@
+﻿<UserControl x:Class="ThunderSE.Ui.MainWindow.UserMode.EffectTabControl.AEArea"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:EffectTabControl="clr-namespace:ThunderSE.Ui.MainWindow.UserMode.EffectTabControl" 
+             xmlns:UserMode="clr-namespace:ThunderSE.Ui.MainWindow.UserMode"
+             xmlns:input="clr-namespace:System.Windows.Input;assembly=PresentationCore"
+             xmlns:customControl="clr-namespace:ThunderSE.Ui.CommonCustomControl"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="500" Background="#FFE5E5E5" 
+             DataContextChanged="OnDataContextChanged"
+             Loaded="OnLoaded">
+    <UserControl.Resources>
+        <EffectTabControl:AEGainMaxValueConverter x:Key="gainMaxValueConverter"></EffectTabControl:AEGainMaxValueConverter>
+        <UserMode:DataArrayToControlCollectionConverter x:Key="ExpTagConverter" />
+    </UserControl.Resources>
+    <GroupBox Header="亮度调节">
+        <StackPanel Orientation="Vertical">
+            <StackPanel  Margin="0,10,0,0" Orientation="Horizontal" >
+                <Label DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,0,20">目标亮度 :</Label>
+                <GroupBox Height="150">
+                    <StackPanel Orientation="Horizontal">
+                        <DockPanel LastChildFill="True">
+                            <TextBox Margin="0,10,0,0" DockPanel.Dock="Bottom" Height="20" Width="30"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                <TextBox.Resources>
+                                    <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="ExpTag" 
+                                             Converter="{StaticResource ExpTagConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>0</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                        <Binding.ValidationRules>
+                                            <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                <customControl:NumberRange.Wrapper>
+                                                    <customControl:Wrapper MinValue="0"
+                                                                           MaxValue="{Binding Data.MaxExpTagValue, Source={StaticResource proxy}}"/>
+                                                </customControl:NumberRange.Wrapper>
+                                            </customControl:NumberRange>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <Slider HorizontalAlignment="Center" Orientation="Vertical" Maximum="{Binding MaxExpTagValue}" SmallChange="1" IsSnapToTickEnabled="True">
+                                <Slider.Value>
+                                    <Binding Path="ExpTag" 
+                                             Converter="{StaticResource ExpTagConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>0</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                    </Binding>
+                                </Slider.Value>
+                            </Slider>
+                        </DockPanel>
+                        <DockPanel LastChildFill="True" Margin="20,0,0,0">
+                            <TextBox Margin="0,10,0,0" DockPanel.Dock="Bottom" Height="20" Width="30"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                <TextBox.Resources>
+                                    <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="ExpTag" 
+                                             Converter="{StaticResource ExpTagConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>1</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                        <Binding.ValidationRules>
+                                            <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                <customControl:NumberRange.Wrapper>
+                                                    <customControl:Wrapper MinValue="0"
+                                                                           MaxValue="{Binding Data.MaxExpTagValue, Source={StaticResource proxy}}"/>
+                                                </customControl:NumberRange.Wrapper>
+                                            </customControl:NumberRange>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <Slider HorizontalAlignment="Center" Orientation="Vertical" Maximum="{Binding MaxExpTagValue}" SmallChange="1" IsSnapToTickEnabled="True">
+                                <Slider.Value>
+                                    <Binding Path="ExpTag" 
+                                             Converter="{StaticResource ExpTagConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>1</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                    </Binding>
+                                </Slider.Value>
+                            </Slider>
+                        </DockPanel>
+                        <DockPanel LastChildFill="True" Margin="20,0,0,0">
+                            <TextBox Margin="0,10,0,0" DockPanel.Dock="Bottom" Height="20" Width="30"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                <TextBox.Resources>
+                                    <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="ExpTag" 
+                                             Converter="{StaticResource ExpTagConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>2</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                        <Binding.ValidationRules>
+                                            <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                <customControl:NumberRange.Wrapper>
+                                                    <customControl:Wrapper MinValue="0"
+                                                                           MaxValue="{Binding Data.MaxExpTagValue, Source={StaticResource proxy}}"/>
+                                                </customControl:NumberRange.Wrapper>
+                                            </customControl:NumberRange>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <Slider HorizontalAlignment="Center" Orientation="Vertical" Maximum="{Binding MaxExpTagValue}" SmallChange="1" IsSnapToTickEnabled="True">
+                                <Slider.Value>
+                                    <Binding Path="ExpTag" 
+                                             Converter="{StaticResource ExpTagConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>2</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                    </Binding>
+                                </Slider.Value>
+                            </Slider>
+                        </DockPanel>
+                        <DockPanel LastChildFill="True" Margin="20,0,0,0">
+                            <TextBox Margin="0,10,0,0" DockPanel.Dock="Bottom" Height="20" Width="30"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                <TextBox.Resources>
+                                    <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="ExpTag" 
+                                             Converter="{StaticResource ExpTagConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>3</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                        <Binding.ValidationRules>
+                                            <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                <customControl:NumberRange.Wrapper>
+                                                    <customControl:Wrapper MinValue="0"
+                                                                           MaxValue="{Binding Data.MaxExpTagValue, Source={StaticResource proxy}}"/>
+                                                </customControl:NumberRange.Wrapper>
+                                            </customControl:NumberRange>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <Slider HorizontalAlignment="Center" Orientation="Vertical" Maximum="{Binding MaxExpTagValue}" SmallChange="1" IsSnapToTickEnabled="True">
+                                <Slider.Value>
+                                    <Binding Path="ExpTag" 
+                                             Converter="{StaticResource ExpTagConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>3</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                    </Binding>
+                                </Slider.Value>
+                            </Slider>
+                        </DockPanel>
+                        <DockPanel LastChildFill="True" Margin="20,0,0,0">
+                            <TextBox Margin="0,10,0,0" DockPanel.Dock="Bottom" Height="20" Width="30"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                <TextBox.Resources>
+                                    <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="ExpTag" 
+                                             Converter="{StaticResource ExpTagConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>4</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                        <Binding.ValidationRules>
+                                            <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                <customControl:NumberRange.Wrapper>
+                                                    <customControl:Wrapper MinValue="0"
+                                                                           MaxValue="{Binding Data.MaxExpTagValue, Source={StaticResource proxy}}"/>
+                                                </customControl:NumberRange.Wrapper>
+                                            </customControl:NumberRange>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <Slider HorizontalAlignment="Center" Orientation="Vertical" Maximum="{Binding MaxExpTagValue}" SmallChange="1" IsSnapToTickEnabled="True">
+                                <Slider.Value>
+                                    <Binding Path="ExpTag" 
+                                             Converter="{StaticResource ExpTagConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>4</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                    </Binding>
+                                </Slider.Value>
+                            </Slider>
+                        </DockPanel>
+                        <DockPanel LastChildFill="True" Margin="20,0,0,0">
+                            <TextBox Margin="0,10,0,0" DockPanel.Dock="Bottom" Height="20" Width="30"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                <TextBox.Resources>
+                                    <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="ExpTag" 
+                                             Converter="{StaticResource ExpTagConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>5</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                        <Binding.ValidationRules>
+                                            <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                <customControl:NumberRange.Wrapper>
+                                                    <customControl:Wrapper MinValue="0"
+                                                                           MaxValue="{Binding Data.MaxExpTagValue, Source={StaticResource proxy}}"/>
+                                                </customControl:NumberRange.Wrapper>
+                                            </customControl:NumberRange>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <Slider HorizontalAlignment="Center" Orientation="Vertical" Maximum="{Binding MaxExpTagValue}" SmallChange="1" IsSnapToTickEnabled="True">
+                                <Slider.Value>
+                                    <Binding Path="ExpTag" 
+                                             Converter="{StaticResource ExpTagConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>5</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                    </Binding>
+                                </Slider.Value>
+                            </Slider>
+                        </DockPanel>
+                        <DockPanel LastChildFill="True" Margin="20,0,0,0">
+                            <TextBox Margin="0,10,0,0" DockPanel.Dock="Bottom" Height="20" Width="30"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                <TextBox.Resources>
+                                    <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="ExpTag" 
+                                             Converter="{StaticResource ExpTagConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>6</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                        <Binding.ValidationRules>
+                                            <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                <customControl:NumberRange.Wrapper>
+                                                    <customControl:Wrapper MinValue="0"
+                                                                           MaxValue="{Binding Data.MaxExpTagValue, Source={StaticResource proxy}}"/>
+                                                </customControl:NumberRange.Wrapper>
+                                            </customControl:NumberRange>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <Slider HorizontalAlignment="Center" Orientation="Vertical" Maximum="{Binding MaxExpTagValue}" SmallChange="1" IsSnapToTickEnabled="True">
+                                <Slider.Value>
+                                    <Binding Path="ExpTag" 
+                                             Converter="{StaticResource ExpTagConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>6</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                    </Binding>
+                                </Slider.Value>
+                            </Slider>
+                        </DockPanel>
+                        <DockPanel LastChildFill="True" Margin="20,0,0,0">
+                            <TextBox Margin="0,10,0,0" DockPanel.Dock="Bottom" Height="20" Width="30"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                <TextBox.Resources>
+                                    <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="ExpTag" 
+                                             Converter="{StaticResource ExpTagConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>7</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                        <Binding.ValidationRules>
+                                            <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                <customControl:NumberRange.Wrapper>
+                                                    <customControl:Wrapper MinValue="0"
+                                                                           MaxValue="{Binding Data.MaxExpTagValue, Source={StaticResource proxy}}"/>
+                                                </customControl:NumberRange.Wrapper>
+                                            </customControl:NumberRange>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <Slider HorizontalAlignment="Center" Orientation="Vertical" Maximum="{Binding MaxExpTagValue}" SmallChange="1" IsSnapToTickEnabled="True">
+                                <Slider.Value>
+                                    <Binding Path="ExpTag" 
+                                             Converter="{StaticResource ExpTagConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>7</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                    </Binding>
+                                </Slider.Value>
+                            </Slider>
+                        </DockPanel>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Margin="50,0,0,0">夜晚</Label>
+                <Label>——————————————————————————➤</Label>
+                <Label>白天</Label>
+            </StackPanel>
+            <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                <Label>最大增益 :</Label>
+                <Slider Orientation="Horizontal" VerticalAlignment="Center" Width="100"
+                        Value="{Binding ExpAdapt.gain_max}" 
+                        Minimum="0"  Maximum="{Binding ExpAdapt.gain_max_save}"/>
+                <TextBox Margin="10,0,0,0" DockPanel.Dock="Bottom" Height="20" Width="50" 
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                    <TextBox.Resources>
+                        <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                    </TextBox.Resources>
+                    <TextBox.Text>
+                        <Binding Path="ExpAdapt.gain_max" >
+                            <Binding.ValidationRules>
+                                <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                    <customControl:NumberRange.Wrapper>
+                                        <customControl:Wrapper MinValue="0"
+                                                               MaxValue="{Binding Data.ExpAdapt.gain_max_save, Source={StaticResource proxy}}"/>
+                                    </customControl:NumberRange.Wrapper>
+                                </customControl:NumberRange>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+            </StackPanel>
+        </StackPanel>
+    </GroupBox>
+</UserControl>

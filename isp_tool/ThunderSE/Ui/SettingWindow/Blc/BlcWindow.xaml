@@ -1,0 +1,494 @@
+﻿<Window x:Class="ThunderSE.Ui.SettingWindow.Blc.BlcWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
+             xmlns:datavis="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
+             xmlns:Blc="clr-namespace:ThunderSE.Ui.SettingWindow.Blc"
+             Width="1000" Height="900" Title="BLC黑电平校正工具" MinWidth="950" MinHeight="700"
+             Background="#FFE5E5E5" WindowStartupLocation="CenterScreen"
+             Loaded="Window_Loaded" Closed="Window_Closed" ResizeMode="NoResize">
+    <Grid Margin="3">
+        <Grid.RowDefinitions>
+            <!-- 第1行：顶部 - 数据分布图表区域 -->
+            <RowDefinition Height="4*"/>
+            <!-- 第2行：中部 - 操作工具栏 -->
+            <RowDefinition Height="Auto"/>
+            <!-- 第3行：下部 - 统计数据+校正控制区 -->
+            <RowDefinition Height="1.3*"/>
+            <!-- 第4行：底部 - 状态栏 -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ==================== 第1行：顶部 - 数据分布图表区域 ==================== -->
+        <Border Grid.Row="0" BorderBrush="#FF0078D7" BorderThickness="1" Background="#FFF9F9F9" Margin="0,0,0,5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- 标题栏 -->
+                <Border Grid.Row="0" Background="#FF0078D7" Padding="3">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="📊 黑电平数据分布 (R / GR / GB / B 四通道像素直方图)" 
+                                   Foreground="White" FontWeight="Bold" FontSize="13" 
+                                   VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TxtChartStatus" Text="" 
+                                   Foreground="#FFB0E0FF" FontSize="11" 
+                                   VerticalAlignment="Center" Margin="15,0,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- 四通道图表网格（2×2布局） -->
+                <Grid Grid.Row="1" Margin="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- R通道图表 (左上) -->
+                    <Border Grid.Column="0" Grid.Row="0" BorderBrush="#FFCCCCCC" BorderThickness="1" Background="White" Margin="2">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="🔴 R通道分布" FontWeight="SemiBold" 
+                                       FontSize="11" Foreground="#CC0000" Padding="1" Background="#FFF0F0F0"/>
+                            <chartingToolkit:Chart Grid.Row="1" BorderThickness="0" Title="">
+                                <chartingToolkit:Chart.Axes>
+                                    <chartingToolkit:LinearAxis Name="ChartXMax" Orientation="X" Minimum="0" Maximum="1024"/>
+                                </chartingToolkit:Chart.Axes>
+                                <chartingToolkit:Chart.LegendStyle>
+                                    <Style TargetType="datavis:Legend">
+                                        <Setter Property="Width" Value="0" />
+                                    </Style>
+                                </chartingToolkit:Chart.LegendStyle>
+                                <chartingToolkit:AreaSeries ItemsSource="{Binding RPixelData}" DependentValuePath="Value" IndependentValuePath="Key" IsSelectionEnabled="True"/>
+                            </chartingToolkit:Chart>
+                        </Grid>
+                    </Border>
+
+                    <!-- GR通道图表 (右上) -->
+                    <Border Grid.Column="2" Grid.Row="0" BorderBrush="#FFCCCCCC" BorderThickness="1" Background="White" Margin="2">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="🟢 GR通道分布" FontWeight="SemiBold" 
+                                       FontSize="11" Foreground="#009900" Padding="1" Background="#F0FFF0F0"/>
+                            <chartingToolkit:Chart Grid.Row="1" BorderThickness="0" Title="">
+                                <chartingToolkit:Chart.Axes>
+                                    <chartingToolkit:LinearAxis Name="ChartXMax2" Orientation="X" Minimum="0" Maximum="1024" />
+                                </chartingToolkit:Chart.Axes>
+                                <chartingToolkit:Chart.LegendStyle>
+                                    <Style TargetType="datavis:Legend">
+                                        <Setter Property="Width" Value="0" />
+                                    </Style>
+                                </chartingToolkit:Chart.LegendStyle>
+                                <chartingToolkit:AreaSeries ItemsSource="{Binding GRPixelData}" DependentValuePath="Value" IndependentValuePath="Key" IsSelectionEnabled="True"/>
+                            </chartingToolkit:Chart>
+                        </Grid>
+                    </Border>
+
+                    <!-- GB通道图表 (左下) -->
+                    <Border Grid.Column="0" Grid.Row="1" BorderBrush="#FFCCCCCC" BorderThickness="1" Background="White" Margin="2">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="🟡 GB通道分布" FontWeight="SemiBold" 
+                                       FontSize="11" Foreground="#999900" Padding="1" Background="#FFFFF0F0"/>
+                            <chartingToolkit:Chart Grid.Row="1" BorderThickness="0" Title="">
+                                <chartingToolkit:Chart.Axes>
+                                    <chartingToolkit:LinearAxis Name="ChartXMax3" Orientation="X" Minimum="0" Maximum="1024" />
+                                </chartingToolkit:Chart.Axes>
+                                <chartingToolkit:Chart.LegendStyle>
+                                    <Style TargetType="datavis:Legend">
+                                        <Setter Property="Width" Value="0" />
+                                    </Style>
+                                </chartingToolkit:Chart.LegendStyle>
+                                <chartingToolkit:AreaSeries ItemsSource="{Binding GBPixelData}" DependentValuePath="Value" IndependentValuePath="Key" IsSelectionEnabled="True"/>
+                            </chartingToolkit:Chart>
+                        </Grid>
+                    </Border>
+
+                    <!-- B通道图表 (右下) -->
+                    <Border Grid.Column="2" Grid.Row="1" BorderBrush="#FFCCCCCC" BorderThickness="1" Background="White" Margin="2">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="🔵 B通道分布" FontWeight="SemiBold" 
+                                       FontSize="11" Foreground="#0000CC" Padding="1" Background="#F0F0FFFF"/>
+                            <chartingToolkit:Chart Grid.Row="1" BorderThickness="0" Title="">
+                                <chartingToolkit:Chart.Axes>
+                                    <chartingToolkit:LinearAxis Orientation="X" Minimum="0" Maximum="1024" />
+                                </chartingToolkit:Chart.Axes>
+                                <chartingToolkit:Chart.LegendStyle>
+                                    <Style TargetType="datavis:Legend">
+                                        <Setter Property="Width" Value="0" />
+                                    </Style>
+                                </chartingToolkit:Chart.LegendStyle>
+                                <chartingToolkit:AreaSeries ItemsSource="{Binding BPixelData}" DependentValuePath="Value" IndependentValuePath="Key" IsSelectionEnabled="True"/>
+                            </chartingToolkit:Chart>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!-- 底部提示信息栏 -->
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Background="#FFE8F4FD" Margin="3">
+                    <TextBlock Text="💡 图表说明: " VerticalAlignment="Center" 
+                               FontWeight="SemiBold" Foreground="#0078D7" Margin="0,0,5,0"/>
+                    <TextBlock Text="X轴: 像素值范围 (0-1024) | Y轴: 像素数量 | 面积图显示各通道的像素值分布情况" 
+                               FontSize="11" Foreground="#333333" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ==================== 第2行：中部 - 操作工具栏 ==================== -->
+        <ToolBarPanel Grid.Row="1" Margin="0,3,0,3">
+            <ToolBarTray>
+                <ToolBar>
+                    <!-- 文件操作组 -->
+                    <Button x:Name="BtnOpenRaw" Content="📂 打开RAW文件" 
+                            Command="{Binding OpenRawFileCommand}"
+                            ToolTip="加载RAW图像文件并计算黑电平数据 (Ctrl+O)" 
+                            Padding="10,4" MinWidth="130"/>
+
+                    <Separator/>
+
+                    <!-- 校正操作组 -->
+                    <Button x:Name="BtnApplyCorrection" Content="✅ 应用校正" 
+                            Command="{Binding ApplyCorrectionCommand}"
+                            ToolTip="应用选定的校正方式到黑电平参数 (Ctrl+Enter)" 
+                            Padding="10,4" MinWidth="120" FontWeight="Bold"/>
+
+                    <Separator/>
+
+                    <!-- 刷新操作组 -->
+                    <Button x:Name="BtnRefresh" Content="🔄 刷新统计" 
+                            Click="RefreshStats_Click"
+                            ToolTip="重新计算并刷新统计数据 (F5)" 
+                            Padding="10,4" MinWidth="110"/>
+
+                    <Separator/>
+
+                    <!-- 状态指示器 -->
+                    <TextBlock x:Name="TxtRawFileStatus" Text="未加载文件" 
+                               VerticalAlignment="Center" Margin="10,0,0,0" 
+                               FontSize="11" Foreground="#666666"/>
+                </ToolBar>
+            </ToolBarTray>
+        </ToolBarPanel>
+
+        <!-- ==================== 第3行：下部 - 统计数据+校正控制区 ==================== -->
+        <Border Grid.Row="2" BorderBrush="#FF0078D7" BorderThickness="1" Background="#FFFAFAFA">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- 区域标题 -->
+                <Border Grid.Row="0" Background="#FF0078D7" Padding="6,4">
+                    <TextBlock Text="📋 统计数据-校正控制面板" Foreground="White" FontWeight="Bold" FontSize="12"/>
+                </Border>
+
+                <!-- 主内容区：统计数据 + 校正选项 -->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.2*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- 左侧：统计数据展示区 -->
+                    <StackPanel Grid.Column="0" Margin="5">
+                        <TextBlock Text="📊 统计数据详情" FontWeight="SemiBold" FontSize="12" 
+                                   Foreground="#333333" Margin="0,0,0,8"/>
+
+                        <!-- 平均值显示组 -->
+                        <Border BorderBrush="#FFE0E0E0" BorderThickness="1" CornerRadius="3" Padding="8,5" Margin="0,0,0,8">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="▪ 平均值 (Average)" FontWeight="SemiBold" FontSize="11" 
+                                           Foreground="#666666" Margin="0,0,0,5"/>
+                                <Grid Margin="5,0,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" Text="R:" FontWeight="Bold" Foreground="#CC0000" FontSize="11"/>
+                                    <TextBox Grid.Column="1" Width="55" IsReadOnly="True" Background="#FFFFFDD0" 
+                                             Text="{Binding AvgBlackLevelR, Mode=OneWay}" HorizontalContentAlignment="Center" Margin="2,0,8,0"
+                                             ToolTip="R通道平均黑电平值"/>
+
+                                    <TextBlock Grid.Column="2" Text="GR:" FontWeight="Bold" Foreground="#009900" FontSize="11" Margin="10,0,0,0"/>
+                                    <TextBox Grid.Column="3" Width="55" IsReadOnly="True" Background="#FFFFFDD0" 
+                                             Text="{Binding AvgBlackLevelGR, Mode=OneWay}" HorizontalContentAlignment="Center" Margin="2,0,8,0"
+                                             ToolTip="GR通道平均黑电平值"/>
+
+                                    <TextBlock Grid.Column="4" Text="GB:" FontWeight="Bold" Foreground="#999900" FontSize="11" Margin="10,0,0,0"/>
+                                    <TextBox Grid.Column="5" Width="55" IsReadOnly="True" Background="#FFFFFDD0" 
+                                             Text="{Binding AvgBlackLevelGB, Mode=OneWay}" HorizontalContentAlignment="Center" Margin="2,0,8,0"
+                                             ToolTip="GB通道平均黑电平值"/>
+
+                                    <TextBlock Grid.Column="6" Text="B:" FontWeight="Bold" Foreground="#0000CC" FontSize="11" Margin="10,0,0,0"/>
+                                    <TextBox Grid.Column="7" Width="55" IsReadOnly="True" Background="#FFFFFDD0" 
+                                             Text="{Binding AvgBlackLevelB, Mode=OneWay}" HorizontalContentAlignment="Center" Margin="2,0,0,0"
+                                             ToolTip="B通道平均黑电平值"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 中值显示组 -->
+                        <Border BorderBrush="#FFE0E0E0" BorderThickness="1" CornerRadius="3" Padding="8,5">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="▪ 中值 (Median)" FontWeight="SemiBold" FontSize="11" 
+                                           Foreground="#666666" Margin="0,0,0,5"/>
+                                <Grid Margin="5,0,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" Text="R:" FontWeight="Bold" Foreground="#CC0000" FontSize="11"/>
+                                    <TextBox Grid.Column="1" Width="55" IsReadOnly="True" Background="#FFDDFFDD" 
+                                             Text="{Binding MedianBlackLevelR, Mode=OneWay}" HorizontalContentAlignment="Center" Margin="2,0,8,0"
+                                             ToolTip="R通道中位黑电平值"/>
+
+                                    <TextBlock Grid.Column="2" Text="GR:" FontWeight="Bold" Foreground="#009900" FontSize="11" Margin="10,0,0,0"/>
+                                    <TextBox Grid.Column="3" Width="55" IsReadOnly="True" Background="#FFDDFFDD" 
+                                             Text="{Binding MedianBlackLevelGR, Mode=OneWay}" HorizontalContentAlignment="Center" Margin="2,0,8,0"
+                                             ToolTip="GR通道中位黑电平值"/>
+
+                                    <TextBlock Grid.Column="4" Text="GB:" FontWeight="Bold" Foreground="#999900" FontSize="11" Margin="10,0,0,0"/>
+                                    <TextBox Grid.Column="5" Width="55" IsReadOnly="True" Background="#FFDDFFDD" 
+                                             Text="{Binding MedianBlackLevelGB, Mode=OneWay}" HorizontalContentAlignment="Center" Margin="2,0,8,0"
+                                             ToolTip="GB通道中位黑电平值"/>
+
+                                    <TextBlock Grid.Column="6" Text="B:" FontWeight="Bold" Foreground="#0000CC" FontSize="11" Margin="10,0,0,0"/>
+                                    <TextBox Grid.Column="7" Width="55" IsReadOnly="True" Background="#FFDDFFDD" 
+                                             Text="{Binding MedianBlackLevelB, Mode=OneWay}" HorizontalContentAlignment="Center" Margin="2,0,0,0"
+                                             ToolTip="B通道中位黑电平值"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- 右侧：校正控制 + 文件信息 -->
+                    <StackPanel Grid.Column="2" Margin="3">
+                        <!-- 校正方式选择 -->
+                        <Border BorderBrush="#FF0078D7" BorderThickness="1" CornerRadius="3" Padding="5" Margin="0,0,0,5">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="⚙️ 校正方式设置" FontWeight="SemiBold" FontSize="12" 
+                                           Foreground="#0078D7" Margin="5"/>
+
+                                <StackPanel Orientation="Horizontal" Margin="5">
+                                    <TextBlock Text="减去:" VerticalAlignment="Center" FontWeight="SemiBold" 
+                                               Foreground="#333333" Margin="0,0,5,0"/>
+                                    <ComboBox VerticalContentAlignment="Center" Margin="5,0,0,0" Width="80" 
+                                              SelectedIndex="{Binding SelectedCorrection}" HorizontalAlignment="Left"
+                                              ToolTip="选择使用中值还是平均值作为校正基准">
+                                        <ComboBoxItem Content="📊 中值"/>
+                                        <ComboBoxItem Content="📈 平均值"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <Button Command="{Binding ApplyCorrectionCommand}" 
+                                        Margin="30,0,0,0" Padding="10,6" FontWeight="Bold"
+                                        HorizontalAlignment="Stretch"
+                                        ToolTip="应用选定的校正方式到黑电平参数 (Ctrl+Enter)">
+                                    ✅ 应用校正
+                                </Button>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- RAW文件信息 -->
+                        <Border BorderBrush="#FFCCCCCC" BorderThickness="1" CornerRadius="3" Padding="5">
+                            <StackPanel>
+                                <TextBlock Text="📁 RAW文件信息" FontWeight="SemiBold" FontSize="12" 
+                                           Foreground="#666666" Margin="0,0,0,3"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="文件路径:" FontSize="11" Foreground="#888888" Margin="0,3,10,3"/>
+                                <TextBox Background="#F5F5F5" IsReadOnly="True" Width="350" Height="25" Margin="0,0,0,0"
+                                         Text="{Binding RawFile, Mode=OneWay}"
+                                         ToolTip="当前加载的RAW图像文件完整路径"
+                                         TextWrapping="Wrap"/>
+                                </StackPanel>
+                                <Button Command="{Binding OpenRawFileCommand}" 
+                                        Margin="0,3,0,0" Padding="10,5"
+                                        HorizontalAlignment="Stretch"
+                                        ToolTip="打开新的RAW图像文件 (Ctrl+O)">
+                                    📂 选择新文件...
+                                </Button>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- ==================== 第4行：底部 - 状态栏 ==================== -->
+        <StatusBar Grid.Row="3">
+            <StatusBarItem>
+                <TextBlock x:Name="StatusBarText" Text="就绪 - BLC黑电平校正工具已就绪"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock x:Name="TxtProgressInfo" Text=""/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock Text="💡 提示: 使用Ctrl+快捷键加速操作 | BLC Black Level Correction Tool"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+    
+    <!--<Grid Background="#FFE5E5E5" Margin="10,10,10,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2.5*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="26"></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0">数据分布:</Label>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <chartingToolkit:Chart Grid.Column="0" Title="R" BorderThickness="0">
+                    <chartingToolkit:Chart.Axes>
+                        <chartingToolkit:LinearAxis  Name="ChartXMax" Orientation="X" Minimum="0" Maximum="1024" />
+                    </chartingToolkit:Chart.Axes>
+                    <chartingToolkit:Chart.LegendStyle>
+                        <Style TargetType="datavis:Legend">
+                            <Setter Property="Width" Value="0" />
+                        </Style>
+                    </chartingToolkit:Chart.LegendStyle>
+                    <chartingToolkit:AreaSeries ItemsSource="{Binding RPixelData}" DependentValuePath="Value" IndependentValuePath="Key" IsSelectionEnabled="True">
+                     
+                    </chartingToolkit:AreaSeries>
+                </chartingToolkit:Chart>
+                <chartingToolkit:Chart Grid.Column="1" Title="GR" BorderThickness="0">
+                    <chartingToolkit:Chart.Axes>
+                        <chartingToolkit:LinearAxis  Name="ChartXMax2" Orientation="X" Minimum="0" Maximum="1024" />
+                    </chartingToolkit:Chart.Axes>
+                    <chartingToolkit:Chart.LegendStyle>
+                        <Style TargetType="datavis:Legend">
+                            <Setter Property="Width" Value="0" />
+                        </Style>
+                    </chartingToolkit:Chart.LegendStyle>
+                    <chartingToolkit:AreaSeries ItemsSource="{Binding GRPixelData}" DependentValuePath="Value" IndependentValuePath="Key" IsSelectionEnabled="True"/>
+                </chartingToolkit:Chart>
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <chartingToolkit:Chart Grid.Column="0" Title="GB" BorderThickness="0">
+                    <chartingToolkit:Chart.Axes>
+                        <chartingToolkit:LinearAxis  Name="ChartXMax3" Orientation="X" Minimum="0" Maximum="1024" />
+                    </chartingToolkit:Chart.Axes>
+                    <chartingToolkit:Chart.LegendStyle>
+                        <Style TargetType="datavis:Legend">
+                            <Setter Property="Width" Value="0" />
+                        </Style>
+                    </chartingToolkit:Chart.LegendStyle>
+                    <chartingToolkit:AreaSeries ItemsSource="{Binding GBPixelData}" DependentValuePath="Value" IndependentValuePath="Key" IsSelectionEnabled="True"/>
+                </chartingToolkit:Chart>
+                <chartingToolkit:Chart Grid.Column="1" Title="B" BorderThickness="0">
+                    <chartingToolkit:Chart.Axes>
+                        <chartingToolkit:LinearAxis  Orientation="X" Minimum="0" Maximum="1024" />
+                    </chartingToolkit:Chart.Axes>
+                    <chartingToolkit:Chart.LegendStyle>
+                        <Style TargetType="datavis:Legend">
+                            <Setter Property="Width" Value="0" />
+                        </Style>
+                    </chartingToolkit:Chart.LegendStyle>
+                    <chartingToolkit:AreaSeries ItemsSource="{Binding BPixelData}" DependentValuePath="Value" IndependentValuePath="Key" IsSelectionEnabled="True"/>
+                </chartingToolkit:Chart>
+            </Grid>
+        </Grid>
+        <Grid Grid.Row="1" Margin="0,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" ></RowDefinition>
+                <RowDefinition Height="50" ></RowDefinition>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0">
+                <Label>统计数据:</Label>
+                <StackPanel Orientation="Horizontal" Height="30" Margin="0,0,0,0">
+                    <Label Width="50">平均值:</Label>
+                    <Label Content="avg__BLC__R :" />
+                    <Label Width="50" Content="{Binding AvgBlackLevelR}" HorizontalContentAlignment="Left"/>
+                    <Label Margin="10,0,0,0" Content="avg__BLC__GR :" />
+                    <Label Width="50" Content="{Binding AvgBlackLevelGR}" HorizontalContentAlignment="Left"/>
+                    <Label Margin="10,0,0,0" Content="avg__BLC__GB :" />
+                    <Label Width="50" Content="{Binding AvgBlackLevelGB}" HorizontalContentAlignment="Left"/>
+                    <Label Margin="10,0,0,0" Content="avg__BLC__B :" />
+                    <Label Width="50" Content="{Binding AvgBlackLevelB}" HorizontalContentAlignment="Left"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Height="30" Margin="0,0,0,0">
+                    <Label Width="50">中值:</Label>
+                    <Label Content="median__BLC__R :" />
+                    <Label Width="50" Content="{Binding MedianBlackLevelR}"/>
+                    <Label Margin="10,0,0,0" Content="median__BLC__GR :" />
+                    <Label Width="50" Content="{Binding MedianBlackLevelGR}"/>
+                    <Label Margin="10,0,0,0" Content="median__BLC__GB :" />
+                    <Label Width="50" Content="{Binding MedianBlackLevelGB}"/>
+                    <Label Margin="10,0,0,0" Content="median__BLC__B :" />
+                    <Label Width="50" Content="{Binding MedianBlackLevelB}"/>
+                </StackPanel>
+                <Label Margin="0,13,0,0" Height="26">校正:</Label>
+                <StackPanel Margin="5,0,0,0" Orientation="Horizontal">
+                    <Label Content="减去" />
+                    <ComboBox VerticalContentAlignment="Center" Margin="10,0,0,0" Width="70" SelectedIndex="{Binding SelectedCorrection}" HorizontalAlignment="Left" >
+                        <ComboBoxItem>中值</ComboBoxItem>
+                        <ComboBoxItem>平均值</ComboBoxItem>
+                    </ComboBox>
+                    <Button Margin="20,0,0,0" Padding="10,0,10,0" Command="{Binding ApplyCorrectionCommand}">应用</Button>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,18">
+                <Label VerticalContentAlignment="Center">Raw文件路径:</Label>
+                <TextBox Background="LightGray" IsReadOnly="True"  Width="300" Margin="5,4,0,4"
+                         Text="{Binding RawFile, Mode=OneWay}"></TextBox>
+                <Button Width="45"  Margin="15,4,0,4" Command="{Binding OpenRawFileCommand}">打开...</Button>
+            </StackPanel>
+        </Grid>
+    </Grid>-->
+</Window>

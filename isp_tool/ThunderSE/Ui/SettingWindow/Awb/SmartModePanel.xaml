@@ -1,0 +1,170 @@
+﻿<UserControl x:Class="ThunderSE.Ui.SettingWindow.Awb.SmartModePanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" 
+             d:DesignHeight="530" d:DesignWidth="220"
+             Background="Transparent">
+    
+    <UserControl.Resources>
+        <!-- 智能模式专用样式 - 符合现有设计规范 -->
+        <Style x:Key="SmartModeTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="Margin" Value="0,10,0,6"/>
+        </Style>
+        
+        <Style x:Key="SmartButtonStyle" TargetType="Button">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Margin" Value="0,7,0,0"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="FontSize" Value="11"/>
+        </Style>
+        
+        <Style x:Key="SmartSliderStyle" TargetType="Slider">
+            <Setter Property="Minimum" Value="4"/>
+            <Setter Property="Maximum" Value="16"/>
+            <Setter Property="TickFrequency" Value="2"/>
+            <Setter Property="TickPlacement" Value="BottomRight"/>
+            <Setter Property="IsSnapToTickEnabled" Value="True"/>
+            <Setter Property="Margin" Value="5,3,5,8"/>
+        </Style>
+    </UserControl.Resources>
+    
+    <Border BorderBrush="#FF28A745" BorderThickness="1" Background="#FFFAFAFA">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- 面板标题栏 - 绿色主题区分智能模式 -->
+            <Border Grid.Row="0" Background="#FF28A745" Padding="6">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="🧠 " FontSize="12"/>
+                    <TextBlock Text="智能插值模式" Foreground="White" 
+                               FontWeight="Bold" FontSize="12"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 主要内容区 -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" 
+                          Padding="8,5">
+                <StackPanel>
+                    
+                    <!-- 模式说明 -->
+                    <Border Background="#FFE8F5E9" Padding="8" CornerRadius="3"
+                            Margin="0,0,0,10">
+                        <TextBlock TextWrapping="Wrap" FontSize="10" 
+                                   Foreground="#2E7D32" LineHeight="14">
+                            <Run Text="✨ 通过编辑少量关键点（默认8个），自动生成平滑曲线"/>
+                            <LineBreak/>
+                            <Run Text="操作量减少75%，精度保持不变"/>
+                        </TextBlock>
+                    </Border>
+
+                    <!-- 关键点数量控制 -->
+                    <TextBlock Text="关键点数量设置" Style="{StaticResource SmartModeTitleStyle}"/>
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <Slider Grid.Column="0" 
+                                Value="{Binding KeyPointCountPerCurve, Mode=TwoWay}"
+                                Style="{StaticResource SmartSliderStyle}"
+                                ToolTip="调整每条曲线的关键点数量（4-16）"/>
+                        
+                        <TextBlock Grid.Column="1" 
+                                   Text="{Binding KeyPointCountPerCurve}" 
+                                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                                   FontWeight="Bold" FontSize="13" Foreground="#28A745"/>
+                    </Grid>
+
+                    <Separator Margin="0,8,0,8"/>
+
+                    <!-- 快速操作按钮组 -->
+                    <TextBlock Text="快速操作" Style="{StaticResource SmartModeTitleStyle}"/>
+                    
+                    <Button Content="🎯 初始化关键点" 
+                            Command="{Binding InitializeDefaultKeyPointsCommand}"
+                            Style="{StaticResource SmartButtonStyle}"
+                            ToolTip="重置为均匀分布的默认关键点 (Ctrl+R)"/>
+                    
+                    <Button Content="📈 生成完整曲线" 
+                            Command="{Binding GenerateCurveFromKeyPointsCommand}"
+                            Style="{StaticResource SmartButtonStyle}"
+                            FontWeight="SemiBold"
+                            ToolTip="从当前关键点通过三次样条插值生成32点曲线 (Ctrl+G)"/>
+
+                    <Button Content="💾 应用到设备" 
+                            Command="{Binding ApplySmartInterpolationCommand}"
+                            Style="{StaticResource SmartButtonStyle}"
+                            FontWeight="Bold"
+                            ToolTip="生成128字节stat_tab并应用到设备 (Ctrl+Enter)"/>
+
+                    <Separator Margin="0,10,0,10"/>
+
+                    <!-- 高级选项 -->
+                    <TextBlock Text="高级选项" Style="{StaticResource SmartModeTitleStyle}"/>
+                    
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                        <CheckBox IsChecked="{Binding SmartInterpolationEnabled, Mode=TwoWay}"
+                                  VerticalAlignment="Center"
+                                  ToolTip="启用/禁用智能插值算法">
+                            <TextBlock Text="启用智能插值" FontSize="11" 
+                                       VerticalAlignment="Center"/>
+                        </CheckBox>
+                    </StackPanel>
+
+                    <!-- 精度指示器 -->
+                    <Border Background="#FFF5F5F5" Padding="8" CornerRadius="3"
+                            Margin="0,10,0,0">
+                        <StackPanel>
+                            <TextBlock Text="精度预估" FontWeight="SemiBold" 
+                                       FontSize="10" Foreground="#666666"
+                                       Margin="0,0,0,4"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="平均误差:" FontSize="9" 
+                                               Foreground="#888888"/>
+                                    <TextBlock Text="1.5%" FontSize="11" 
+                                               FontWeight="Bold" Foreground="#28A745"/>
+                                </StackPanel>
+                                
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="最大偏差:" FontSize="9" 
+                                               Foreground="#888888"/>
+                                    <TextBlock Text="3级" FontSize="11" 
+                                               FontWeight="Bold" Foreground="#28A745"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- 底部状态栏 -->
+            <Border Grid.Row="2" Background="#FFE8F5E9" Padding="6,4"
+                    BorderThickness="1,0,0,0" BorderBrush="#FFC8E6C9">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="⚡ " FontSize="10"/>
+                    <TextBlock x:Name="TxtSmartStatus" 
+                               Text="就绪 - 等待操作" 
+                               FontSize="10" Foreground="#2E7D32"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

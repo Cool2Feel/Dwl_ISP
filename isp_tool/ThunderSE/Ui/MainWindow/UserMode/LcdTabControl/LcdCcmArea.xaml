@@ -1,0 +1,323 @@
+﻿<UserControl x:Class="ThunderSE.Ui.MainWindow.UserMode.LcdTabControl.LcdCcmArea"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:LcdTabControl="clr-namespace:ThunderSE.Ui.MainWindow.UserMode.LcdTabControl"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:UserMode="clr-namespace:ThunderSE.Ui.MainWindow.UserMode"
+             xmlns:input="clr-namespace:System.Windows.Input;assembly=PresentationCore"
+             xmlns:customControl="clr-namespace:ThunderSE.Ui.CommonCustomControl"
+             mc:Ignorable="d" 
+             d:DesignHeight="1000" d:DesignWidth="1000" Background="#FFE5E5E5"
+             DataContextChanged="OnDataContextChanged">
+    <UserControl.Resources>
+        <UserMode:DataArrayToControlCollectionConverter x:Key="ccmConverter" />
+    </UserControl.Resources>
+    <GroupBox Header="颜色矩阵">
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <Label >
+                    <TextBlock>值 :</TextBlock>
+                </Label>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel>
+                            <TextBox Margin="10,0,0,0" DockPanel.Dock="Bottom" Height="20" Width="40" KeyDown="OnCCMDataTextBoxKeyDown"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                <TextBox.Resources>
+                                    <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="de_ccm" 
+                                             Converter="{StaticResource ccmConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>0</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                        <Binding.ValidationRules>
+                                            <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                <customControl:NumberRange.Wrapper>
+                                                    <customControl:Wrapper MinValue="{Binding Data.MinValue0to8, Source={StaticResource proxy}}"
+                                                                           MaxValue="{Binding Data.MaxValue0to8, Source={StaticResource proxy}}"/>
+                                                </customControl:NumberRange.Wrapper>
+                                            </customControl:NumberRange>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox Margin="10,0,0,0" DockPanel.Dock="Bottom" Height="20" Width="40" KeyDown="OnCCMDataTextBoxKeyDown"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                <TextBox.Resources>
+                                    <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="de_ccm" 
+                                             Converter="{StaticResource ccmConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>1</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                        <Binding.ValidationRules>
+                                            <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                <customControl:NumberRange.Wrapper>
+                                                    <customControl:Wrapper MinValue="{Binding Data.MinValue0to8, Source={StaticResource proxy}}"
+                                                                           MaxValue="{Binding Data.MaxValue0to8, Source={StaticResource proxy}}"/>
+                                                </customControl:NumberRange.Wrapper>
+                                            </customControl:NumberRange>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox Margin="10,0,0,0" DockPanel.Dock="Bottom" Height="20" Width="40" KeyDown="OnCCMDataTextBoxKeyDown"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                <TextBox.Resources>
+                                    <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="de_ccm" 
+                                             Converter="{StaticResource ccmConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>2</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                        <Binding.ValidationRules>
+                                            <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                <customControl:NumberRange.Wrapper>
+                                                    <customControl:Wrapper MinValue="{Binding Data.MinValue0to8, Source={StaticResource proxy}}"
+                                                                           MaxValue="{Binding Data.MaxValue0to8, Source={StaticResource proxy}}"/>
+                                                </customControl:NumberRange.Wrapper>
+                                            </customControl:NumberRange>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBox Margin="10,0,0,0" DockPanel.Dock="Bottom" Height="20" Width="40" KeyDown="OnCCMDataTextBoxKeyDown"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                <TextBox.Resources>
+                                    <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="de_ccm" 
+                                             Converter="{StaticResource ccmConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>3</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                        <Binding.ValidationRules>
+                                            <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                <customControl:NumberRange.Wrapper>
+                                                    <customControl:Wrapper MinValue="{Binding Data.MinValue0to8, Source={StaticResource proxy}}"
+                                                                           MaxValue="{Binding Data.MaxValue0to8, Source={StaticResource proxy}}"/>
+                                                </customControl:NumberRange.Wrapper>
+                                            </customControl:NumberRange>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox Margin="10,0,0,0" DockPanel.Dock="Bottom" Height="20" Width="40" KeyDown="OnCCMDataTextBoxKeyDown"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                <TextBox.Resources>
+                                    <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="de_ccm" 
+                                             Converter="{StaticResource ccmConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>4</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                        <Binding.ValidationRules>
+                                            <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                <customControl:NumberRange.Wrapper>
+                                                    <customControl:Wrapper MinValue="{Binding Data.MinValue0to8, Source={StaticResource proxy}}"
+                                                                           MaxValue="{Binding Data.MaxValue0to8, Source={StaticResource proxy}}"/>
+                                                </customControl:NumberRange.Wrapper>
+                                            </customControl:NumberRange>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox Margin="10,0,0,0" DockPanel.Dock="Bottom" Height="20" Width="40" KeyDown="OnCCMDataTextBoxKeyDown"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                <TextBox.Resources>
+                                    <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="de_ccm" 
+                                             Converter="{StaticResource ccmConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>5</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                        <Binding.ValidationRules>
+                                            <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                <customControl:NumberRange.Wrapper>
+                                                    <customControl:Wrapper MinValue="{Binding Data.MinValue0to8, Source={StaticResource proxy}}"
+                                                                           MaxValue="{Binding Data.MaxValue0to8, Source={StaticResource proxy}}"/>
+                                                </customControl:NumberRange.Wrapper>
+                                            </customControl:NumberRange>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBox Margin="10,0,0,0" DockPanel.Dock="Bottom" Height="20" Width="40" KeyDown="OnCCMDataTextBoxKeyDown"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                <TextBox.Resources>
+                                    <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="de_ccm" 
+                                             Converter="{StaticResource ccmConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>6</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                        <Binding.ValidationRules>
+                                            <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                <customControl:NumberRange.Wrapper>
+                                                    <customControl:Wrapper MinValue="{Binding Data.MinValue0to8, Source={StaticResource proxy}}"
+                                                                           MaxValue="{Binding Data.MaxValue0to8, Source={StaticResource proxy}}"/>
+                                                </customControl:NumberRange.Wrapper>
+                                            </customControl:NumberRange>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox Margin="10,0,0,0" DockPanel.Dock="Bottom" Height="20" Width="40" KeyDown="OnCCMDataTextBoxKeyDown"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                <TextBox.Resources>
+                                    <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="de_ccm" 
+                                             Converter="{StaticResource ccmConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>7</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                        <Binding.ValidationRules>
+                                            <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                <customControl:NumberRange.Wrapper>
+                                                    <customControl:Wrapper MinValue="{Binding Data.MinValue0to8, Source={StaticResource proxy}}"
+                                                                           MaxValue="{Binding Data.MaxValue0to8, Source={StaticResource proxy}}"/>
+                                                </customControl:NumberRange.Wrapper>
+                                            </customControl:NumberRange>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox Margin="10,0,0,0" DockPanel.Dock="Bottom" Height="20" Width="40" KeyDown="OnCCMDataTextBoxKeyDown"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                <TextBox.Resources>
+                                    <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                </TextBox.Resources>
+                                <TextBox.Text>
+                                    <Binding Path="de_ccm" 
+                                             Converter="{StaticResource ccmConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>8</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                        <Binding.ValidationRules>
+                                            <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                <customControl:NumberRange.Wrapper>
+                                                    <customControl:Wrapper MinValue="{Binding Data.MinValue0to8, Source={StaticResource proxy}}"
+                                                                           MaxValue="{Binding Data.MaxValue0to8, Source={StaticResource proxy}}"/>
+                                                </customControl:NumberRange.Wrapper>
+                                            </customControl:NumberRange>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                        <TextBox Margin="10,0,0,0" DockPanel.Dock="Bottom" Height="20" Width="40"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                            <TextBox.Resources>
+                                <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                            </TextBox.Resources>
+                            <TextBox.Text>
+                                <Binding Path="de_ccm" 
+                                             Converter="{StaticResource ccmConverter}" >
+                                    <Binding.ConverterParameter>
+                                        <sys:Int32>9</sys:Int32>
+                                    </Binding.ConverterParameter>
+                                    <Binding.ValidationRules>
+                                        <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                            <customControl:NumberRange.Wrapper>
+                                                <customControl:Wrapper MinValue="{Binding Data.MinValue9to11, Source={StaticResource proxy}}"
+                                                                       MaxValue="{Binding Data.MaxValue9to11, Source={StaticResource proxy}}"/>
+                                            </customControl:NumberRange.Wrapper>
+                                        </customControl:NumberRange>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <TextBox Margin="10,0,0,0" DockPanel.Dock="Bottom" Height="20" Width="40"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                            <TextBox.Resources>
+                                <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                            </TextBox.Resources>
+                            <TextBox.Text>
+                                <Binding Path="de_ccm" 
+                                             Converter="{StaticResource ccmConverter}" >
+                                    <Binding.ConverterParameter>
+                                        <sys:Int32>10</sys:Int32>
+                                    </Binding.ConverterParameter>
+                                    <Binding.ValidationRules>
+                                        <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                            <customControl:NumberRange.Wrapper>
+                                                <customControl:Wrapper MinValue="{Binding Data.MinValue9to11, Source={StaticResource proxy}}"
+                                                                       MaxValue="{Binding Data.MaxValue9to11, Source={StaticResource proxy}}"/>
+                                            </customControl:NumberRange.Wrapper>
+                                        </customControl:NumberRange>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <TextBox Margin="10,0,0,0" DockPanel.Dock="Bottom" Height="20" Width="40"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                            <TextBox.Resources>
+                                <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                            </TextBox.Resources>
+                            <TextBox.Text>
+                                <Binding Path="de_ccm" 
+                                             Converter="{StaticResource ccmConverter}" >
+                                    <Binding.ConverterParameter>
+                                        <sys:Int32>11</sys:Int32>
+                                    </Binding.ConverterParameter>
+                                    <Binding.ValidationRules>
+                                        <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                            <customControl:NumberRange.Wrapper>
+                                                <customControl:Wrapper MinValue="{Binding Data.MinValue9to11, Source={StaticResource proxy}}"
+                                                                       MaxValue="{Binding Data.MaxValue9to11, Source={StaticResource proxy}}"/>
+                                            </customControl:NumberRange.Wrapper>
+                                        </customControl:NumberRange>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5,10,0,0">
+                        <Label>预设值 :</Label>
+                        <RadioButton GroupName="PresetCcmVal" Name="PresetCCMValRButton" Checked="OnSelectPresetCcmVal" VerticalAlignment="Center">R</RadioButton>
+                        <RadioButton GroupName="PresetCcmVal" Name="PresetCCMValGButton" Checked="OnSelectPresetCcmVal" Margin="10,0,0,0" VerticalAlignment="Center">G</RadioButton>
+                        <RadioButton GroupName="PresetCcmVal" Name="PresetCCMValBButton" Checked="OnSelectPresetCcmVal" Margin="10,0,0,0" VerticalAlignment="Center">B</RadioButton>
+                        <RadioButton GroupName="PresetCcmVal" Name="PresetCCMValYButton" Checked="OnSelectPresetCcmVal" Margin="10,0,0,0" VerticalAlignment="Center">Y</RadioButton>
+                        <RadioButton GroupName="PresetCcmVal" Name="PresetCCMValCButton" Checked="OnSelectPresetCcmVal" Margin="10,0,0,0" VerticalAlignment="Center">C</RadioButton>
+                        <RadioButton GroupName="PresetCcmVal" Name="PresetCCMValMButton" Checked="OnSelectPresetCcmVal" Margin="10,0,0,0" VerticalAlignment="Center">M</RadioButton>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </GroupBox>
+</UserControl>

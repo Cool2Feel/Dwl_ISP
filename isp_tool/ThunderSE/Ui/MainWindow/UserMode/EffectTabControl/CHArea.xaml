@@ -1,0 +1,254 @@
+﻿<UserControl x:Class="ThunderSE.Ui.MainWindow.UserMode.EffectTabControl.CHArea"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="1000" d:DesignWidth="1000" Background="#FFE5E5E5"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:UserMode="clr-namespace:ThunderSE.Ui.MainWindow.UserMode" 
+             xmlns:input="clr-namespace:System.Windows.Input;assembly=PresentationCore"
+             xmlns:customControl="clr-namespace:ThunderSE.Ui.CommonCustomControl">
+    <UserControl.Resources>
+        <UserMode:DataArrayToControlCollectionConverter x:Key="RRateConverter" />
+        <UserMode:DataArrayToControlCollectionConverter x:Key="EnhanceConverter" />
+    </UserControl.Resources>
+    <GroupBox Header="颜色增强">
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <Label Content="使能 :"/>
+                <CheckBox IsChecked="{Binding IsChEnable}"/>
+            </StackPanel>
+            <StackPanel  Margin="0,10,0,0" Orientation="Horizontal" >
+                <StackPanel>
+                    <Label DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,25,0,0" >
+                        <TextBlock>强度 :</TextBlock>
+                    </Label>
+                    <Label DockPanel.Dock="Left" Margin="0,94,0,0" VerticalAlignment="Center">
+                        <TextBlock>使能 :</TextBlock>
+                    </Label>
+                </StackPanel>
+                <GroupBox Height="180">
+                    <StackPanel Orientation="Horizontal">
+                        <DockPanel LastChildFill="True">
+                            <CheckBox DockPanel.Dock="Bottom" HorizontalAlignment="Center">
+                                <CheckBox.IsChecked>
+                                    <Binding Path="enhance" 
+                                             Converter="{StaticResource EnhanceConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>0</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                    </Binding>
+                                </CheckBox.IsChecked>
+                            </CheckBox>
+                            <Label DockPanel.Dock="Bottom" HorizontalAlignment="Center">R</Label>
+                            <DockPanel>
+                                <TextBox DockPanel.Dock="Bottom" Width="30" Margin="0,10,0,0" 
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                    <TextBox.Resources>
+                                        <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                    </TextBox.Resources>
+                                    <TextBox.Text>
+                                        <Binding Path="r_rate_r" >
+                                            <Binding.ValidationRules>
+                                                <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                    <customControl:NumberRange.Wrapper>
+                                                        <customControl:Wrapper MinValue="0"
+                                                               MaxValue="{Binding Data.MaxRateValue, Source={StaticResource proxy}}"/>
+                                                    </customControl:NumberRange.Wrapper>
+                                                </customControl:NumberRange>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                                <Slider HorizontalAlignment="Center" Orientation="Vertical" SmallChange="1" IsSnapToTickEnabled="True"
+                                    Maximum="{Binding MaxRateValue}" Value="{Binding r_rate_r}"/>
+                            </DockPanel>
+                        </DockPanel>
+                        <DockPanel LastChildFill="True" Margin="20,0,0,0">
+                            <CheckBox DockPanel.Dock="Bottom" HorizontalAlignment="Center">
+                                <CheckBox.IsChecked>
+                                    <Binding Path="enhance" 
+                                             Converter="{StaticResource EnhanceConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>1</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                    </Binding>
+                                </CheckBox.IsChecked>
+                            </CheckBox>
+                            <Label DockPanel.Dock="Bottom" HorizontalAlignment="Center">G</Label>
+                            <DockPanel>
+                                <TextBox DockPanel.Dock="Bottom" Width="30" Margin="0,10,0,0" 
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                    <TextBox.Resources>
+                                        <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                    </TextBox.Resources>
+                                    <TextBox.Text>
+                                        <Binding Path="r_rate_g" >
+                                            <Binding.ValidationRules>
+                                                <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                    <customControl:NumberRange.Wrapper>
+                                                        <customControl:Wrapper MinValue="0"
+                                                               MaxValue="{Binding Data.MaxRateValue, Source={StaticResource proxy}}"/>
+                                                    </customControl:NumberRange.Wrapper>
+                                                </customControl:NumberRange>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                                <Slider HorizontalAlignment="Center" Orientation="Vertical" SmallChange="1" IsSnapToTickEnabled="True"
+                                    Maximum="{Binding MaxRateValue}" Value="{Binding r_rate_g}"/>
+                            </DockPanel>
+                        </DockPanel>
+                        <DockPanel LastChildFill="True" Margin="20,0,0,0">
+                            <CheckBox DockPanel.Dock="Bottom" HorizontalAlignment="Center">
+                                <CheckBox.IsChecked>
+                                    <Binding Path="enhance" 
+                                             Converter="{StaticResource EnhanceConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>2</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                    </Binding>
+                                </CheckBox.IsChecked>
+                            </CheckBox>
+                            <Label DockPanel.Dock="Bottom" HorizontalAlignment="Center">B</Label>
+                            <DockPanel>
+                                <TextBox DockPanel.Dock="Bottom" Width="30" Margin="0,10,0,0" 
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                    <TextBox.Resources>
+                                        <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                    </TextBox.Resources>
+                                    <TextBox.Text>
+                                        <Binding Path="r_rate_b" >
+                                            <Binding.ValidationRules>
+                                                <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                    <customControl:NumberRange.Wrapper>
+                                                        <customControl:Wrapper MinValue="0"
+                                                               MaxValue="{Binding Data.MaxRateValue, Source={StaticResource proxy}}"/>
+                                                    </customControl:NumberRange.Wrapper>
+                                                </customControl:NumberRange>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                                <Slider HorizontalAlignment="Center" Orientation="Vertical" SmallChange="1" IsSnapToTickEnabled="True"
+                                    Maximum="{Binding MaxRateValue}" Value="{Binding r_rate_b}"/>
+                            </DockPanel>
+                        </DockPanel>
+                        <DockPanel LastChildFill="True" Margin="20,0,0,0">
+                            <CheckBox DockPanel.Dock="Bottom" HorizontalAlignment="Center">
+                                <CheckBox.IsChecked>
+                                    <Binding Path="enhance" 
+                                             Converter="{StaticResource EnhanceConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>3</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                    </Binding>
+                                </CheckBox.IsChecked>
+                            </CheckBox>
+                            <Label DockPanel.Dock="Bottom" HorizontalAlignment="Center">Y</Label>
+                            <DockPanel>
+                                <TextBox DockPanel.Dock="Bottom" Width="30" Margin="0,10,0,0" 
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                    <TextBox.Resources>
+                                        <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                    </TextBox.Resources>
+                                    <TextBox.Text>
+                                        <Binding Path="r_rate_y" >
+                                            <Binding.ValidationRules>
+                                                <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                    <customControl:NumberRange.Wrapper>
+                                                        <customControl:Wrapper MinValue="0"
+                                                               MaxValue="{Binding Data.MaxRateValue, Source={StaticResource proxy}}"/>
+                                                    </customControl:NumberRange.Wrapper>
+                                                </customControl:NumberRange>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                                <Slider HorizontalAlignment="Center" Orientation="Vertical" SmallChange="1" IsSnapToTickEnabled="True"
+                                    Maximum="{Binding MaxRateValue}" Value="{Binding r_rate_y}"/>
+                            </DockPanel>
+                        </DockPanel>
+                        <DockPanel LastChildFill="True" Margin="20,0,0,0">
+                            <CheckBox DockPanel.Dock="Bottom" HorizontalAlignment="Center">
+                                <CheckBox.IsChecked>
+                                    <Binding Path="enhance" 
+                                             Converter="{StaticResource EnhanceConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>4</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                    </Binding>
+                                </CheckBox.IsChecked>
+                            </CheckBox>
+                            <Label DockPanel.Dock="Bottom" HorizontalAlignment="Center">C</Label>
+                            <DockPanel>
+                                <TextBox DockPanel.Dock="Bottom" Width="30" Margin="0,10,0,0" 
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                    <TextBox.Resources>
+                                        <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                    </TextBox.Resources>
+                                    <TextBox.Text>
+                                        <Binding Path="r_rate_c" >
+                                            <Binding.ValidationRules>
+                                                <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                    <customControl:NumberRange.Wrapper>
+                                                        <customControl:Wrapper MinValue="0"
+                                                               MaxValue="{Binding Data.MaxRateValue, Source={StaticResource proxy}}"/>
+                                                    </customControl:NumberRange.Wrapper>
+                                                </customControl:NumberRange>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                                <Slider HorizontalAlignment="Center" Orientation="Vertical" SmallChange="1" IsSnapToTickEnabled="True"
+                                    Maximum="{Binding MaxRateValue}" Value="{Binding r_rate_c}"/>
+                            </DockPanel>
+                        </DockPanel>
+                        <DockPanel LastChildFill="True" Margin="20,0,0,0">
+                            <CheckBox DockPanel.Dock="Bottom" HorizontalAlignment="Center">
+                                <CheckBox.IsChecked>
+                                    <Binding Path="enhance" 
+                                             Converter="{StaticResource EnhanceConverter}" >
+                                        <Binding.ConverterParameter>
+                                            <sys:Int32>5</sys:Int32>
+                                        </Binding.ConverterParameter>
+                                    </Binding>
+                                </CheckBox.IsChecked>
+                            </CheckBox>
+                            <Label DockPanel.Dock="Bottom" HorizontalAlignment="Center">M</Label>
+                            <DockPanel>
+                                <TextBox DockPanel.Dock="Bottom" Width="30" Margin="0,10,0,0" 
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                                    <TextBox.Resources>
+                                        <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                                    </TextBox.Resources>
+                                    <TextBox.Text>
+                                        <Binding Path="r_rate_m" >
+                                            <Binding.ValidationRules>
+                                                <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                                    <customControl:NumberRange.Wrapper>
+                                                        <customControl:Wrapper MinValue="0"
+                                                               MaxValue="{Binding Data.MaxRateValue, Source={StaticResource proxy}}"/>
+                                                    </customControl:NumberRange.Wrapper>
+                                                </customControl:NumberRange>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                                <Slider HorizontalAlignment="Center" Orientation="Vertical" SmallChange="1" IsSnapToTickEnabled="True"
+                                    Maximum="{Binding MaxRateValue}" Value="{Binding r_rate_m}"/>
+                            </DockPanel>
+                        </DockPanel>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </StackPanel>
+    </GroupBox>
+</UserControl>

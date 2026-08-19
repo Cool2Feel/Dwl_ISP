@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="ThunderSE.Ui.MainWindow.UserMode.EffectTabControl.EEArea"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="1000" Background="#FFE5E5E5"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:EffectTabControl="clr-namespace:ThunderSE.Ui.MainWindow.UserMode.EffectTabControl"
+             xmlns:input="clr-namespace:System.Windows.Input;assembly=PresentationCore"
+             xmlns:customControl="clr-namespace:ThunderSE.Ui.CommonCustomControl">
+    <GroupBox Header="锐化">
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <Label>
+                    <TextBlock>使能 :</TextBlock>
+                </Label>
+                <CheckBox IsChecked="{Binding IsEeEnable}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <Label >
+                    <TextBlock>锐化强度 :</TextBlock>
+                </Label>
+                <Slider Orientation="Horizontal" VerticalAlignment="Center" Width="100"
+                        Value="{Binding ee_class}" Maximum="{Binding MaxEEClassValue}" SmallChange="1" IsSnapToTickEnabled="True"/>
+                <TextBox Margin="10,0,0,0" DockPanel.Dock="Bottom" Height="20" Width="30"
+                                     input:InputMethod.IsInputMethodEnabled="False" 
+                                     customControl:NumberOnlyBehaviour.IsEnabled="True" Style="{DynamicResource TextBoxStyle1}">
+                    <TextBox.Resources>
+                        <customControl:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                    </TextBox.Resources>
+                    <TextBox.Text>
+                        <Binding Path="ee_class" >
+                            <Binding.ValidationRules>
+                                <customControl:NumberRange ValidatesOnTargetUpdated="True" >
+                                    <customControl:NumberRange.Wrapper>
+                                        <customControl:Wrapper MinValue="0"
+                                                               MaxValue="{Binding Data.MaxEEClassValue, Source={StaticResource proxy}}"/>
+                                    </customControl:NumberRange.Wrapper>
+                                </customControl:NumberRange>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+            </StackPanel>
+        </StackPanel>
+    </GroupBox>
+</UserControl>

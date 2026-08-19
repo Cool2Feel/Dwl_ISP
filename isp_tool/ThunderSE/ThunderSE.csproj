@@ -1,0 +1,621 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{AE503B37-445F-46DE-B8FD-25811A9B0323}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ThunderSE</RootNamespace>
+    <AssemblyName>JT-USBCamera-ISPTool</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <PublishUrl>发布\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CommonServiceLocator, Version=2.0.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.2.0.2\lib\net45\CommonServiceLocator.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.4.1.0, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.4.1.0, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationFramework.Aero" />
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Controls.DataVisualization.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\WPFToolkit.DataVisualization.3.5.50211.1\lib\System.Windows.Controls.DataVisualization.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Controls.Input.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\WPFToolkit.3.5.50211.1\lib\System.Windows.Controls.Input.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Controls.Layout.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\WPFToolkit.3.5.50211.1\lib\System.Windows.Controls.Layout.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WPFToolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\WPFToolkit.3.5.50211.1\lib\WPFToolkit.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="IspToolApp.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="DeviceConfig\Isp\AF.cs" />
+    <Compile Include="DeviceConfig\Isp\GainLevel.cs" />
+    <Compile Include="DeviceConfig\Isp\GammaTable.cs" />
+    <Compile Include="DeviceConfig\MemoryManager.cs" />
+    <Compile Include="DeviceConfig\XmlHelper.cs" />
+    <Compile Include="IspToolApp.xaml.cs">
+      <DependentUpon>IspToolApp.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DeviceConfig\Config.cs" />
+    <Compile Include="DeviceConfig\ConfigManager.cs" />
+    <Compile Include="DeviceConfig\Isp\AE\AE.cs" />
+    <Compile Include="DeviceConfig\Isp\AE\AEData.cs" />
+    <Compile Include="DeviceConfig\Isp\CCM.cs" />
+    <Compile Include="DeviceConfig\Isp\CH.cs" />
+    <Compile Include="DeviceConfig\Isp\CommonConfig.cs" />
+    <Compile Include="DeviceConfig\Isp\DDC.cs" />
+    <Compile Include="DeviceConfig\Isp\EE.cs" />
+    <Compile Include="DeviceConfig\Isp\SAJ.cs" />
+    <Compile Include="DeviceConfig\Isp\VDE.cs" />
+    <Compile Include="DeviceConfig\Lcd\LcdApi.cs" />
+    <Compile Include="DeviceConfig\Lcd\LcdLsawtooth.cs" />
+    <Compile Include="DeviceConfig\Lcd\LcdSaj.cs" />
+    <Compile Include="DeviceConfig\Lcd\LcdCcm.cs" />
+    <Compile Include="DeviceConfig\Lcd\LcdGamma.cs" />
+    <Compile Include="DeviceConfig\Lcd\LcdVde.cs" />
+    <Compile Include="DeviceConfig\Lcd\LcdCommon.cs" />
+    <Compile Include="DeviceConfig\Lcd\LcdSetting.cs" />
+    <Compile Include="DeviceConfig\Lcd\LcdSettingSection.cs" />
+    <Compile Include="Device\DeviceApi.cs" />
+    <Compile Include="Device\DeviceManger.cs" />
+    <Compile Include="DeviceConfig\Isp\LensShading.cs" />
+    <Compile Include="DeviceConfig\Isp\BlackLevel.cs" />
+    <Compile Include="DeviceConfig\Isp\Processor.cs" />
+    <Compile Include="DeviceConfig\Isp\IspApi.cs" />
+    <Compile Include="DeviceConfig\Isp\ProcessStep.cs" />
+    <Compile Include="DeviceConfig\Isp\AutoWhiteBalance.cs" />
+    <Compile Include="DeviceConfig\Isp\Gamma.cs" />
+    <Compile Include="Common\Logger.cs" />
+    <Compile Include="Model\AsyncRelayCommand.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Ui\CommonCustomControl\NumberRange.cs" />
+    <Compile Include="Ui\CommonCustomControl\NumberOnlyBehaviour.cs" />
+    <Compile Include="Ui\Converter\Converter.cs" />
+    <Compile Include="Ui\MainWindow\CrashLogWindow.xaml.cs">
+      <DependentUpon>CrashLogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\ArrayDataWindow.xaml.cs">
+      <DependentUpon>ArrayDataWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\CreateConfigWindow.xaml.cs">
+      <DependentUpon>CreateConfigWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\DeviceConfigPageViewModel.cs" />
+    <Compile Include="Ui\MainWindow\DeviceConfigPageViewModel.I2C.cs" />
+    <Compile Include="Ui\MainWindow\DeviceConfigPageViewModel.Writer.cs" />
+    <Compile Include="Ui\MainWindow\ExpGainWindow.xaml.cs">
+      <DependentUpon>ExpGainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\ExpGainWindowViewModel.cs" />
+    <Compile Include="Ui\MainWindow\FormatDataWindow.xaml.cs">
+      <DependentUpon>FormatDataWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\IICConfigWindow.xaml.cs">
+      <DependentUpon>IICConfigWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\MainFrameForDevelopViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\CommonTab.xaml.cs">
+      <DependentUpon>CommonTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UserMode\CommonTabViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\EffectTabControl\DDCArea.xaml.cs">
+      <DependentUpon>DDCArea.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UserMode\EffectTabControl\DDCAreaViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\LcdTab.xaml.cs">
+      <DependentUpon>LcdTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UserMode\EffectTab.xaml.cs">
+      <DependentUpon>EffectTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UserMode\EffectTabControl\CCMArea.xaml.cs">
+      <DependentUpon>CCMArea.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UserMode\EffectTabControl\CCMAreaViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\EffectTabControl\SAJArea.xaml.cs">
+      <DependentUpon>SAJArea.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UserMode\EffectTabControl\AEArea.xaml.cs">
+      <DependentUpon>AEArea.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UserMode\EffectTabControl\SAJAreaViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\EffectTabControl\AEAreaViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\DataArrayToControlCollectionConverter.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\EffectTabControl\EEArea.xaml.cs">
+      <DependentUpon>EEArea.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UserMode\EffectTabControl\CHArea.xaml.cs">
+      <DependentUpon>CHArea.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UserMode\EffectTabControl\CHAreaViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\EffectTabControl\EEAreaViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\EffectTabControl\VDEArea.xaml.cs">
+      <DependentUpon>VDEArea.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UserMode\EffectTabControl\VDEAreaViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\LcdTabControl\LcdSajArea.xaml.cs">
+      <DependentUpon>LcdSajArea.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UserMode\LcdTabControl\LcdSajAreaViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\LcdTabControl\LcdGammaArea.xaml.cs">
+      <DependentUpon>LcdGammaArea.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UserMode\LcdTabControl\LcdCcmArea.xaml.cs">
+      <DependentUpon>LcdCcmArea.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UserMode\LcdTabControl\LcdLsawtoothArea.xaml.cs">
+      <DependentUpon>LcdLsawtoothArea.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UserMode\LcdTabControl\LcdVdeArea.xaml.cs">
+      <DependentUpon>LcdVdeArea.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UserMode\LcdTabControl\LcdGammaAreaViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\LcdTabControl\LcdCcmAreaViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\LcdTabControl\LcdLsawtoothAreaViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\LcdTabControl\LcdVdeAreaViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\LcdTabViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\EffectTabViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\LcdTabControl\LcdCommonArea.xaml.cs">
+      <DependentUpon>LcdCommonArea.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UserMode\LcdTabControl\LcdCommonAreaViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UserMode\MainFrameForUser.xaml.cs">
+      <DependentUpon>MainFrameForUser.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UserMode\MainFrameForUserViewModel.cs" />
+    <Compile Include="Ui\MainWindow\UvcViewControl.xaml.cs">
+      <DependentUpon>UvcViewControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\UvcWindow.xaml.cs">
+      <DependentUpon>UvcWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\ProcAmpPanel.xaml.cs">
+      <DependentUpon>ProcAmpPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\ProcAmpWindow.xaml.cs">
+      <DependentUpon>ProcAmpWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\CameraControlWindow.xaml.cs">
+      <DependentUpon>CameraControlWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\CameraControlPanel.xaml.cs">
+      <DependentUpon>CameraControlPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\DevicePropertyWindow.xaml.cs">
+      <DependentUpon>DevicePropertyWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\SettingWindow\Awb\AwbIQWindow.xaml.cs">
+      <DependentUpon>AwbIQWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\SettingWindow\Awb\CubicSplineInterpolator.cs" />
+    <Compile Include="Ui\SettingWindow\Awb\LabelInputDialog.xaml.cs">
+      <DependentUpon>LabelInputDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\SettingWindow\Awb\ModeSwitchControl.xaml.cs">
+      <DependentUpon>ModeSwitchControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\SettingWindow\Awb\SmartModePanel.xaml.cs">
+      <DependentUpon>SmartModePanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\SettingWindow\Ccm\CcmWindowViewModel.cs" />
+    <Compile Include="Ui\SettingWindow\Ccm\CcmWindow.xaml.cs">
+      <DependentUpon>CcmWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\SettingWindow\IspSteps\IspStepsWindowViewModel.cs" />
+    <Compile Include="Ui\SettingWindow\IspSteps\IspStepsWindow.xaml.cs">
+      <DependentUpon>IspStepsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\MainWindow\DeviceConfigPage.xaml.cs">
+      <DependentUpon>DeviceConfigPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\SettingWindow\Awb\AwbWindow.xaml.cs">
+      <DependentUpon>AwbWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\SettingWindow\Awb\AwbWindowViewModel.cs" />
+    <Compile Include="Ui\SettingWindow\Awb\CustomControls\BezierFigure.cs" />
+    <Compile Include="Ui\SettingWindow\Awb\ColorblockPickingWindow.xaml.cs">
+      <DependentUpon>ColorblockPickingWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\SettingWindow\Awb\ColorblockPickingWindowViewModel.cs" />
+    <Compile Include="Ui\CommonCustomControl\ImageWithRubberBandControl.xaml.cs">
+      <DependentUpon>ImageWithRubberBandControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\SettingWindow\Awb\CustomControls\ThumbPoint.cs" />
+    <Compile Include="Ui\SettingWindow\Blc\BlcWindow.xaml.cs">
+      <DependentUpon>BlcWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\SettingWindow\Blc\BlcWindowViewModel.cs" />
+    <Compile Include="Ui\SettingWindow\Lsc\LscIQWindow.xaml.cs">
+      <DependentUpon>LscIQWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\SettingWindow\Lsc\LscWindow.xaml.cs">
+      <DependentUpon>LscWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\SettingWindow\Lsc\LscWindowViewModel.cs" />
+    <Compile Include="Ui\SettingWindow\Lsc\RawBufferToBitmapImageConverter.cs" />
+    <Compile Include="Ui\CommonCustomControl\BezierCurveEditor.cs" />
+    <Compile Include="Ui\SettingWindow\YGamma\YGammaIQChartWindow.xaml.cs">
+      <DependentUpon>YGammaIQChartWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\SettingWindow\YGamma\YGammaOfflineIQWindow.xaml.cs">
+      <DependentUpon>YGammaOfflineIQWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\SettingWindow\YGamma\YGammaOfflineIQWindowViewModel.cs" />
+    <Compile Include="Ui\SettingWindow\YGamma\YGammaOnlineIQWindow.xaml.cs">
+      <DependentUpon>YGammaOnlineIQWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\SettingWindow\YGamma\YGammaWindow.xaml.cs">
+      <DependentUpon>YGammaWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\SettingWindow\YGamma\YGammaWindowViewModel.cs" />
+    <Compile Include="Uvc\UvcApi.cs" />
+    <Compile Include="Uvc\UvcDeviceManager.cs" />
+    <Compile Include="Uvc\UvcReceiver.cs" />
+    <Compile Include="Uvc\ProcAmpController.cs" />
+    <Compile Include="Uvc\CameraControlController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Ui\MainWindow\MainFrameForDevelop.xaml.cs">
+      <DependentUpon>MainFrameForDevelop.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="app.manifest">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Ui\MainWindow\CrashLogWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\MainWindow\ArrayDataWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\CreateConfigWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\ExpGainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\FormatDataWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\IICConfigWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\MainWindow\UserMode\CommonTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\UserMode\EffectTabControl\DDCArea.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\MainWindow\UserMode\LcdTab.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\MainWindow\UserMode\EffectTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\UserMode\EffectTabControl\CCMArea.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\MainWindow\UserMode\EffectTabControl\SAJArea.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\MainWindow\UserMode\EffectTabControl\AEArea.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\UserMode\EffectTabControl\EEArea.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\MainWindow\UserMode\EffectTabControl\CHArea.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\MainWindow\UserMode\EffectTabControl\VDEArea.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\UserMode\LcdTabControl\LcdSajArea.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\MainWindow\UserMode\LcdTabControl\LcdGammaArea.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\MainWindow\UserMode\LcdTabControl\LcdCcmArea.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\MainWindow\UserMode\LcdTabControl\LcdLsawtoothArea.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\MainWindow\UserMode\LcdTabControl\LcdVdeArea.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\MainWindow\UserMode\LcdTabControl\LcdCommonArea.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\UserMode\MainFrameForUser.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\UvcViewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\UvcWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\ProcAmpPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\ProcAmpWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\CameraControlWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\CameraControlPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\DevicePropertyWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\SettingWindow\Awb\AwbIQWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\SettingWindow\Awb\LabelInputDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\SettingWindow\Awb\ModeSwitchControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\SettingWindow\Awb\SmartModePanel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\SettingWindow\Ccm\CcmWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\SettingWindow\IspSteps\IspStepsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\DeviceConfigPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\SettingWindow\Awb\AwbWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\SettingWindow\Awb\ColorblockPickingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\CommonCustomControl\ImageWithRubberBandControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\SettingWindow\Blc\BlcWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\MainWindow\MainFrameForDevelop.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Dictionary1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\SettingWindow\Lsc\LscIQWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\SettingWindow\Lsc\LscWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\SettingWindow\YGamma\YGammaIQChartWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\SettingWindow\YGamma\YGammaOfflineIQWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\SettingWindow\YGamma\YGammaOnlineIQWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\SettingWindow\YGamma\YGammaWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icon.ico" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

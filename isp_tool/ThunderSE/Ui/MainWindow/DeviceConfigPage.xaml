@@ -1,0 +1,1244 @@
+﻿<UserControl x:Class="ThunderSE.Ui.MainWindow.DeviceConfigPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:MainWindow="clr-namespace:ThunderSE.Ui.MainWindow"
+             xmlns:CV="clr-namespace:ThunderSE.Ui.Converter"
+             xmlns:Isp="clr-namespace:ThunderSE.DeviceConfig.Isp"
+             mc:Ignorable="d"
+             d:DesignHeight="2600"
+             d:DesignWidth="1024"
+             HorizontalContentAlignment="Stretch"
+             Loaded="OnLoaded">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="boolToVisibillityConverter"></BooleanToVisibilityConverter>
+        <CV:UvcViewVisibilityConverter x:Key="uvcViewVisibilityConverter"></CV:UvcViewVisibilityConverter>
+        <CV:SetModeToVisibilityConverter x:Key="setModeToVisibilityConverter"/>
+        <CV:DecimalToHexConverter x:Key="decimalToHexConverter"></CV:DecimalToHexConverter>
+        <CV:EnumToBooleanConverter x:Key="enumToBooleanConverter"/>
+        <CV:IndexToColorConverter x:Key="IndexToColorConverter"/>
+        <RoutedUICommand x:Key="SettingDetailCommand"></RoutedUICommand>
+        <RoutedUICommand x:Key="SettingOutputCommand"></RoutedUICommand>
+        <RoutedUICommand x:Key="OpenDevicePropertyCommand"></RoutedUICommand>
+        <CV:PlayNavigateAnimationConverter x:Key="playNavigateAnimationConverter"></CV:PlayNavigateAnimationConverter>
+        <CV:ModuleEnableStatusConverter x:Key="moduleEnableStatusConverter"/>
+        <CV:ModuleEnableStatusColorConverter x:Key="moduleEnableStatusColorConverter"/>
+        <Storyboard x:Key="FadeOutAnimationStoryBoard">
+            <ColorAnimation Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+                        AutoReverse="True"
+                        From="Transparent" To="Black" Completed="ModuleBorderLoaded"/>
+        </Storyboard>
+        <!-- 自定义下划线参数 -->
+        <Thickness x:Key="UnderlineMargin">0,1,5,1</Thickness>
+        <SolidColorBrush x:Key="UnderlineBrush" Color="Green"/>
+        <CornerRadius x:Key="UnderlineCornerRadius">1</CornerRadius>
+        <!-- 带下划线的参数标签样式 -->
+        <Style x:Key="SimpleUnderlinedParamLabelStyle" TargetType="Label">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Height" Value="27"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Label">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <ContentPresenter x:Name="contentPresenter"
+                                Grid.Row="0"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                RecognizesAccessKey="True"/>
+                            <!-- 下划线，宽度自动匹配内容宽度 -->
+                            <Border Grid.Row="1"
+                                Height="1"
+                                MinWidth="{Binding ActualWidth, ElementName=contentPresenter}"
+                                Margin="{StaticResource UnderlineMargin}"
+                                CornerRadius="{StaticResource UnderlineCornerRadius}"
+                                Background="{StaticResource UnderlineBrush}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <UserControl.CommandBindings>
+        <CommandBinding Command="{StaticResource SettingDetailCommand}" Executed="OpenSetttingWindow"></CommandBinding>
+        <CommandBinding Command="{StaticResource SettingOutputCommand}" Executed="OutputCurrentDateConfig"></CommandBinding>
+        <CommandBinding Command="{StaticResource OpenDevicePropertyCommand}" Executed="OpenDevicePropertyWindow"></CommandBinding>
+    </UserControl.CommandBindings>
+    <UserControl.InputBindings>
+        <KeyBinding Command="{StaticResource OpenDevicePropertyCommand}" Key="P" Modifiers="Control+Shift"/>
+    </UserControl.InputBindings>
+    <Grid Background="#FFF5F5F5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="38"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <!-- ==================== 顶部专业工具栏 ==================== -->
+        <Border Grid.Row="0" BorderBrush="#FF0078D7" BorderThickness="0,0,0,1" Background="#FFFAFAFA">
+            <Grid Margin="0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.5*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                
+                <!-- 左侧：配置操作按钮组 -->
+                <StackPanel Grid.Column="0" Background="Transparent" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
+                    <Button Margin="5,0,0,0" Padding="8,4" Command="{Binding ReloadConfigCommand}" 
+                            ToolTip="重新从设备读取配置 (F5)"
+                            Background="#FFF9F9F9" BorderBrush="#FFCCCCCC"
+                            Content="🔄 重新读取"/>
+                    <Button Margin="10,0,0,0" Padding="8,4" Command="{Binding WriteConfigCommand}"
+                            Visibility="{Binding IsOnline, Converter={StaticResource boolToVisibillityConverter}}" 
+                            ToolTip="将配置写入设备 (Ctrl+S)"
+                            Background="#FF0078D7" Foreground="White" FontWeight="SemiBold"
+                            BorderBrush="#FF005A9E"
+                            Content="💾 写入"/>
+                    <Button Margin="10,0,0,0" Padding="8,4" Command="{Binding WriteConfigCommand}"
+                            Visibility="{Binding IsOffline,Converter={StaticResource boolToVisibillityConverter}}"
+                            ToolTip="保存当前离线配置 (Ctrl+S)"
+                            Background="#FF0078D7" Foreground="White" FontWeight="SemiBold"
+                            BorderBrush="#FF005A9E"
+                            Content="💾 保存"/>
+                    <Button Margin="10,0,0,0" Visibility="{Binding IsOnline, Converter={StaticResource boolToVisibillityConverter}}" 
+                            Command="{Binding SaveConfigAsCommand}"
+                            ToolTip="将当前配置保存到文件 (Ctrl+Shift+S)"
+                            Background="#FFF9F9F9" BorderBrush="#FFCCCCCC"
+                            Content="📁 保存到文件"/>
+                    <Button Margin="10,0,0,0" Visibility="{Binding IsOnline, Converter={StaticResource boolToVisibillityConverter}}" 
+                            Command="{Binding LoadConfigCommand}"
+                            ToolTip="从文件读取数据配置 (Ctrl+Shift+L)"
+                            Background="#FFF9F9F9" BorderBrush="#FFCCCCCC"
+                            Content="📁 读取"/>
+
+                    <Button Margin="10,0,0,0" Visibility="{Binding IsOnline, Converter={StaticResource boolToVisibillityConverter}}" 
+                            Command="{StaticResource OpenDevicePropertyCommand}"
+                            ToolTip="打开设备的属性设置页面 (Ctrl+Shift+P)"
+                            Background="#FFF9F9F9" BorderBrush="#FFCCCCCC"
+                            Content="🎛️ 属性设置"/>
+                    <Button Margin="10,0,0,0" Visibility="{Binding IsOffline, Converter={StaticResource boolToVisibillityConverter}}" 
+                            Command="{Binding LoadConfigCommand}"
+                            ToolTip="从文件加载配置 (Ctrl+Shift+L)"
+                            Background="#FFF9F9F9" BorderBrush="#FFCCCCCC"
+                            Content="📁 读取"/>
+                    <Button Margin="10,0,0,0" Visibility="{Binding IsOffline, Converter={StaticResource boolToVisibillityConverter}}" 
+                            Command="{Binding SaveConfigAsCommand}"
+                            ToolTip="另存为新配置文件 (Ctrl+Shift+S)"
+                            Background="#FFF9F9F9" BorderBrush="#FFCCCCCC"
+                            Content="📁 另存为"/>
+                    <Separator Margin="10,5" VerticalAlignment="Stretch" Background="#FFCCCCCC"/>
+                    <Button Margin="10,0,0,0" Click="OnClickCloseTab"
+                            Visibility="{Binding IsOffline,Converter={StaticResource boolToVisibillityConverter}}" 
+                            ToolTip="关闭此配置标签页"
+                            Background="#FFFFEEEE" BorderBrush="#FFCC0000" Foreground="#CC0000"
+                            Content="❌ 关闭"/>
+                </StackPanel>
+                
+                <!-- 中间：模式指示器 -->
+                <StackPanel Grid.Column="1" Background="Transparent" Orientation="Horizontal" Visibility="Collapsed"
+                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Border Background="#FFF0F8FF" BorderBrush="#FF0078D7" BorderThickness="1" 
+                            CornerRadius="3" Padding="8,4">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Name="TxtModeIndicator" Text="📡 " FontSize="11" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtModeStatus" Text="在线模式" FontWeight="SemiBold" 
+                                       FontSize="11" Foreground="#0078D7" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+                
+                <!-- 右侧：UVC视图控制按钮组 -->
+                <StackPanel Grid.Column="2"  Visibility="{Binding IsOnline,Converter={StaticResource boolToVisibillityConverter}}"
+                            Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0">
+                    <Button Margin="0,0,0,0" Padding="8,4" Click="OnClickShowUvcView" 
+                            Visibility="{Binding ShowUvcView, 
+                                                 Mode=TwoWay,
+                                                 RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl, AncestorLevel=1},
+                                                 Converter={StaticResource uvcViewVisibilityConverter},
+                                                 ConverterParameter=ShowButton}"
+                            ToolTip="展开UVC视频预览面板"
+                            Background="#FFF9F9F9" BorderBrush="#FFCCCCCC"
+                            Content="📹 展开UVCView"/>
+                    <Button Margin="0,0,0,0" Padding="8,4" Click="OnClickHideUvcView" 
+                            Visibility="{Binding ShowUvcView,
+                                                 Mode=TwoWay,
+                                                 RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl, AncestorLevel=1},
+                                                 Converter={StaticResource uvcViewVisibilityConverter},
+                                                 ConverterParameter=HideButton}"
+                            ToolTip="收起UVC视频预览面板"
+                            Background="#FFF9F9F9" BorderBrush="#FFCCCCCC"
+                            Content="🔽 收起UVCView"/>
+                    <Separator Margin="8,5" VerticalAlignment="Stretch" Background="#FFCCCCCC"/>
+                    <Button Margin="8,0,0,0" Padding="8,4" Click="OnClickShowUvcInNewWindow" 
+                            ToolTip="在独立窗口中打开UVC预览"
+                            Background="#FF0078D7" Foreground="White" FontWeight="SemiBold"
+                            BorderBrush="#FF005A9E"
+                            Content="🚀 弹出窗口"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <ScrollViewer x:Name="ModuleScrollView" VerticalScrollBarVisibility="Auto">
+                <StackPanel Orientation="Vertical" Background="Transparent" Margin="2,2,2,0" MinWidth="{Binding ActualWidth, ElementName=ModuleScrollView}">
+                    <!-- Common 模块 -->
+                    <Border Style="{StaticResource ModuleBorderStyle}">
+                        <Grid Name="General" Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Content="Common" Style="{StaticResource ModuleLabelStyle}" Grid.Column="0"/>
+                            <TextBlock Text="(ON)" Foreground="#4CAF50" FontSize="10" HorizontalAlignment="Center" Grid.Column="0" Margin="0,28,0,0"/>
+
+                            <StackPanel Orientation="Vertical" Grid.Column="1">
+                                <!-- 基础信息 -->
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="Name :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Width="100" Text="{Binding Name, Mode=TwoWay}"
+                                         IsEnabled="{Binding IsOffline}"/>
+                                    <!--<Label Content="ID :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Width="100" Text="{Binding Id, Mode=TwoWay}"
+                                         IsEnabled="{Binding IsOffline}"/>-->
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="Type :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Width="100" Text="{Binding Type, Mode=TwoWay}"
+                                         IsEnabled="{Binding IsOffline}"/>
+                                    <Label Content="Bayer :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <ComboBox Width="100" Margin="0,2,8,2" HorizontalAlignment="Left"
+                                          ItemsSource="{Binding BayerPatterns}"
+                                          DisplayMemberPath="Key"
+                                          SelectedIndex="{Binding SelectedBayerPattern, Mode=TwoWay}"
+                                          IsEnabled="{Binding IsOffline}"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="Resolution :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Label Content="Width :" Style="{StaticResource ParamLabelStyle}" Width="70"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Width="80" Text="{Binding ResolutionWidth, Mode=TwoWay}" IsEnabled="{Binding IsOffline}"/>
+                                    <Label Content="Height :" Style="{StaticResource ParamLabelStyle}" Width="70"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Width="80" Text="{Binding ResolutionHeight, Mode=TwoWay}" IsEnabled="{Binding IsOffline}"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="Enables :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Click="OnClickShowEnables">查看 enables 列表</Button>
+                                </StackPanel>
+
+                                <!-- 曝光控制 -->
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="Exp Gain:" Style="{StaticResource ParamLabelStyle}"/>
+                                    <!--<TextBox Style="{StaticResource ParamTextBoxStyle}" Width="100" Text="{Binding ExpGain, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>-->
+
+                                    <CheckBox Style="{StaticResource ParamCheckBoxStyle}" Margin="0,5,4,3" IsChecked="{Binding IsExpGainEnable, Mode=TwoWay}">启用 ExpGain</CheckBox>
+
+                                    <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}" Visibility="{Binding IsExpGainEnable, Converter={StaticResource boolToVisibilityConverter}}">
+                                        <Label Content="Turn Gain:" Style="{StaticResource ParamLabelStyle}" Width="70"/>
+                                        <TextBox Style="{StaticResource ParamTextBoxStyle}" Width="80" Text="{Binding TurnGain, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                        <Label Content="Turn Exp:" Width="60" Style="{StaticResource ParamLabelStyle}" />
+                                        <TextBox Style="{StaticResource ParamTextBoxStyle}" Width="80" Text="{Binding TurnExp, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+
+                                        <Button Style="{StaticResource ParamButtonStyle}" Margin="5,0,0,0" Click="OnClickShowExpGainSettingWindow"
+                                                Visibility="{Binding IsOnline, Converter={StaticResource boolToVisibilityConverter}}">
+                                            在线调试...
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <!-- 时钟配置 -->
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <CheckBox Style="{StaticResource ParamCheckBoxStyle}" Margin="100,0,10,0" IsChecked="{Binding IsPclkFirEn, Mode=TwoWay}">
+                                        pclk_fir_en
+                                    </CheckBox>
+                                    <CheckBox Style="{StaticResource ParamCheckBoxStyle}" Margin="30,0,12,0" IsChecked="{Binding IsPclkInvEn, Mode=TwoWay}">
+                                        pclk_inv_en
+                                    </CheckBox>
+                                    <Label Content="pclk_fir_class :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}"  Text="{Binding PclkFirClass, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="csi_tun :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding CsiTun, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                    <Label Content="hsyn :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Hsyn, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                    <Label Content="vsyn :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Vsyn, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="rotate :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Rotate, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                    <Label Content="mclk :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Width="100" Text="{Binding Mclk, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="AVDD :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding AVDD, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                    <Label Content="DVDD :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding DVDD, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                    <Label Content="VDDIO :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding VDDIO, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="v_len :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Vlen, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                    <Label Content="down_fps_mode :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding DownFpsMode, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                    <Label Content="fps :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Fps, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                </StackPanel>
+                                
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="frequency :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Frequency, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                    <Label Content="pclk :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Width="100" Text="{Binding Pclk, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                    
+                                </StackPanel>
+                                
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}" Visibility="Collapsed">
+                                    <Label Content="iicInfor :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding IICInfor, Mode=OneWay}"/>
+                                    
+                                </StackPanel>
+                                
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="mipiRxClkDiv :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding MipiRxClkDiv, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                    <Label Content="mipiDRperlane :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding MipiDRperlane, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                </StackPanel>
+                                
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="mipiHbpTime :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding MipiHbpTime, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                    <Label Content="mipiHsaTime :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding MipiHsaTime, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="ISP Ver :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" IsReadOnly="True" IsEnabled="False" Text="{Binding IspVer, Mode=OneWay, Converter={StaticResource decimalToHexConverter}}" KeyDown="OnTextBoxKeyDown"/>
+                                    <Label Content="Current‌ Gain :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" IsReadOnly="True" IsEnabled="False" Text="{Binding CurGain, Mode=OneWay}" KeyDown="OnTextBoxKeyDown"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}"  Margin="0,3,0,3" VerticalAlignment="Center">
+                                    <Label Content="Set Mode :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <RadioButton Content="RAW8" GroupName="SetMode" Margin="8,5,20,0" VerticalAlignment="Center" 
+                                                 IsChecked="{Binding SetMode, Mode=TwoWay, Converter={StaticResource enumToBooleanConverter}, ConverterParameter=RAW8}"/>
+                                    <RadioButton Content="RAW10" GroupName="SetMode" Margin="8,5,20,0" VerticalAlignment="Center" 
+                                                 IsChecked="{Binding SetMode, Mode=TwoWay, Converter={StaticResource enumToBooleanConverter}, ConverterParameter=RAW10}"/>
+                                    <RadioButton Content="MJPG" GroupName="SetMode" Margin="8,5,20,0" VerticalAlignment="Center" 
+                                                 IsChecked="{Binding SetMode, Mode=TwoWay, Converter={StaticResource enumToBooleanConverter}, ConverterParameter=MJPG}"/>
+                                    <RadioButton Content="YUV" GroupName="SetMode" Margin="8,5,10,0" VerticalAlignment="Center" Visibility="Collapsed"
+                                                 IsChecked="{Binding SetMode, Mode=TwoWay, Converter={StaticResource enumToBooleanConverter}, ConverterParameter=YUV}"/>
+
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Visibility="{Binding SetMode, Converter={StaticResource setModeToVisibilityConverter}}">
+                                    <Label Content="RAW Scale :" Margin="0,0,0,0" Width="100" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Label Content="Row :" Margin="5,0,0,0" Width="40" Style="{StaticResource ParamLabelStyle}"/>
+                                    <ComboBox Width="70" Height="20" Margin="5,0,20,0" HorizontalAlignment="Left"
+                                                  ItemsSource="{Binding RawScaleValues}"
+                                                  SelectedIndex="{Binding SelectedRawScaleValue, Mode=TwoWay}"
+                                                  ToolTip="RAW 行数据降采样，改变设备RAW数据行的输出模式"/>
+                                    <StackPanel Orientation="Horizontal" Visibility="{Binding IsIcVerValid, Converter={StaticResource boolToVisibilityConverter}}">
+                                        <Label Content="Column :" Width="60" Style="{StaticResource ParamLabelStyle}"/>
+                                        <ComboBox Width="70" Height="20" Margin="3,0,0,0" HorizontalAlignment="Left"
+                                                ItemsSource="{Binding RawScaleValues}"
+                                                SelectedIndex="{Binding SelectedColRawScaleValue, Mode=TwoWay}"
+                                                ToolTip="RAW 列数据降采样，改变设备RAW数据列的输出模式"/>
+                                    </StackPanel>
+                                    <Button x:Name="setscale" Content="应用" Width="80" Height="20" Margin="20,0,0,0"
+                                            Command="{Binding SetRawScaleCommand}"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Visibility="Collapsed" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="Flip Image :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <RadioButton Content="不翻转" GroupName="FlipMode" Margin="8,4,20,0" VerticalAlignment="Center" 
+                                    IsChecked="{Binding FlipImage, Mode=TwoWay, Converter={StaticResource enumToBooleanConverter}, ConverterParameter=None}"/>
+                                    <RadioButton Content="垂直翻转" GroupName="FlipMode" Margin="6,4,20,0" VerticalAlignment="Center" 
+                                    IsChecked="{Binding FlipImage, Mode=TwoWay, Converter={StaticResource enumToBooleanConverter}, ConverterParameter=Horizontal}"
+                                    IsEnabled="{Binding IsFlip}"/>
+                                    <RadioButton Content="水平翻转" GroupName="FlipMode" Margin="4,4,20,0" VerticalAlignment="Center" 
+                                    IsChecked="{Binding FlipImage, Mode=TwoWay, Converter={StaticResource enumToBooleanConverter}, ConverterParameter=Vertical}"
+                                    IsEnabled="{Binding IsFlip}"/>
+                                    <RadioButton Content="水平+垂直" GroupName="FlipMode" Margin="4,4,10,0" VerticalAlignment="Center"
+                                    IsChecked="{Binding FlipImage, Mode=TwoWay, Converter={StaticResource enumToBooleanConverter}, ConverterParameter=Both}"
+                                    IsEnabled="{Binding IsFlip}"/>
+                                </StackPanel>
+
+                                <!--<StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="IIC配置 :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Border Background="Transparent" BorderBrush="#FF0078D7" BorderThickness="0" CornerRadius="3" Padding="3">
+                                        <StackPanel Orientation="Horizontal">
+                                            <StackPanel Orientation="Vertical" Margin="0,0,15,0">
+                                                <TextBlock Text="寄存器地址 (addr_num)" FontSize="10" Foreground="#666666" Margin="0,0,0,2"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBox x:Name="TxtIICAddrNum" Style="{StaticResource ParamTextBoxStyle}" Width="60"
+                                                         Text="{Binding IICAddrNum, Mode=TwoWay}" ToolTip="4位寄存器地址 (0x00-0x0F)"
+                                                         PreviewTextInput="OnIICInputPreviewTextInput"/>                            
+                                                    <TextBlock Text="(0-15)" FontSize="9" Foreground="#999999" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                                </StackPanel>
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Vertical" Margin="0,0,15,0">
+                                                <TextBlock Text="数据 (data_num)" FontSize="10" Foreground="#666666" Margin="0,0,0,2"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBox x:Name="TxtIICDataNum" Style="{StaticResource ParamTextBoxStyle}" Width="60"
+                                                         Text="{Binding IICDataNum, Mode=TwoWay}" ToolTip="4位数据 (0x00-0x0F)"
+                                                         PreviewTextInput="OnIICInputPreviewTextInput"/>
+                                                    <TextBlock Text="(0-15)" FontSize="9" Foreground="#999999" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                                </StackPanel>
+                                            </StackPanel>
+
+
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Text="打包结果 (IICInfor)" FontSize="10" Foreground="#666666" Margin="0,0,0,2"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Width="60" IsReadOnly="True" Background="#FFEFEFEF"
+                                                        Text="{Binding IICInfor, Mode=OneWay}" ToolTip="自动计算: addr_num 4 | data_num"/>
+                                                    <TextBlock x:Name="TxtIICPackedHex" FontWeight="SemiBold" VerticalAlignment="Center" Margin="5,0,0,0"
+                                                        Foreground="#0078D7"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            
+                                            
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>-->
+
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="Register Set :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Border Background="Transparent" BorderBrush="#FF0078D7" BorderThickness="0" CornerRadius="3" Padding="0,6">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button x:Name="BtnOpenIICConfig" Content="🔧 打开Register配置工具" Width="160" Style="{StaticResource ParamButtonStyle}"
+                                                    Click="OnOpenIICConfigClick"
+                                                    ToolTip="打开独立的IIC寄存器配置窗口"/>
+                                            <TextBlock Text="配置寄存器地址和数据打包参数" FontSize="10" Foreground="#666666"
+                                                       VerticalAlignment="Center" Margin="15,0,0,0"/>
+
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+                            <TextBlock Grid.Column="1" Margin="10,0,15,10" Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver, Converter={StaticResource boolToVisibillityConverter}}" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                <Hyperlink Command="{Binding Source={StaticResource SettingOutputCommand}}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=Name}">
+                                    导出全部ISP数据
+                                </Hyperlink>
+                            </TextBlock>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource FadeOutBorderStyle}"
+                    Tag="{Binding CurrentNavigatingModule, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=MainWindow:DeviceConfigPage},
+                        Converter={StaticResource playNavigateAnimationConverter}, ConverterParameter=DeviceConfig.Isp.IspModule.GainLevel}">
+                        <Grid Name="LevelGrid" Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Content="GainLevel" Style="{StaticResource ModuleLabelStyle}" Grid.Column="0"/>
+                            <TextBlock Text="(ON)" Foreground="#4CAF50" FontSize="10" HorizontalAlignment="Center" Grid.Column="0" Margin="0,28,0,0"/>
+
+                            <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,0,0,15">
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="Level 0-3:" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding GainLevel0, Mode=TwoWay}"
+                                             BorderBrush="{Binding Path=SelectedGainLevelValue, ConverterParameter=0, Converter={StaticResource IndexToColorConverter}}"
+                                             BorderThickness="2" KeyDown="OnTextBoxKeyDown"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding GainLevel1, Mode=TwoWay}"
+                                             BorderBrush="{Binding Path=SelectedGainLevelValue, ConverterParameter=1, Converter={StaticResource IndexToColorConverter}}"
+                                             BorderThickness="2" KeyDown="OnTextBoxKeyDown"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding GainLevel2, Mode=TwoWay}"
+                                             BorderBrush="{Binding Path=SelectedGainLevelValue, ConverterParameter=2, Converter={StaticResource IndexToColorConverter}}"
+                                             BorderThickness="2" KeyDown="OnTextBoxKeyDown"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding GainLevel3, Mode=TwoWay}"
+                                             BorderBrush="{Binding Path=SelectedGainLevelValue, ConverterParameter=3, Converter={StaticResource IndexToColorConverter}}"
+                                             BorderThickness="2" KeyDown="OnTextBoxKeyDown"/>
+                                    <Label Content="Select Level:" Style="{StaticResource ParamLabelStyle}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="Level 4-7:" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding GainLevel4, Mode=TwoWay}"
+                                             BorderBrush="{Binding Path=SelectedGainLevelValue, ConverterParameter=4, Converter={StaticResource IndexToColorConverter}}"
+                                             BorderThickness="2" KeyDown="OnTextBoxKeyDown"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding GainLevel5, Mode=TwoWay}"
+                                             BorderBrush="{Binding Path=SelectedGainLevelValue, ConverterParameter=5, Converter={StaticResource IndexToColorConverter}}"
+                                             BorderThickness="2" KeyDown="OnTextBoxKeyDown"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding GainLevel6, Mode=TwoWay}"
+                                             BorderBrush="{Binding Path=SelectedGainLevelValue, ConverterParameter=6, Converter={StaticResource IndexToColorConverter}}"
+                                             BorderThickness="2" KeyDown="OnTextBoxKeyDown"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding GainLevel7, Mode=TwoWay}"
+                                             BorderBrush="{Binding Path=SelectedGainLevelValue, ConverterParameter=7, Converter={StaticResource IndexToColorConverter}}"
+                                             BorderThickness="2" KeyDown="OnTextBoxKeyDown"/>
+                                    <ComboBox Width="100" Margin="25,2,5,2" HorizontalAlignment="Left"
+                                              ItemsSource="{Binding GainLevelValues}"
+                                              SelectedIndex="{Binding SelectedGainLevelValue, Mode=TwoWay}"
+                                              ToolTip="Sensor增益等级，根据当前增益，确定处于哪个增益等级&#x0a;ISP各模块的参数，根据增益等级选取参数">
+                                        <!--<ComboBox.ItemContainerStyle>
+                                            <Style TargetType="ComboBoxItem">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsSelected" Value="True">
+                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ComboBox.ItemContainerStyle>-->
+                                        <ComboBox.ItemContainerStyle>
+                                            <Style TargetType="ComboBoxItem">
+                                                <Setter Property="ContentTemplate">
+                                                    <Setter.Value>
+                                                        <DataTemplate>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="{Binding}" Margin="10,0,0,0"/>
+                                                                <Rectangle Width="10" Height="10" Fill="Transparent" Margin="5,0,0,0"/>
+                                                            </StackPanel>
+                                                        </DataTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsSelected" Value="True">
+                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                        <Setter Property="ContentTemplate">
+                                                            <Setter.Value>
+                                                                <DataTemplate>
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <TextBlock Text="{Binding}" Margin="10,0,0,0"/>
+                                                                        <TextBlock Text="✓" Margin="10,0,0,0" Foreground="Green" FontWeight="Bold"/>
+                                                                    </StackPanel>
+                                                                </DataTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ComboBox.ItemContainerStyle>
+                                    </ComboBox>
+
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="30,65,10,-5">
+
+                                <TextBlock Grid.Column="1" Text="提示：调试模块参数请选择不同的Gain Level增益，设置下面模块的ISP参数不能是Auto模式." 
+                                    FontSize="12" Foreground="#666666" VerticalAlignment="Center"/>
+
+                                <TextBlock Grid.Column="1" Margin="10,0,0,2" Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver, Converter={StaticResource boolToVisibillityConverter}}" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                                    <Hyperlink Command="{Binding Source={StaticResource SettingOutputCommand}}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=Name}">
+                                        导出LevelGrid数据
+                                    </Hyperlink>
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- AE 模块 -->
+                    <Border Style="{StaticResource FadeOutBorderStyle}"
+                        Tag="{Binding CurrentNavigatingModule, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=MainWindow:DeviceConfigPage},
+                            Converter={StaticResource playNavigateAnimationConverter}, ConverterParameter=DeviceConfig.Isp.IspModule.AE}">
+                        <Grid Name="AEGrid" Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                <ColumnDefinition Width="3*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Content="AE" Style="{StaticResource ModuleLabelStyle}" Grid.Column="0"/>
+                            <TextBlock Text="(ON)"
+                               Foreground="#4CAF50"
+                               FontSize="10" HorizontalAlignment="Center" Grid.Column="0" Margin="0,28,0,0"/>
+
+                            <StackPanel Orientation="Vertical" Grid.Column="1">
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="exp__tag :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="100" Click="OnClickShowAEExpTag">查看exp__tag</Button>
+                                    <Label Content="exp__tag :" Margin="40,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding ExpTarget, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+				    	                    ToolTip="目标亮度值(uint8)&#x0a;高增益(暗环境)使用较低值避免噪声放大；低增益(亮环境)使用较高值充分利用动态范围"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="exp__adj :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding ExpAdapt.exp_adj, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="目标亮度偏移(uint8)&#x0a;正值整体画面变亮，负值变暗。用于EV补偿功能的全局亮度调整"/>
+                                    <Label Content="dark__weight :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding ExpAdapt.dark_weight, Mode=TwoWay,Converter={StaticResource decimalToHexConverter}}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="暗区权重(Hex,uint8)&#x0a;高4位:统计暗区像素数量阈值；低4位:暗区对曝光决策的影响权重。值越大暗场景越亮但亮场景易过曝"/>
+                                    <Label Content="light__weight :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding ExpAdapt.light_weight, Mode=TwoWay,Converter={StaticResource decimalToHexConverter}}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="亮区权重(Hex,uint8)&#x0a;高4位:统计亮区像素数量阈值；低4位:亮区对曝光决策的影响权重。值越大亮场景不易过曝但暗场景偏暗"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="exp__min :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding ExpAdapt.exp_min, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="最小曝光行数(uint8)&#x0a;限制最短曝光时间，防止帧率过高导致带宽不足"/>
+                                    <Label Content="gain__max :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding ExpAdapt.gain_max, Mode=TwoWay,Converter={StaticResource decimalToHexConverter}}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="最大Sensor增益(Hex,uint32)&#x0a;控制传感器端允许的最大模拟/数字增益倍数×1024。值越大弱光灵敏度越高但噪声也越大"/>
+                                    <Label Content="exp__nums :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding ExpAdapt.exp_nums, Mode=TwoWay,Converter={StaticResource decimalToHexConverter}}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="AE综合控制参数位域(Hex,uint32)&#x0a;[0:3]多少帧进行一次AE调节&#x0a;[4:7]在亮度变化比较大时，值越小，可以加快AE调节频率 &#x0a;[8:11]目标亮度稳定范围&#x0a;[12:15]亮到暗变化时，当前增益调节权重，越大速度越快&#x0a;[16:19]暗到亮变化时，当前增益调节权重，越大速度越快&#x0a;[20:23]亮度变化时，当前亮度所占权重，越大速度越快&#x0a;[24:27]EV补偿调节方式，1：代表直接亮度偏移，0，代表使用目标亮度偏移&#x0a;[28:31]写sensor增益函数调用方式，1：代表在中断中调用（当前不起作用，不要配置为1），0：代表在任务中调用"/>
+                                </StackPanel>
+
+                                <Label Content="hgrm__adapt (直方图自适应)" Style="{StaticResource ParamLabelStyle}" Width="Auto" HorizontalContentAlignment="Left" Margin="0,8,0,0"/>
+
+                                <!--<StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                <Label Content="allow_miss_dots :" Style="{StaticResource ParamLabelStyle}"/>
+                                <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding HgrmAdapt.allow_miss_dots, Mode=TwoWay}"/>
+                            </StackPanel>-->
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="ae__win__x0 :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding HgrmAdapt.ae_win_x0, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="直方图统计区间划分点0(uint16)。用于将亮度范围划分为多个区间进行统计"/>
+                                    <Label Content="ae__win__x1 :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding HgrmAdapt.ae_win_x1, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="直方图统计区间划分点1(uint16)"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="ae__win__x2 :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding HgrmAdapt.ae_win_x2, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="直方图统计区间划分点2(uint16)"/>
+                                    <Label Content="ae__win__x3 :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding HgrmAdapt.ae_win_x3, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="直方图统计区间划分点3(uint16)"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="ae__win__y0 :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding HgrmAdapt.ae_win_y0, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="直方图区间边界0(uint16)。第1个亮度分区阈值(DN)&#x0a;将画面亮度划分为5个统计区域: [0~y0], [y0~y1], [y1~y2], [y2~y3], [y3~max]。此值为最暗区域的上限"/>
+                                    <Label Content="ae__win__y1 :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding HgrmAdapt.ae_win_y1, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="直方图区间边界1(uint16)。第2个亮度分区阈值(DN)&#x0a;暗灰区域的范围上限。值越大→暗部统计区域越宽，AE对暗部更敏感"/>
+
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="ae__win__y2 :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding HgrmAdapt.ae_win_y2, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="直方图区间边界2(uint16)。第3个亮度分区阈值(DN)&#x0a;亮灰区域的范围上限。通常设置在接近高光位置以区分中间调和亮部"/>
+
+                                    <Label Content="ae__win__y3 :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding HgrmAdapt.ae_win_y3, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="直方图区间边界3(uint16)。第4个亮度分区阈值(DN)&#x0a;高光区域的范围上限。超过此值的像素归入最亮区间。影响过曝检测灵敏度"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="weight__0__7 :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding HgrmAdapt.weight_0_7, Mode=TwoWay,Converter={StaticResource decimalToHexConverter}}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="权重掩码0-7位(Hex,uint32)。控制8个子区域(或通道)的AE计算权重&#x0a;每4bit一个权重值(1=启用)。用于精细调整各区域/通道对最终曝光决策的影响比例"/>
+                                    <Label Content="weight__8__15 :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding HgrmAdapt.weight_8_15, Mode=TwoWay,Converter={StaticResource decimalToHexConverter}}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="权重掩码8-15位(Hex,uint32)。扩展权重掩码高位部分&#x0a;配合weight_0_7实现最多16个子区域的独立权重控制。值越大对应区域对AE影响越大"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="weight__16__23 :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding HgrmAdapt.weight_16_23, Mode=TwoWay,Converter={StaticResource decimalToHexConverter}}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="权重掩码16-23位(Hex,uint32)。高级权重配置字段&#x0a;可用于实现更复杂的空间加权策略(如中心权重高于边缘)。支持多点阵测光的差异化处理"/>
+                                    <Label Content="weight__24 :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding HgrmAdapt.weight_24, Mode=TwoWay,Converter={StaticResource decimalToHexConverter}}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="权重掩码24+位(Hex,uint32)。附加权重配置或保留扩展位"/>
+
+                                    <TextBlock Margin="20,0,0,5" Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver, Converter={StaticResource boolToVisibillityConverter}}" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                        <Hyperlink Command="{Binding Source={StaticResource SettingOutputCommand}}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=Name}">
+                                            导出AE数据
+                                        </Hyperlink>
+                                    </TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+
+                        </Grid>
+                    </Border>
+                    <!-- BLC 模块 -->
+                    <Border Style="{StaticResource FadeOutBorderStyle}"
+                        Tag="{Binding CurrentNavigatingModule, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=MainWindow:DeviceConfigPage},
+                            Converter={StaticResource playNavigateAnimationConverter}, ConverterParameter=DeviceConfig.Isp.IspModule.Blc}">
+                        <Grid Name="BlcGrid" Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                <ColumnDefinition Width="3*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Content="BLC" Style="{StaticResource ModuleLabelStyle}" Grid.Column="0"/>
+                            <TextBlock Text="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusConverter}, ConverterParameter=Blc}"
+                                       Foreground="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusColorConverter}, ConverterParameter=Blc}"
+                                       FontSize="10" HorizontalAlignment="Center" Grid.Column="0" Margin="0,28,0,0"/>
+
+                            <StackPanel Orientation="Vertical" Grid.Column="1">
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="BLC_R :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding BlcR, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="R通道黑电平校正值 (uint16)&#x0a;从R通道减去的固定偏移量(DN)。负值实际增加信号用于补偿传感器特性。公式: 输出 = max(输入 - BlackLevel, ClipLimit)"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="BLC_GR :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding BlcGr, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="GR通道(绿色红色行)黑电平校正值(uint16)&#x0a;从GR通道减去的固定偏移量(DN)。与R/G/B通道配合调整各颜色分量的基准黑电平"/>
+                                    <Label Content="blc__rate :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="100" Click="OnClickShowBLC_Rate">查看blc__rate</Button>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="BLC_GB :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding BlcGb, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="GB通道(绿色蓝色行)黑电平校正值(int16)&#x0a;从GB通道减去的固定偏移量(DN)。RGGB Bayer格式中G通道有两个分量需分别校正"/>
+                                    <Label Content="blc__rate :" Margin="40,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Blc_Target, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="BLC裁剪限制值(uint8)&#x0a;校正后允许的最小输出值(DN)。防止黑电平校正后出现负值或过暗像素"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="BLC_B :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding BlcB, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="B通道黑电平校正值(uint16)&#x0a;从B通道减去的固定偏移量(DN)。4个通道(R/GR/G/B)通常保持一致以确保色彩平衡"/>
+                                    <Label Content="" Visibility="Hidden" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Visibility="Hidden" Style="{StaticResource ParamTextBoxStyle}" Text="{Binding BlcB, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"/>
+                                    
+                                    <TextBlock Margin="20,0,0,5" Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver, Converter={StaticResource boolToVisibillityConverter}}" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                        <Hyperlink Command="{Binding Source={StaticResource SettingOutputCommand}}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=Name}">
+                                            导出BLC数据
+                                        </Hyperlink>
+                                    </TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <TextBlock Grid.Column="2" Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver, Converter={StaticResource boolToVisibillityConverter}}" HorizontalAlignment="Right" VerticalAlignment="Top">
+                                <Hyperlink Command="{Binding Source={StaticResource SettingDetailCommand}}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=Name}">使用图示进行设置...</Hyperlink>
+                            </TextBlock>
+                        </Grid>
+                    </Border>
+                    <!-- LSC 模块 -->
+                    <Border Style="{StaticResource FadeOutBorderStyle}"
+                        Tag="{Binding CurrentNavigatingModule, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=MainWindow:DeviceConfigPage},
+                            Converter={StaticResource playNavigateAnimationConverter}, ConverterParameter=DeviceConfig.Isp.IspModule.Lsc}">
+                        <Grid Name="LscGrid" Background="Transparent" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                <ColumnDefinition Width="3*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="LSC" Style="{StaticResource ModuleLabelStyle}" Grid.Column="0"/>
+                            <TextBlock Text="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusConverter}, ConverterParameter=Lsc}"
+                                       Foreground="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusColorConverter}, ConverterParameter=Lsc}"
+                                       FontSize="10" HorizontalAlignment="Center" Grid.Column="0" Margin="0,28,0,0"/>
+                            
+                            <StackPanel Orientation="Vertical" Grid.Column="1">
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="LSC WEIGHT :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Click="OnClickShowLenShadingCorrectionData">查看lsc__weight</Button>
+                                </StackPanel>
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver, Converter={StaticResource boolToVisibillityConverter}}" HorizontalAlignment="Right" VerticalAlignment="Top">
+                                <Hyperlink Command="{Binding Source={StaticResource SettingDetailCommand} }" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=Name}">使用图示进行设置...</Hyperlink>
+                            </TextBlock>
+                        </Grid>
+                    </Border>
+                    <!-- DDC 模块 -->
+                    <Border Style="{StaticResource FadeOutBorderStyle}"
+                        Tag="{Binding CurrentNavigatingModule, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=MainWindow:DeviceConfigPage},
+                            Converter={StaticResource playNavigateAnimationConverter}, ConverterParameter=DeviceConfig.Isp.IspModule.Ddc}">
+                        <Grid Name="DDCGrid" Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="10"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="DDC" Style="{StaticResource ModuleLabelStyle}" Grid.Column="0"/>
+                            <TextBlock Text="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusConverter}, ConverterParameter=Ddc}"
+                                       Foreground="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusColorConverter}, ConverterParameter=Ddc}"
+                                       FontSize="10" HorizontalAlignment="Center" Grid.Column="0" Margin="0,28,0,0"/>
+                            
+                            <StackPanel Orientation="Vertical" Grid.Column="1">
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="hot__num :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding hot_num, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="亮点数量阈值(uint8,)。允许的最大亮点像素数量，超过则启用强校正&#x0a;值越大→坏点矫正越强(更多像素被标记为坏点)。噪声大时增大"/>
+                                    <Label Content="dead__num :" Margin="10,0,0,0" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding dead_num, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="坏点数量阈值(uint8)。允许的最大死点像素数量&#x0a;值越大→坏点矫正越强。与hot_num配合控制坏点检测灵敏度"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="hot__th :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding hot_th, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="亮点绝对阈值(uint16)。像素值>此值视为亮点候选&#x0a;值越大→检测越不敏感(需更极端才触发)。根据实际坏点程度调整"/>
+                                    <Label Content="dead__th :" Margin="10,0,0,0" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding dead_th, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="坏点绝对阈值(uint16)。像素值(此值视为死点候选&#x0a;值越大→检测越不敏感。典型坏点值为0或255时保持较低阈值"/>
+                                    <Label Content="avg__th :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding avg_th, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="平均值阈值(uint8)。邻域平均值的判断门限，用于区分真实坏点和正常噪声&#x0a;值越大→对噪声容忍度越高"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="dpc__dn__en :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding dpc_dn_en, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="DPC降噪使能开关(0/1)。启用后结合降噪算法进行坏点校正&#x0a; 1=启用双重校正，0=仅使用基础坏点校正"/>
+                                    <Label Content="std__th__rate :" Margin="10,0,0,0" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding std_th_rate, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="标准差比率阈值(uint8)。边缘检测的灵敏度控制&#x0a;值越小→越容易判定为边缘区域(平坦区更多应用强降噪)"/>
+                                    <Label Content="std__th :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="100" Click="OnClickShowDDCStdTh">查看std__th</Button>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="d__th__rate :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Click="OnClickShowDDC_DThRate">查看d__th__rate</Button>
+                                    <Label Content="d__th__rate :" Margin="21.6,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding D_th_Target, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="坏点比率目标值(uint8)。坏点检测的比率/百分比基数&#x0a;值越大→坏点矫正越弱(高增益时适当增大容忍度以避免误判)"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="h__th__rate :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Click="OnClickShowDDC_HThRate">查看h__th__rate</Button>
+                                    <Label Content="h__th__rate :" Margin="22,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding H_th_Target, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="亮点比率目标值(uint8)。各增益等级下的亮点检测比率阈值&#x0a;值越大→坏点矫正越弱。高增益环境建议适当增大"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="indx__table :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Click="OnClickShowDDCIndxTable">查看indx__table</Button>
+                                    <Label Content="indx__table :" Margin="16,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Indx_Target, Mode=TwoWay,Converter={StaticResource decimalToHexConverter}}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="降噪强度索引(Hex,uint32)。不同边缘等级对应的降噪参数索引(0-7)&#x0a;值越大→降噪越厉害(图像更平滑但细节损失)。8级增益×4边缘等级的查找表索引"/>
+                                    <!--<Label Content="ddc step :" Style="{StaticResource ParamLabelStyle}"/>
+                                <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding ddc_step, Mode=TwoWay}"/>-->
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="weight__table :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Click="OnClickShowDDCIndxAdapt">查看weight__table</Button>
+                                    <Label Content="weight__table :" Margin="1.5,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Weight_Target, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="降噪权重系数(uint8)&#x0a;值越大→降噪越强(平滑效果明显但细节模糊)。用于加权平均滤波器"/>
+
+                                    <TextBlock Margin="20,0,0,5" Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver, Converter={StaticResource boolToVisibillityConverter}}" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                        <Hyperlink Command="{Binding Source={StaticResource SettingOutputCommand}}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=Name}">
+                                            导出DDC数据
+                                        </Hyperlink>
+                                    </TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <!-- AWB 模块 -->
+                    <Border Style="{StaticResource FadeOutBorderStyle}"
+                        Tag="{Binding CurrentNavigatingModule, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=MainWindow:DeviceConfigPage},
+                            Converter={StaticResource playNavigateAnimationConverter}, ConverterParameter=DeviceConfig.Isp.IspModule.Awb}">
+                        <Grid Name="AwbGrid" Background="Transparent" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                <ColumnDefinition Width="3*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="AWB" Style="{StaticResource ModuleLabelStyle}" Grid.Column="0"/>
+                            <TextBlock Text="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusConverter}, ConverterParameter=Awb}"
+                                       Foreground="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusColorConverter}, ConverterParameter=Awb}"
+                                       FontSize="10" HorizontalAlignment="Center" Grid.Column="0" Margin="0,28,0,0"/>
+                            
+                            <StackPanel Orientation="Vertical" Grid.Column="1">
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <!--<Label Content="awb seg mode :" Style="{StaticResource ParamLabelStyle}"/>
+                                <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Seg_Mode, Mode=TwoWay}" ></TextBox>-->
+                                    <Label Content="awb__mixpix__sum :" Width="120" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding MixPixSum, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="混合像素总数(uint16)。AWB统计窗口内的有效像素数量，用于色温计算的平均值分母&#x0a;值越大统计越稳定但响应变慢"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="awb__weight__in :" Width="120" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Awb_Weight_In, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="输入权重系数(uint8)。新旧测量值的混合比例，控制AWB响应速度&#x0a;值越大→越依赖当前测量值(快速但可能不稳定)，值越小→平滑过渡(迟缓)"/>
+                                    <Label Content="awb__weight__out:" Width="120" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Awb_Weight_Out, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="输出权重系数 (uint8)。增益变化的平滑因子&#x0a;值越大→增益变化越快(可能色彩跳变)，值越小→渐变过渡(稳定)"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="awb__rg__start :" Width="120" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding RGainStart, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="R/B增益初始值(uint16)。AWB算法启动时的初始增益基准点&#x0a;通常设为256(单位增益)让算法从平衡状态开始收敛"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="awb__rgain__min :" Width="120" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding RGainMin, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="R通道最小增益限制(uint16)。防止R增益过低导致画面偏青/冷色调&#x0a;下限保护避免极端白平衡结果"/>
+                                    <Label Content="awb__rgain__max :" Width="120" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding RGainMax}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="R通道最大增益限制(uint16)。防止R增益过高导致过饱和或偏红&#x0a;上限保护确保色彩自然"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="awb__ymin :" Width="120" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Awb_YMin, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="亮度最小阈值(uint8)。参与AWB计算的像素最低亮度值&#x0a;过暗像素不参与统计以避免噪声干扰。值太小会引入暗部噪声"/>
+                                    <Label Content="awb__ymax :" Width="120" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Awb_YMax, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="亮度最大阈值(uint8)。参与AWB计算的像素最高亮度值&#x0a;过亮像素(接近饱和)不参与统计以确保准确性。典型值: 220-245"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="awb__stat__tab :" Width="120" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="130" Click="OnClickShowAwbStatTab">查看awb__stat__tab</Button>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="awb__yuv__mod__en :" Width="150" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Awb_Yuv_Mod_En, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="YUV模式使能开关(0/1)。启用后使用YCbCr色彩空间进行高级白平衡判断&#x0a;1=启用YUV域分析(更精确但计算量大)，0=仅使用RGB域"/>
+
+                                    <!--<StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                <Label Content="awb cb th :" Style="{StaticResource ParamLabelStyle}"/>
+                                <Button Style="{StaticResource ParamButtonStyle}" Click="OnClickShowAwbCbTh">查看 awb_cb_th</Button>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                <Label Content="awb cr th :" Style="{StaticResource ParamLabelStyle}"/>
+                                <Button Style="{StaticResource ParamButtonStyle}" Click="OnClickShowAwbCrTh">查看 awb_cr_th</Button>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                <Label Content="awb cbcr th :" Style="{StaticResource ParamLabelStyle}"/>
+                                <Button Style="{StaticResource ParamButtonStyle}" Click="OnClickShowAwbCbcrTh">查看 awb_cbcr_th</Button>
+                            </StackPanel>-->
+
+                                    <Label Content="awb__ycbcr__th :" Width="150" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Awb_Ycbcr_Th, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="YCbCr色差阈值(uint8)。Cb/Cr分量偏离中性点的判定门限&#x0a;值越小→对偏色越敏感(频繁调节)，值越大→容忍度越高(稳定但反应慢)"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="awb__de__high__red__class :" Width="150" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Awb_De_High_Red_Class, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="高红区域分类阈值(uint8)。将场景分为高红/正常区域的边界值"/>
+                                    <Label Content="awb__de__high__blue__class :" Width="150" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Awb_De_High_Blue_Class, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="高蓝区域分类阈值(uint8)。将场景分为高蓝/正常区域的边界值"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="awb__de__high__red__rate :" Width="150" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Awb_De_High_Red_Rate, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="高红区域校正强度(uint8)。检测到高红场景时的增益调整速率&#x0a;值越大→校正越积极(快速消除偏红但可能过度补偿)，值越小→保守处理(保持暖色调氛围)"/>
+                                    <Label Content="awb__de__high__blue__rate :" Width="150" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Awb_De_High_Blue_Rate, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="高蓝区域校正强度(uint8)。检测到高蓝场景时的增益调整速率&#x0a;值越大→校正越积极(快速消除偏蓝但可能失去冷调氛围)，值越小→保守处理"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <TextBlock  Grid.Column="2" Margin="0,0,0,5" Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver, Converter={StaticResource boolToVisibillityConverter}}" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                                        <Hyperlink Command="{Binding Source={StaticResource SettingOutputCommand}}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=Name}">
+                                            导出AWB数据
+                                        </Hyperlink>
+                            </TextBlock>
+                            <TextBlock Grid.Column="2" Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver, Converter={StaticResource boolToVisibillityConverter}}" HorizontalAlignment="Right" VerticalAlignment="Top">
+                                <Hyperlink Command="{Binding Source={StaticResource SettingDetailCommand} }" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=Name}">使用图示进行设置...</Hyperlink>
+                            </TextBlock>
+                        </Grid>
+                    </Border>
+                    <!-- CCM 模块 -->
+                    <Border Style="{StaticResource FadeOutBorderStyle}"
+                        Tag="{Binding CurrentNavigatingModule, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=MainWindow:DeviceConfigPage},
+                            Converter={StaticResource playNavigateAnimationConverter}, ConverterParameter=DeviceConfig.Isp.IspModule.Ccm}">
+                        <Grid Name="CCMGrid" Background="Transparent" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                <ColumnDefinition Width="3*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="CCM" Style="{StaticResource ModuleLabelStyle}" Grid.Column="0"/>
+                            <TextBlock Text="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusConverter}, ConverterParameter=Ccm}"
+                                       Foreground="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusColorConverter}, ConverterParameter=Ccm}"
+                                       FontSize="10" HorizontalAlignment="Center" Grid.Column="0" Margin="0,28,0,0"/>
+                            
+                            <StackPanel Orientation="Vertical" Grid.Column="1">
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="ccm :" Width="60" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="100" Click="OnClickShowCCM">查看 ccm</Button>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="s41 :" Width="60" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding s41, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="CCM矩阵偏移量S41(uint16, ×256量化)。R通道的固定偏移值(DN)&#x0a;用于补偿色彩校正后的直流分量偏差，通常保持为0"/>
+                                    <Label Content="s42 :" Width="60" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding s42, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="CCM矩阵偏移量S42(uint16, ×256量化)。G通道的固定偏移值(DN)&#x0a;调整整体亮度基准，正值提亮G通道，负值压暗"/>
+                                    <Label Content="s43 :" Width="60" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding s43, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="CCM矩阵偏移量S43(uint16, ×256量化)。B通道的固定偏移值(DN)&#x0a;用于微调蓝色通道的亮度水平，影响画面冷暖色调"/>
+
+                                </StackPanel>
+                            </StackPanel>
+
+                            <TextBlock Grid.Column="2" Margin="0,0,0,5" Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver, Converter={StaticResource boolToVisibillityConverter}}" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                                <Hyperlink Command="{Binding Source={StaticResource SettingOutputCommand}}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=Name}">
+                                    导出CCM数据
+                                </Hyperlink>
+                            </TextBlock>
+                            <!--<TextBlock Grid.Column="2" Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver, Converter={StaticResource boolToVisibillityConverter}}" HorizontalAlignment="Right" VerticalAlignment="Top">
+                                <Hyperlink Command="{Binding Source={StaticResource SettingDetailCommand} }" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=Name}">使用图示进行设置...</Hyperlink>
+                            </TextBlock>-->
+                        </Grid>
+                    </Border>
+                    <!-- YGamma 模块 -->
+                    <Border Style="{StaticResource FadeOutBorderStyle}"
+                        Tag="{Binding CurrentNavigatingModule, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=MainWindow:DeviceConfigPage},
+                            Converter={StaticResource playNavigateAnimationConverter}, ConverterParameter=DeviceConfig.Isp.IspModule.YGamma}">
+                        <Grid Name="YGammaGrid" Background="Transparent" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                <ColumnDefinition Width="3*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="YGamma" Style="{StaticResource ModuleLabelStyle}" Grid.Column="0"/>
+                            <TextBlock Text="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusConverter}, ConverterParameter=YGamma}"
+                                       Foreground="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusColorConverter}, ConverterParameter=YGamma}"
+                                       FontSize="10" HorizontalAlignment="Center" Grid.Column="0" Margin="0,28,0,0"/>
+                            
+                            <StackPanel Orientation="Vertical" Grid.Column="1">
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="gma__num :" Width="100" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="100" Click="OnClickShowYGammaTable">查看gma__num</Button>
+                                    <Label Content="gma__num :" Margin="29,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding YGamma_Num_Target, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+				    	                    ToolTip="Gamma曲线索引(uint8)。值越大→图像越亮(整体提亮特别是暗部)&#x0a;高增益用低索引压制噪声，低增益用高索引获得更好动态范围"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="yLowRate :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="100" Click="OnClickShowYGammaLowRate">查看yLowRate</Button>
+                                    <Label Content="yLowRate :" Margin="29,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding YLowRate_Target, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="暗部对比度(uint8)。值越大→对比度越高但暗部容易过暗(细节丢失)&#x0a;值越小→暗部更亮(细节好但可能发灰)"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="yHighRate :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="100" Click="OnClickShowYGammaHighRate">查看YHighRate</Button>
+                                    <Label Content="yHighRate :" Margin="25,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding YHighRate_Target, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="亮部对比度(uint8)&#x0a;值越大→对比度越高但亮处容易过曝&#x0a;值越小→亮部更柔和(高光细节保留更好)"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="Rate :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="100" Click="OnClickShowYGammaRate">查看Rate</Button>
+                                    <Label Content="Rate :" Margin="59,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding YGamma_Rate_Target, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="色彩对比度(uint8)&#x0a;值越大→色彩对比度越高但会引起偏色(特别在高增益噪声环境)"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="yLowLimit :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding YLowLimit, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="暗部输出限制(uint8)&#x0a;Gamma校正后的最小输出值(DN)。防止过暗，确保暗部可见性"/>
+                                    <Label Content="yHighLimit :" Margin="0,0,0,0" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding YHighLimit, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="亮部输出限制 (uint8)&#x0a;Gamma校正后的最大输出值(DN)。防止过曝溢出，保留高光细节"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="fogPersent :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding FogPersent, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="全局对比度/去雾参数(uint8)&#x0a;值越大→对比度越高但易引起过曝和过暗。值越小→图像更平淡类似有雾效果"/>
+                                    
+                                    <Label Content="" Visibility="Hidden" Margin="6,0,0,0" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Visibility="Hidden" Style="{StaticResource ParamTextBoxStyle}" Text="{Binding FogPersent, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"></TextBox>
+
+                                    <TextBlock Margin="20,0,0,5" Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver, Converter={StaticResource boolToVisibillityConverter}}" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                        <Hyperlink Command="{Binding Source={StaticResource SettingOutputCommand}}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=Name}">
+                                            导出YGamma数据
+                                        </Hyperlink>
+                                    </TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver, Converter={StaticResource boolToVisibillityConverter}}" HorizontalAlignment="Right" VerticalAlignment="Top">
+                                <Hyperlink Command="{Binding Source={StaticResource SettingDetailCommand} }" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=Name}">使用图示进行设置...</Hyperlink>
+                            </TextBlock>
+                        </Grid>
+                    </Border>
+                    <!-- EE 模块 -->
+                    <Border Style="{StaticResource FadeOutBorderStyle}"
+                        Tag="{Binding CurrentNavigatingModule, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=MainWindow:DeviceConfigPage},
+                            Converter={StaticResource playNavigateAnimationConverter}, ConverterParameter=DeviceConfig.Isp.IspModule.Ee}">
+                        <Grid Name="EEGrid" Background="Transparent" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                <ColumnDefinition Width="3*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="EE" Style="{StaticResource ModuleLabelStyle}" Grid.Column="0"/>
+                            <TextBlock Text="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusConverter}, ConverterParameter=Ee}"
+                                       Foreground="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusColorConverter}, ConverterParameter=Ee}"
+                                       FontSize="10" HorizontalAlignment="Center" Grid.Column="0" Margin="0,28,0,0"/>
+                            
+                            <StackPanel Orientation="Vertical" Grid.Column="1">
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="ee__class :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Width="130" Text="{Binding ee_class, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                        ToolTip="EE工作模式/类别选择(uint8)&#x0a;决定了ee_sharp_slope 等参数的调节逻辑方向"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="ee__dn__slope :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="130" Click="OnClickShowEEDnslope">查看ee__dn__slope</Button>
+                                    <Label Content="ee__dn__slope :" Margin="17,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding ee_dn_slope_Target, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="降噪倾向斜率(uint8)&#x0a;值越大→越偏向降噪(图像更平滑)。设计趋势: 随增益降低而递减(高增益强降噪，低增益弱/无降噪)"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="ee__sharp__slope :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="130" Click="OnClickShowEESharpSlope">查看ee__sharp__slope</Button>
+                                    <Label Content="ee__sharp__slope :" Margin="0,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding ee_sharp_slope_Target, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="锐化斜率(uint8)&#x0a;当ee_class=1时值越大→锐化越强；当ee_class=0时值越小→锐化越强(反向关系)。高增益用低值避免噪声放大"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="ee__th__adp :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="130" Click="OnClickShowEEThAdp">查看ee__th__adp</Button>
+                                    <Label Content="ee__th__adp :" Margin="29,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding ee_th_adp_Target, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="自适应阈值(uint8)&#x0a;边缘检测的灵敏度门限。值越大→越偏向降噪(只有更强边缘才被锐化，其余做降噪处理)。所有增益等级通常统一设置"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="ee__dn__th :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="130" Click="OnClickShowEEDnTh">查看ee__dn__th</Button>
+                                    <Label Content="ee__dn__th :" Margin="36,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding ee_dn_th_Target, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="降噪阈值(uint8)&#x0a;触发降噪处理的最低条件。值越大→越偏向降噪(更多区域应用降噪算法)。与ee_th_adp配合控制降噪/锐化平衡"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="sharp__class :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="130" Click="OnClickShowEESharpClass">查看 sharp__class</Button>
+                                    <Label Content="sharp__class :" Margin="23,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding sharp_class_Target, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="锐化等级(uint8)&#x0a;值越大→锐化越强。特点: 高增益时锐化强但降噪也强(平衡)；低增益时两者都弱(保持自然)"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="dn__class :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="130" Click="OnClickShowDnClass">查看 dn__class</Button>
+                                    <Label Content="dn__class :" Margin="40,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding dn_class_Target, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="降噪等级(uint8)&#x0a;值越大→降噪越强(图像更平滑但细节模糊)。L7设为10强力降噪可能是特殊需求"/>
+
+                                    <TextBlock Margin="20,0,0,5" Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver, Converter={StaticResource boolToVisibillityConverter}}" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                        <Hyperlink Command="{Binding Source={StaticResource SettingOutputCommand}}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=Name}">
+                                            导出EE数据
+                                        </Hyperlink>
+                                    </TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <!-- CH 模块 -->
+                    <Border Style="{StaticResource FadeOutBorderStyle}"
+                        Tag="{Binding CurrentNavigatingModule, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=MainWindow:DeviceConfigPage},
+                            Converter={StaticResource playNavigateAnimationConverter}, ConverterParameter=DeviceConfig.Isp.IspModule.Ch}">
+                        <Grid Name="ChGrid" Background="Transparent" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                <ColumnDefinition Width="3*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="CH" Style="{StaticResource ModuleLabelStyle}" Grid.Column="0"/>
+                            <TextBlock Text="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusConverter}, ConverterParameter=Ch}"
+                                       Foreground="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusColorConverter}, ConverterParameter=Ch}"
+                                       FontSize="10" HorizontalAlignment="Center" Grid.Column="0" Margin="0,28,0,0"/>
+                            
+                            <StackPanel Orientation="Vertical" Grid.Column="1">
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="stage0__en :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding stage0_en, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="Stage0使能: [enable, R, G, B] (0/1)&#x0a;RGB域基础色调处理: R=Red红色, G=Green绿色, B=Blue蓝色"/>
+                                    <Label Content="stage1__en :" Width="80" Style="{StaticResource ParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding stage1_en, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="Stage1使能: [enable, C, M, Y] (0/1)&#x0a;CMY域高级色调处理: C=Cyan青色, M=Magenta洋红, Y=Yellow黄色"/>
+                                    <Label Content="enhence :" Width="80" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="100" Click="OnClickShowChEnhence">查看 enhence</Button>
+                                    <!--<Label Content="th1 :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Click="OnClickShowChTh1">查看 th1</Button>-->
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <!--<Label Content="th0 :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Click="OnClickShowChTh0">查看 th0</Button>-->
+                                    <Label Content="rgb__rate :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="100" Click="OnClickShowChRRate">查看 rgb__rate</Button>
+                                    <!--<Label Content="g__rate :" Width="80" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="100" Click="OnClickShowChGRate">查看 g__rate</Button>
+                                    <Label Content="b__rate :" Width="80" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="100" Click="OnClickShowChBRate">查看 b__rate</Button>-->
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="sat :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="100" Click="OnClickShowChSat">查看 sat</Button>
+                                    <Label Content="rate :" Width="80" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="100" Click="OnClickShowChRate">查看 rate</Button>
+                                    <Label Content="rate :" Margin="42,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding Rate_Target, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="颜色增强目标值(uint8)&#x0a;r_rate/g_rate/b_rate越大→对应颜色增强越厉害。通常设计为中间饱和度区域增强较多，两端(极淡/极浓)保持克制以避免过度处理"/>
+
+                                    <TextBlock Margin="20,0,0,5" Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver, Converter={StaticResource boolToVisibillityConverter}}" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                        <Hyperlink Command="{Binding Source={StaticResource SettingOutputCommand}}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=Name}">
+                                            导出CH数据
+                                        </Hyperlink>
+                                    </TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <!-- SAJ 模块 -->
+                    <Border Style="{StaticResource FadeOutBorderStyle}"
+                        Tag="{Binding CurrentNavigatingModule, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=MainWindow:DeviceConfigPage},
+                            Converter={StaticResource playNavigateAnimationConverter}, ConverterParameter=DeviceConfig.Isp.IspModule.Saj}">
+                        <Grid Name="SajGrid" Background="Transparent" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                <ColumnDefinition Width="3*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="SAJ" Style="{StaticResource ModuleLabelStyle}" Grid.Column="0"/>
+                            <TextBlock Text="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusConverter}, ConverterParameter=Saj}"
+                                       Foreground="{Binding CommonConfig, Converter={StaticResource moduleEnableStatusColorConverter}, ConverterParameter=Saj}"
+                                       FontSize="10" HorizontalAlignment="Center" Grid.Column="0" Margin="0,28,0,0"/>
+                            
+                            <StackPanel Orientation="Vertical" Grid.Column="1">
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource ParamRowStyle}">
+                                    <Label Content="sat :" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="100" Click="OnClickShowSAJSat">查看sat</Button>
+                                    <Label Content="sat__rate :" Width="80" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Button Style="{StaticResource ParamButtonStyle}" Width="100" Click="OnClickShowSAJSatRate">查看sat__rate</Button>
+                                    <Label Content="sat__rate :" Margin="20,3,0,0" Style="{StaticResource SimpleUnderlinedParamLabelStyle}"/>
+                                    <TextBox Style="{StaticResource ParamTextBoxStyle}" Text="{Binding SAJ_Rate_Target, Mode=TwoWay}" KeyDown="OnTextBoxKeyDown"
+                                             ToolTip="全局饱和度目标值(uint8)&#x0a;值越大→饱和度越高(色彩更鲜艳)。设计特点: 饱和度随增益降低而递增(高增益保守避免色彩噪声，低增益激进最大化表现力)"/>
+
+                                    <TextBlock Margin="20,0,0,5" Visibility="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver, Converter={StaticResource boolToVisibillityConverter}}" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                        <Hyperlink Command="{Binding Source={StaticResource SettingOutputCommand}}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=Name}">
+                                            导出SAJ数据
+                                        </Hyperlink>
+                                    </TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+            <MainWindow:UvcViewControl x:Name="UvcView" Width="420" Height="320" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                       Visibility="{Binding ShowUvcView, 
+                RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl, AncestorLevel=1},
+                Converter={StaticResource boolToVisibillityConverter}}"/>
+        </Grid>
+        
+        <!-- ==================== 底部状态信息栏 ==================== -->
+        <Border Grid.Row="2" Background="#FFE8E8E8" BorderBrush="#FFCCCCCC" BorderThickness="0,1,0,0" Padding="10,5">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="💡 提示: " FontWeight="SemiBold" FontSize="11" 
+                           Foreground="#333333" VerticalAlignment="Center"/>
+                <TextBlock Text="按Enter键确认参数修改 | 使用图示设置功能可快速配置模块参数 | 在线模式下支持UVC实时预览" 
+                           FontSize="10" Foreground="#666666" VerticalAlignment="Center"/>
+                
+                <Separator Margin="15,0" VerticalAlignment="Stretch"/>
+                
+                <TextBlock x:Name="TxtConfigInfo" Text="" FontSize="10" Foreground="#0078D7" 
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

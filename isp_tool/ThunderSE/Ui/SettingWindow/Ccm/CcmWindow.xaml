@@ -1,0 +1,296 @@
+﻿<Window x:Class="ThunderSE.Ui.SettingWindow.Ccm.CcmOnlineIQWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:commonCtrls="clr-namespace:ThunderSE.Ui.CommonCustomControl"
+        xmlns:datagridTookit="http://schemas.microsoft.com/wpf/2008/toolkit"
+        Title="CCM色彩校正调试" Height="800" Width="1000" ResizeMode="NoResize" Background="#FFE5E5E5"
+        Loaded="Onloaded" Unloaded="OnUnloaded" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="boolToVisibillityConverter"></BooleanToVisibilityConverter>
+    </Window.Resources>
+    <!--<Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="7*"></RowDefinition>
+            <RowDefinition Height="2.3*"></RowDefinition>
+            <RowDefinition Height="0.7*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <commonCtrls:ImageWithRubberBandControl Grid.Row="0" x:Name="DisplayControl"
+                        IsEnabled="{Binding IsDrawing, RelativeSource={RelativeSource Mode=FindAncestor, 
+                                    AncestorLevel=1, AncestorType=Window}}"
+                        SizeChanged="OnDisplayControlSizeChange"/>
+        <Grid Grid.Row="1">
+            <datagridTookit:DataGrid ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
+                                     AutoGenerateColumns="False"  
+                                     ItemsSource="{Binding}">
+                <datagridTookit:DataGrid.CellStyle>
+                    <Style TargetType="datagridTookit:DataGridCell">
+                        <Setter Property="Block.TextAlignment" Value="Center"/>
+                    </Style>
+                </datagridTookit:DataGrid.CellStyle>
+                <datagridTookit:DataGrid.Columns>
+                    <datagridTookit:DataGridTextColumn Width="200" Binding="{Binding Value}" IsReadOnly="True" Header="值" />
+                </datagridTookit:DataGrid.Columns>
+            </datagridTookit:DataGrid>
+        </Grid>
+        <StackPanel Grid.Row="2" Orientation="Horizontal"  VerticalAlignment="Center">
+            <Button Margin="10,0,0,0" Click="OnClickCalcIQ">加载图片</Button>
+            <Button Margin="10,0,0,0" Click="OnClickCalcIQ">计算RGB均值</Button>
+            <Button Margin="10,0,0,0" Click="OnClickUndoRubberBand">撤销选框</Button>
+        </StackPanel>
+    </Grid>-->
+    <Grid Margin="3">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2.2*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 顶部：图像预览区域 + 矩阵参数面板 -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2.5*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 图像预览区（左侧） -->
+            <Border Grid.Column="0" BorderBrush="#FF0078D7" BorderThickness="1" Background="#FFF5F5F5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 预览区标题栏 -->
+                    <Border Grid.Row="0" Background="#FF0078D7" Padding="5">
+                        <TextBlock Text="📷 RAW图像预览 (支持24色卡选区)" 
+                                   Foreground="White" FontWeight="Bold" FontSize="12"/>
+                    </Border>
+
+                    <!-- 图像显示和RubberBandControl -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                        <Grid x:Name="PreviewGrid" Background="Black">
+                            <Image x:Name="DisplayImage" Stretch="Uniform" 
+                                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                            <commonCtrls:ImageWithRubberBandControl x:Name="RubberBandCtrl"
+                                                          MaxBands="24"
+                                                          Visibility="{Binding IsLoadImage, Converter={StaticResource boolToVisibillityConverter}}"/>
+                        </Grid>
+                    </ScrollViewer>
+
+                    <!-- 选区状态栏 -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Background="#FFE0E0E0">
+                        <TextBlock Text="已选色块: " VerticalAlignment="Center" Margin="5,0,5,0"/>
+                        <TextBlock x:Name="TxtPatchCount" Text="0/24" FontWeight="Bold" 
+                                   Foreground="#FF0078D7" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                        <Border Background="{Binding PatchCountValid, Converter={StaticResource boolToVisibillityConverter}}" 
+                                CornerRadius="3" Padding="8,2">
+                            <TextBlock x:Name="TxtPatchStatus" Text="⏳ 请选择24个色卡区域" FontSize="11"/>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- CCM矩阵参数面板（右侧） -->
+            <Border Grid.Column="2" BorderBrush="#FF0078D7" BorderThickness="1" Background="#FFF9F9F9">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 矩阵标题 -->
+                    <Border Grid.Row="0" Background="#FF0078D7" Padding="5">
+                        <TextBlock Text="🔧 3×3 色彩校正矩阵参数" Foreground="White" FontWeight="Bold" FontSize="12"/>
+                    </Border>
+
+                    <!-- 矩阵DataGrid -->
+                    <DataGrid Grid.Row="1" x:Name="MatrixDataGrid" 
+                              AutoGenerateColumns="False" CanUserAddRows="False" 
+                              CanUserDeleteRows="False" IsReadOnly="True"
+                              GridLinesVisibility="All" 
+                              HeadersVisibility="Column"
+                              RowBackground="White" AlternatingRowBackground="#FFF0F0F0"
+                              Margin="5" FontSize="11">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="" Width="30" Binding="{Binding RowLabel}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="R'←" Width="70" Binding="{Binding Col0, StringFormat=N0}"/>
+                            <DataGridTextColumn Header="G'←" Width="70" Binding="{Binding Col1, StringFormat=N0}"/>
+                            <DataGridTextColumn Header="B'←" Width="70" Binding="{Binding Col2, StringFormat=N0}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- 偏移量显示 -->
+                    <GroupBox Grid.Row="2" Header="RGB偏移量 (Offset)" Margin="3" FontSize="11">
+                        <Grid Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="R:" VerticalAlignment="Center" Margin="0,0,3,0"/>
+                            <TextBox Grid.Column="1" x:Name="TxtOffsetR" IsReadOnly="True" 
+                                     TextAlignment="Center" Background="#FFFFFDD0" Margin="0,0,8,0"/>
+                            <TextBlock Grid.Column="2" Text="G:" VerticalAlignment="Center" Margin="0,0,3,0"/>
+                            <TextBox Grid.Column="3" x:Name="TxtOffsetG" IsReadOnly="True" 
+                                     TextAlignment="Center" Background="#FFFFFDD0" Margin="0,0,8,0"/>
+                            <TextBlock Grid.Column="4" Text="B:" VerticalAlignment="Center" Margin="0,0,3,0"/>
+                            <TextBox Grid.Column="5" x:Name="TxtOffsetB" IsReadOnly="True" 
+                                     TextAlignment="Center" Background="#FFFFFDD0"/>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- 中部：操作按钮栏 -->
+        <ToolBarPanel Grid.Row="1">
+            <ToolBarTray>
+                <ToolBar>
+                    <Button x:Name="BtnLoadRaw" Content="📂 加载RAW" Click="OnLoadRaw_Click" 
+                            ToolTip="加载RAW图像文件 (Ctrl+O)" Padding="10,4" MinWidth="100"/>
+                    <Separator/>
+                    <Button x:Name="BtnUndoPatch" Content="↩️ 撤销选区" Click="OnUndoPatch_Click" 
+                            IsEnabled="False" ToolTip="撤销最后一个选区 (Ctrl+Z)" Padding="10,4" MinWidth="100"/>
+                    <Separator/>
+                    <!-- 新增：自动识别色卡按钮 -->
+                    <Button x:Name="BtnAutoDetect" Visibility="Collapsed" Content="🔍 自动识别色卡" Click="OnAutoDetect_Click" 
+                            IsEnabled="False" ToolTip="框选整个色卡区域自动生成24个选区" Padding="10,4" MinWidth="100"/>
+                    <Separator/>
+                    <Button x:Name="BtnCalculate" Content="🔧 计算矩阵" Click="OnCalculate_Click" 
+                            IsEnabled="False" ToolTip="从24色卡计算最优CCM矩阵 (Ctrl+Enter)" 
+                            Padding="10,4" MinWidth="120" FontWeight="Bold"/>
+                    <Button x:Name="BtnApply" Content="👁️ 应用预览" Click="OnApply_Click" 
+                            IsEnabled="False" ToolTip="应用矩阵到预览图 (Ctrl+P)" Padding="10,4" MinWidth="100"/>
+                    <Separator/>
+                    <Button x:Name="BtnEvaluate" Content="📊 评估质量" Click="OnEvaluate_Click" 
+                            IsEnabled="False" ToolTip="评估色彩准确性 Delta E (Ctrl+E)" Padding="10,4" MinWidth="100"/>
+                    <Separator/>
+                    <Button x:Name="BtnExport" Content="💾 导出报告" Click="OnExport_Click" 
+                            IsEnabled="False" ToolTip="导出PDF/CSV报告 (Ctrl+S)" Padding="10,4" MinWidth="100"/>
+
+                    <!-- 进度指示器 -->
+                    <ProgressBar x:Name="ProgressCalc" Width="150" Height="16" 
+                                 Visibility="Collapsed" Minimum="0" Maximum="100" Value="0"/>
+                    <TextBlock x:Name="TxtProgress" Text="" VerticalAlignment="Center" Margin="5,0,0,0" FontSize="11"/>
+                </ToolBar>
+            </ToolBarTray>
+        </ToolBarPanel>
+
+        <!-- 下部：数据表格 + 评估结果 -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2.5*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 24色卡RGB均值数据表（左） -->
+            <Border Grid.Column="0" BorderBrush="#FFCCCCCC" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" Background="#FF666666" Padding="5">
+                        <TextBlock Text="📋 24色卡RGB均值数据" Foreground="White" FontWeight="Bold" FontSize="12"/>
+                    </Border>
+                    <DataGrid Grid.Row="1" x:Name="ColorPatchDataGrid" 
+                              AutoGenerateColumns="False" CanUserAddRows="False" 
+                              CanUserDeleteRows="False" IsReadOnly="True"
+                              GridLinesVisibility="All" HeadersVisibility="Column"
+                              RowBackground="White" AlternatingRowBackground="#FFF8F8F8"
+                              FontSize="10">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="#" Width="30" Binding="{Binding Index}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="R均值" Width="60" Binding="{Binding RAvg, StringFormat=F0}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="#FFCC0000"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="G均值" Width="60" Binding="{Binding GAvg, StringFormat=F0}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="#FF00AA00"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="B均值" Width="60" Binding="{Binding BAvg, StringFormat=F0}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="#FF0000CC"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="ΔE" Width="50" Binding="{Binding DeltaE, StringFormat=F1}" 
+                                                Foreground="#FF333333"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <!-- 色彩准确性评估结果（右） -->
+            <Border Grid.Column="2" BorderBrush="#FF0078D7" BorderThickness="1" Background="#FFFAFAFA">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" Background="#FF0078D7">
+                        <TextBlock Text="🎯 色彩准确性评估结果" Foreground="White" FontWeight="Bold" FontSize="12"/>
+                    </Border>
+                    <StackPanel Grid.Row="1" Margin="10,0,0,0">
+                        <!-- Delta E 主指标 -->
+                        <TextBlock Text="ΔE (整体色差):" FontSize="11" Margin="5,5,0,0"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0">
+                            <TextBlock x:Name="TxtDeltaE" Text="--.--" FontSize="24" FontWeight="Bold" 
+                                       Foreground="#FF333333"/>
+                            <TextBlock Text=" " FontSize="14"/>
+                            <TextBlock x:Name="TxtRatingStars" Text="--" FontSize="16" Margin="10,0,0,0"/>
+                        </StackPanel>
+
+                        <!-- Delta Eab 色度指标 -->
+                        <TextBlock Text="ΔEab (色度偏差，忽略亮度):" FontSize="11" Margin="5,3,0,0"/>
+                        <TextBlock x:Name="TxtDeltaEab" Text="--.--" FontSize="18" FontWeight="Bold" 
+                                   Foreground="#FF0066CC" Margin="10,2,0,0"/>
+
+                        <!-- 准确率进度条 -->
+                        <TextBlock Text="准确率:" FontSize="11" Margin="5,3,5,2"/>
+                        <ProgressBar x:Name="ProgressAccuracy" Height="20"  Margin="5,0,5,3" Minimum="0" Maximum="100" Value="0"
+                                     Background="#FFE0E0E0" Foreground="#FF4CAF50"/>
+
+                        <!-- 详细信息按钮 -->
+                        <Button x:Name="BtnShowDetail" Content="查看24色块详细偏差 →" 
+                                Click="OnShowDetail_Click" Margin="5,3,5,0" Padding="4,2"
+                                HorizontalAlignment="Stretch" IsEnabled="False"
+                                ToolTip="展开每个色块的详细Delta E数值"/>
+
+                        <!-- 状态消息 -->
+                        <TextBlock x:Name="TxtStatusMessage" Text="" FontSize="10" 
+                                   Foreground="#FF666666" TextWrapping="Wrap" Margin="0,3,0,0"
+                                   VerticalAlignment="Bottom"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- 底部：状态栏 -->
+        <StatusBar Grid.Row="3">
+            <StatusBarItem>
+                <TextBlock x:Name="StatusBarText" Text="就绪 - 请加载RAW图像开始校准流程"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock x:Name="TxtElapsedTime" Text=""/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>

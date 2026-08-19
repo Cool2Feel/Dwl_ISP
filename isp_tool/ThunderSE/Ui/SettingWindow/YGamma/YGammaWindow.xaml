@@ -1,0 +1,495 @@
+﻿<Window x:Class="ThunderSE.Ui.SettingWindow.YGamma.YGammaWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"  
+        xmlns:yGamma="clr-namespace:ThunderSE.Ui.SettingWindow.YGamma"
+        xmlns:ccc ="clr-namespace:ThunderSE.Ui.CommonCustomControl"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        Title="Gamma曲线调试工具" Height="800" Width="1000" WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize" Loaded="OnWindowLoaded" Activated="Window_Activated">
+    <Window.Resources>
+        <Style x:Key="FullCurveLineStyle" TargetType="ccc:BezierCurveEditor">
+            <Setter Property="Background" Value="#1A1A2E"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ccc:BezierCurveEditor">
+                        <Border Background="{TemplateBinding Background}"
+                            CornerRadius="3"
+                            Padding="3">
+                            <Canvas x:Name="PART_Canvas"
+                                ClipToBounds="True"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!-- 底层曲线样式 -->
+        <!--<Style x:Key="FullCurveLineStyle" TargetType="chartingToolkit:LineSeries">
+            <Setter Property="DataPointStyle">
+                <Setter.Value>
+                    <Style TargetType="chartingToolkit:LineDataPoint">
+                        <Setter Property="Width" Value="0"/>
+                        <Setter Property="Height" Value="0"/>
+                        <Setter Property="Opacity" Value="0"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>-->
+
+        <!-- 关键点样式 -->
+        <!--<Style x:Key="KeyPointLineStyle" TargetType="chartingToolkit:LineSeries">
+            <Setter Property="DataPointStyle">
+                <Setter.Value>
+                    <Style TargetType="chartingToolkit:LineDataPoint">
+                        <Setter Property="Width" Value="10"/>
+                        <Setter Property="Height" Value="10"/>
+                        <Setter Property="Background" Value="#0078D7"/>
+                        <Setter Property="BorderBrush" Value="White"/>
+                        <Setter Property="BorderThickness" Value="2"/>
+                        <Setter Property="ToolTip">
+                            <Setter.Value>
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="关键点: X={0}, Y={1}">
+                                            <Binding Path="Key"/>
+                                            <Binding Path="Value"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>-->
+
+        <!-- 贝塞尔控制点样式（P1/P2 可拖动，P0/P3 固定显示） -->
+        <!--<Style x:Key="BezierCtrlPointStyle" TargetType="chartingToolkit:LineSeries">
+            <Setter Property="DataPointStyle">
+                <Setter.Value>
+                    <Style TargetType="chartingToolkit:LineDataPoint">
+                        <Setter Property="Width" Value="16"/>
+                        <Setter Property="Height" Value="16"/>
+                        <Setter Property="Background" Value="#4CAF50"/>
+                        <Setter Property="BorderBrush" Value="White"/>
+                        <Setter Property="BorderThickness" Value="3"/>
+                        <Setter Property="ToolTip">
+                            <Setter.Value>
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="Bezier控制点 P{0}: X={1}, Y={2}">
+                                            <Binding Path="Key"/>
+                                            <Binding Path="Value"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>-->
+    </Window.Resources>
+    <Grid Margin="3">
+        <Grid.RowDefinitions>
+            <!-- 第1行：顶部 - 图表预览区域 + 操作控制面板 -->
+            <RowDefinition Height="*"/>
+            <!-- 第2行：中部 - 操作工具栏 -->
+            <RowDefinition Height="Auto"/>
+            <!-- 第3行：下部 - 状态信息区 -->
+            <RowDefinition Height="Auto"/>
+            <!-- 第4行：底部 - 状态栏 -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ==================== 第1行：顶部区域 ==================== -->
+        <Grid Grid.Row="0" Margin="0,0,0,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧：Y-Gamma图表区 -->
+            <Border Grid.Column="0" BorderBrush="#FF0078D7" BorderThickness="1" Background="#FFF9F9F9">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 图表标题栏 -->
+                    <Border Grid.Row="0" Background="#FF0078D7" Padding="3">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📈 Y-Gamma校正曲线 (X轴: 输入值 0-255 | Y轴: 输出值 0-1023)" 
+                                       Foreground="White" FontWeight="Bold" FontSize="13" 
+                                       VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtChartStatus" Text="" 
+                                       Foreground="#FFB0E0FF" FontSize="11" 
+                                       VerticalAlignment="Center" Margin="15,0,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 图表主体 -->
+                    <DockPanel Grid.Row="1">
+                        <Label DockPanel.Dock="Bottom" Padding="5,3" Background="#FFE8F4FD">
+                            <Hyperlink Command="{Binding ViewPreviousIspStepCommand}" TextDecorations="Underline">
+                                <Run Text="← 查看先行步骤"/>
+                            </Hyperlink>
+                        </Label>
+
+                        <!--<chartingToolkit:Chart Name="YGammaChart" BorderThickness="0" 
+                                           MouseRightButtonDown="Chart_MouseRightButtonDown"
+                                           MouseWheel="Chart_MouseWheel"
+                                           MouseMove="Chart_MouseMove"
+                                           MouseLeftButtonUp="Chart_MouseLeftButtonUp"
+                                           ToolTip="右键拖拽平移坐标轴 | 滚轮缩放 | 左键选择点并拖拽编辑">
+                            <chartingToolkit:Chart.Axes>
+                                <chartingToolkit:LinearAxis Orientation="X" Minimum="0" Maximum="255" />
+                                <chartingToolkit:LinearAxis Orientation="Y" Minimum="0" Maximum="1023" />
+                            </chartingToolkit:Chart.Axes>
+                            <chartingToolkit:Chart.LegendStyle>
+                                <Style TargetType="datavis:Legend">
+                                    <Setter Property="Width" Value="0" />
+                                </Style>
+                            </chartingToolkit:Chart.LegendStyle>
+                            -->
+                        <!-- 底层曲线 -->
+                        <!--
+                            <chartingToolkit:LineSeries Name="FullCurveLine" 
+                                ItemsSource="{Binding FullGammaCurve}" 
+                                DependentValuePath="Value" IndependentValuePath="Key" 
+                                IsSelectionEnabled="False"
+                                Style="{StaticResource FullCurveLineStyle}"
+                                TransitionDuration="0"/>
+
+                            -->
+                        <!-- 关键点 -->
+                        <!--
+                            <chartingToolkit:LineSeries Name="YGammaTableLine" 
+                                ItemsSource="{Binding YGammaTable}" 
+                                DependentValuePath="Value" IndependentValuePath="Key" 
+                                IsSelectionEnabled="True"
+                                Style="{StaticResource KeyPointLineStyle}"
+                                MouseLeftButtonUp="Chart_MouseLeftButtonUp"
+                                SelectionChanged="LineSeries_SelectionChanged"
+                                TransitionDuration="0"/>
+
+                            -->
+                        <!-- 贝塞尔控制点（P0/P3 固定，P1/P2 可拖动） -->
+                        <!--
+                            <chartingToolkit:LineSeries Name="BezierCtrlLine"
+                                ItemsSource="{Binding BezierControlPoints}"
+                                DependentValuePath="Value" IndependentValuePath="Key"
+                                IsSelectionEnabled="True"
+                                Style="{StaticResource BezierCtrlPointStyle}"
+                                SelectionChanged="BezierCtrlLine_SelectionChanged"
+                                TransitionDuration="0"/>
+                        </chartingToolkit:Chart>-->
+
+                        <ccc:BezierCurveEditor x:Name="YGammaChart" Style="{StaticResource FullCurveLineStyle}"
+                                        P1X="85" P1Y="682"
+                                        P2X="103" P2Y="750"
+                                        MaxX="255" MaxY="1023"/>
+
+                    </DockPanel>
+
+                    <!-- 底部提示信息栏 -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Background="#FFE8F4FD">
+                        <TextBlock Text="💡 操作提示: " VerticalAlignment="Center" 
+                                   FontWeight="SemiBold" Foreground="#0078D7" Margin="0,0,5,0"/>
+                        <TextBlock Text="右键拖拽平移坐标轴 | 滚轮缩放视图 | 左键点击数据点并拖拽调整Y值 | 共20个关键控制点" 
+                                   FontSize="11" Foreground="#333333" VerticalAlignment="Center" Visibility="Collapsed"/>
+                        <TextBlock Text="右键拖拽控制点调整曲线的形状，对应不同的Gamma数据 | 显示对应20个关键的的数据 | 共2个关键控制点" 
+                                   FontSize="11" Foreground="#333333" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 右侧：操作控制面板 -->
+            <Border Grid.Column="2" BorderBrush="#FF0078D7" BorderThickness="1" Background="#FFFAFAFA">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 面板标题 -->
+                    <Border Grid.Row="0" Background="#FF0078D7" Padding="8,6">
+                        <TextBlock Text="🎛️ 操作控制面板" Foreground="White" FontWeight="Bold" FontSize="12"/>
+                    </Border>
+
+                    <!-- TabControl按钮组 -->
+                    <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0" Margin="5">
+
+                        <!-- Tab 1: 文件操作 -->
+                        <TabItem Header="📁 文件操作" Height="36">
+                            <StackPanel Background="Transparent" Margin="0,10,0,0">
+                                <Button Content="📥 导入Gamma表" Command="{Binding LoadYGammaTableFromFileCommand}" 
+                                        HorizontalAlignment="Stretch" Padding="8,6"
+                                        ToolTip="从文件导入Y-Gamma曲线数据 (Ctrl+O)"/>
+                                <Button Content="📤 导出Gamma表" Command="{Binding SaveYGammaTableToFileCommand}" 
+                                        HorizontalAlignment="Stretch" Margin="0,8,0,0" Padding="8,6"
+                                        ToolTip="将当前Y-Gamma曲线导出到文件 (Ctrl+S)"/>
+                                <Separator Margin="0,15,0,15"/>
+                                <TextBlock Text="💾 数据管理" FontWeight="SemiBold" 
+                                           FontSize="11" Foreground="#666666" Margin="0,0,0,8"/>
+                                <Button Content="⏬ 在线调试读" Command="{Binding LoadYGammaTableFromDeviceCommand}" 
+                                        HorizontalAlignment="Stretch" Padding="8,6"
+                                        ToolTip="从设备读取当前Y-Gamma参数"/>
+                                <Button Content="⏫ 在线调试写" Command="{Binding SaveYGammaTableToDeviceCommand}" 
+                                        HorizontalAlignment="Stretch" Margin="0,8,0,0" Padding="8,6"
+                                        ToolTip="将参数写入设备"/>
+                            </StackPanel>
+                        </TabItem>
+
+                        <!-- Tab 2: 视图控制 -->
+                        <TabItem Header="🔍 视图控制" Height="36">
+                            <StackPanel Background="Transparent" Margin="10,10,10,0">
+                                <TextBlock Text="📐 坐标轴设置" FontWeight="SemiBold" 
+                                           FontSize="11" Foreground="#666666" Margin="0,0,0,8"/>
+
+                                <Button Content="🔄 复位比例" Click="OnResetChartAxes" Visibility="Collapsed"
+                                        HorizontalAlignment="Stretch" Padding="8,6" FontWeight="Bold"
+                                        ToolTip="恢复默认坐标轴范围 (X:0-255, Y:0-1023) (Home键)"/>
+                                
+                                <Button Content="🔄 恢复默认" Command="{Binding ResetYGammaTableCommand}"
+                                        HorizontalAlignment="Stretch" Padding="8,6" FontWeight="Bold"
+                                        ToolTip="恢复默认坐标轴范围 (X:0-255, Y:0-1023) (Home键)"/>
+
+                                <Separator Margin="0,15,0,15"/>
+
+                                <!--<TextBlock Text="✨ 曲线平滑处理" FontWeight="SemiBold" 
+                                           FontSize="11" Foreground="#666666" Margin="0,0,0,8"/>
+
+                                <CheckBox Content="启用三次样条插值平滑"
+                                          IsChecked="{Binding EnableSmoothProcessing}"
+                                          HorizontalAlignment="Left" VerticalAlignment="Center"
+                                          Padding="5,-2,5,3" Margin="10,0,0,0"
+                                          ToolTip="勾选后使用三次样条插值，使Gamma曲线更加平滑&#x0a;不勾选则使用线性插值（默认）">
+                                    <CheckBox.Style>
+                                        <Style TargetType="CheckBox">
+                                            <Setter Property="Foreground" Value="#333333"/>
+                                            <Setter Property="FontSize" Value="12"/>
+                                        </Style>
+                                    </CheckBox.Style>
+                                </CheckBox>
+                                <CheckBox Content="启用三点锚定平滑"
+                                      IsChecked="{Binding EnableAnchorPointSmoothing}"
+                                      HorizontalAlignment="Left"
+                                      Padding="5,-2,5,3" Margin="10,10,0,0"
+                                      ToolTip="勾选后基于起点、拖动点、终点生成光滑曲线&#x0a;其他关键点会自动适配"/>          
+
+
+                                <TextBlock Text="💡 提示: 平滑处理会使曲线在关键点处更光滑，但可能略微偏离精确值" 
+                                           FontSize="9" Foreground="#999999" TextWrapping="Wrap"
+                                           Margin="0,5,0,0"/>
+
+                                <Separator Margin="0,15,0,15"/>-->
+
+                                <TextBlock Text="🎯 IQ计算" FontWeight="SemiBold" 
+                                           FontSize="11" Foreground="#666666" Margin="0,0,0,8"/>
+
+                                <Button Content="🧮 计算IQ" Click="OnClickCalcIQButton" 
+                                        HorizontalAlignment="Stretch" Padding="8,6" FontWeight="Bold"
+                                        ToolTip="打开IQ计算选项 (在线/离线模式) (F7)">
+                                    <Button.ContextMenu>
+                                        <ContextMenu x:Name="MainContextMenu">
+                                            <MenuItem Header="🌐 在线IQ" Click="ShowOnlineYGammaIQ"
+                                                      ToolTip="打开在线IQ计算窗口（实时设备交互）"/>
+                                            <MenuItem Header="💻 离线IQ" Click="ShowOfflineYGammaIQ"
+                                                      ToolTip="打开离线IQ计算窗口（使用本地数据）"/>
+                                        </ContextMenu>
+                                    </Button.ContextMenu>
+                                </Button>
+
+                                <Separator Margin="0,15,0,15"/>
+
+                                <TextBlock Text="📊 当前状态" FontWeight="SemiBold" 
+                                           FontSize="11" Foreground="#666666" Margin="0,0,0,8"/>
+
+                                <TextBlock x:Name="TxtPointCount" Text="控制点数: 2" 
+                                           FontSize="10" Foreground="#333333"/>
+                                <TextBlock x:Name="TxtSelectedPoint" Text="选中: --" 
+                                           FontSize="10" Foreground="#0078D7" Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </TabItem>
+                    </TabControl>
+
+                    <Border Grid.Row="2" Background="#FFE8F4FD" CornerRadius="5" Padding="5" Height="260">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Panel Title -->
+                            <TextBlock Grid.Row="0" Text="坐标数据 (256点)" FontSize="12"
+                               HorizontalAlignment="Center" Margin="0,5,0,5"
+                               Padding="0,5,0,5">
+                                <TextBlock.ToolTip>
+                                    <TextBlock Text="基于三次贝塞尔曲线生成的256个均匀分布的坐标点"/>
+                                </TextBlock.ToolTip>
+                            </TextBlock>
+                            <Border Grid.Row="0" Height="1" Background="#FEFEFE" VerticalAlignment="Bottom"/>
+
+                            <!-- Coordinates Display -->
+                            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,5,0,5">
+                                <Border Background="#FFE8F4FD" CornerRadius="0" Padding="5">
+                                    <TextBlock x:Name="TxtCoordinates"
+                                       Foreground="#666666" FontFamily="Consolas"
+                                       FontSize="12" LineHeight="20" 
+                                       Text="{Binding CoordinatesText}"/>
+                                </Border>
+                            </ScrollViewer>
+
+
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ==================== 第2行：中部 - 操作工具栏 ==================== -->
+        <ToolBarPanel Grid.Row="1" Margin="0,5,0,5">
+            <ToolBarTray>
+                <ToolBar>
+                    <!-- 快速访问按钮组 -->
+                    <Button x:Name="BtnQuickImport" Content="⚡ 导入" 
+                            Command="{Binding LoadYGammaTableFromFileCommand}"
+                            ToolTip="快速导入Y-Gamma曲线数据 (Ctrl+O)" 
+                            Padding="10,4" MinWidth="90"/>
+
+                    <Button x:Name="BtnQuickExport" Content="⚡ 导出" 
+                            Command="{Binding SaveYGammaTableToFileCommand}"
+                            ToolTip="快速导出Y-Gamma曲线数据 (Ctrl+S)" 
+                            Padding="10,4" MinWidth="90"/>
+
+                    <Separator/>
+
+                    <!-- 视图控制按钮组 -->
+                    <Button x:Name="BtnResetView" Content="🔄 复位比例" 
+                            Click="OnResetChartAxes"
+                            ToolTip="恢复默认坐标轴范围 (Home)" 
+                            Padding="10,4" MinWidth="100"/>
+
+                    <Separator/>
+
+                    <!-- IQ计算按钮组 -->
+                    <Button x:Name="BtnCalcIQ" Content="🧮 计算IQ" 
+                            Click="OnClickCalcIQButton"
+                            ToolTip="打开IQ计算选项菜单 (F7)" 
+                            Padding="10,4" MinWidth="100" FontWeight="Bold">
+                        <Button.ContextMenu>
+                            <ContextMenu x:Name="ContextMenu">
+                                <MenuItem Header="🌐 在线IQ" Click="ShowOnlineYGammaIQ"
+                                ToolTip="打开在线IQ计算窗口（实时设备交互）"/>
+                                <MenuItem Header="💻 离线IQ" Click="ShowOfflineYGammaIQ"
+                                ToolTip="打开离线IQ计算窗口（使用本地数据）"/>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                    </Button>
+
+                    <Separator/>
+
+                    <!-- 状态指示器 -->
+                    <TextBlock x:Name="TxtOperationStatus" Text="就绪" 
+                               VerticalAlignment="Center" Margin="10,0,0,0" 
+                               FontSize="11" Foreground="#666666"/>
+                </ToolBar>
+            </ToolBarTray>
+        </ToolBarPanel>
+
+        <!-- ==================== 第3行：下部 - 快速信息面板 ==================== -->
+        <Grid Grid.Row="2" Height="50">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧：导航链接区 -->
+            <Border Grid.Column="0" BorderBrush="#FFCCCCCC" BorderThickness="1" 
+                    Background="White" Padding="12,8">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="📍 导航: " VerticalAlignment="Center" 
+                               Foreground="#666666" FontWeight="SemiBold" Margin="0,0,8,0"/>
+                    <TextBlock Text="Y-Gamma模块 - 亮度非线性校正曲线调整工具" 
+                               FontSize="11" Foreground="#333333" FontStyle="Italic" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 右侧：快速信息面板 -->
+            <Border Grid.Column="2" BorderBrush="#FF0078D7" BorderThickness="1" 
+                    Background="#FFF0F8FF" Padding="12,8">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="📋 工作流程" FontWeight="SemiBold" FontSize="11" 
+                               Foreground="#0078D7" Margin="0,0,0,3"/>
+                    <TextBlock Text="1.导入Gamma表 → 2.编辑曲线 → 3.计算IQ → 4.导出保存" 
+                               FontSize="10" Foreground="#333333"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- ==================== 第4行：底部 - 状态栏 ==================== -->
+        <StatusBar Grid.Row="3" Margin="0,5,0,0">
+            <StatusBarItem>
+                <TextBlock x:Name="StatusBarText" Text="就绪 - Y-Gamma曲线调试工具已就绪"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock x:Name="TxtProgressInfo" Text=""/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock Text="💡 提示: 使用快捷键加速操作 | Home=复位 F7=IQ计算 Ctrl+O/S=导入导出"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+
+    <!--<Grid Background="#FFE5E5E5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <DockPanel Grid.Column="0">
+            <Label DockPanel.Dock="Bottom">
+                <Hyperlink Command="{Binding ViewPreviousIspStepCommand}">查看先行步骤</Hyperlink>
+            </Label>
+            <chartingToolkit:Chart Name="YGammaChart" BorderThickness="0" 
+                               MouseRightButtonDown="Chart_MouseRightButtonDown"
+                               MouseWheel="Chart_MouseWheel"
+                               MouseMove="Chart_MouseMove"
+                               MouseLeftButtonUp="Chart_MouseLeftButtonUp">
+                <chartingToolkit:Chart.Axes>
+                    <chartingToolkit:LinearAxis Orientation="X" Minimum="0" Maximum="255" />
+                    <chartingToolkit:LinearAxis Orientation="Y" Minimum="0" Maximum="1023" />
+                </chartingToolkit:Chart.Axes>
+                <chartingToolkit:Chart.LegendStyle>
+                    <Style TargetType="datavis:Legend">
+                        <Setter Property="Width" Value="0" />
+                    </Style>
+                </chartingToolkit:Chart.LegendStyle>
+                <chartingToolkit:LineSeries Name="YGammaTableLine" ItemsSource="{Binding YGammaTable}" DependentValuePath="Value" IndependentValuePath="Key" IsSelectionEnabled="True"
+                                        MouseLeftButtonUp="Chart_MouseLeftButtonUp"
+                                        SelectionChanged="LineSeries_SelectionChanged"
+                                        TransitionDuration="0"/>
+            </chartingToolkit:Chart>
+        </DockPanel>
+        <StackPanel Grid.Column="1" Margin="30,60,30,0">
+            <Button Height="40" Command="{Binding LoadYGammaTableFromFileCommand}">导入</Button>
+            <Button Height="40" Margin="0,10,0,0" Command="{Binding SaveYGammaTableToFileCommand}">导出</Button>
+            <Button Height="40" Margin="0,10,0,0">在线调试读</Button>
+            <Button Height="40" Margin="0,10,0,0">在线调试写</Button>
+            <Button Height="40" Margin="0,10,0,0" Click="OnResetChartAxes">复位比例</Button>
+            <Button Height="40" Margin="0,10,0,0" Click="OnClickCalcIQButton">计算IQ
+                <Button.ContextMenu>
+                    <ContextMenu x:Name="MainContextMenu">
+                        <MenuItem Header="在线IQ" Click="ShowOnlineYGammaIQ"/>
+                        <MenuItem Header="离线IQ" Click="ShowOfflineYGammaIQ"/>
+                    </ContextMenu>
+                </Button.ContextMenu>
+            </Button>
+        </StackPanel>
+    </Grid>-->
+</Window>
