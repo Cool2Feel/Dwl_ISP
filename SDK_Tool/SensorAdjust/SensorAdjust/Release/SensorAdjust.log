@@ -1,0 +1,18 @@
+﻿D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(1155,5): warning MSB4211: 正在首次将属性“GetTargetPathDependsOn”设置为某个值，但已在“D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\Microsoft.Common.CurrentVersion.targets (2259,5)”处使用了该属性。
+  stdafx.cpp
+  SensorAdjust.cpp
+  SensorAdjustDlg.cpp
+D:\jrx\SVN\SensorAdjust\SensorAdjust\SensorAdjustDlg.cpp(551,10): warning C4244: “初始化”: 从“wchar_t”转换到“char”，可能丢失数据
+  (编译源文件“/SensorAdjustDlg.cpp”)
+  
+D:\jrx\SVN\SensorAdjust\SensorAdjust\SensorAdjustDlg.cpp(603,8): warning C4101: “i”: 未引用的局部变量
+  (编译源文件“/SensorAdjustDlg.cpp”)
+  
+D:\jrx\SVN\SensorAdjust\SensorAdjust\SensorAdjustDlg.cpp(769,8): warning C4101: “i”: 未引用的局部变量
+  (编译源文件“/SensorAdjustDlg.cpp”)
+  
+  正在生成代码
+  Previous IPDB not found, fall back to full compilation.
+  All 164 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  已完成代码的生成
+  SensorAdjust.vcxproj -> D:\jrx\SVN\SensorAdjust\Release\SensorAdjust.exe

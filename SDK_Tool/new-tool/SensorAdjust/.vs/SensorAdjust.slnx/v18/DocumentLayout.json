@@ -1,0 +1,44 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\jrx\\SVN\\new-tool\\SensorAdjust\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{92772CDF-B4D1-D0F2-F976-B3ED3EC9C58A}|SensorAdjust\\SensorAdjust.csproj|d:\\jrx\\svn\\new-tool\\sensoradjust\\sensoradjust\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{92772CDF-B4D1-D0F2-F976-B3ED3EC9C58A}|SensorAdjust\\SensorAdjust.csproj|solutionrelative:sensoradjust\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "D:\\jrx\\SVN\\new-tool\\SensorAdjust\\SensorAdjust\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "SensorAdjust\\MainWindow.xaml",
+              "ToolTip": "D:\\jrx\\SVN\\new-tool\\SensorAdjust\\SensorAdjust\\MainWindow.xaml",
+              "RelativeToolTip": "SensorAdjust\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-08-06T05:58:19.952Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

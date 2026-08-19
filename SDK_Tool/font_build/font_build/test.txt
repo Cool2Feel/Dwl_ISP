@@ -1,0 +1,38 @@
+﻿
+#include "../header/include.h"
+char const simplified_chinese_cns[] = "简体中文";   
+char const simplified_chinese_cnt[] = "簡體中文";
+char const simplified_chinese_en[] = "Simplified Chinese";
+char const simplified_chinese_ru[] = "Упрощенный китайский";
+char const simplified_chinese_ko[] = "중문간체";
+char const simplified_chinese_ja[] = "簡体中国語";
+char const simplified_chinese_spa[] = "Chino simplificado";
+char const traditional_chinese_cnt[] = "繁体中文";
+char const traditional_chinese_cns[] = "繁體中文";
+char const traditional_chinese_en[] = "Traditional Chinese";
+char const traditional_chinese_ru[] = "Традиционный китайский";
+char const traditional_chinese_ko[] = "중문번체";
+char const traditional_chinese_ja[] = "繁体中国語";
+char const traditional_chinese_spa[] = "Chino tradicional";
+char const english_cns[] = "英语";
+char const english_cnt[] = "英語";
+char const english_en[] = "English";
+char const english_ru[] = "Английский язык";
+char const english_ko[] = "영문";
+char const english_ja[] = "英語";
+char const english_spa[] = "Ingles";
+char const russian_cns[] = "俄语";
+char const russian_cnt[] = "俄語";
+char const russian_en[] = "Russian";
+char const russian_ru[] = "Русско";
+char const russian_ko[] = "러시아어";
+char const russian_ja[] = "ロシア語";
+char const russian_spa[] = "Ruso";
+char const korean_cns[] = "韩语";
+char const korean_cnt[] = "韩語";
+char const korean_en[] = "Korean";
+char const korean_ru[] = "Корейско";
+char const korean_ko[] = "한국어";
+char const korean_ja[] = "韓国語";
+char const korean_spa[] = "Coreano";
+

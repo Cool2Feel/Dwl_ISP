@@ -1,0 +1,4 @@
+// Microsoft Visual C++ generated Help ID include file.
+// Used by SensorAdjust.rc
+//
+#define HIDC_LIST1                      0x806603ea    // IDD_SENSORADJUST_DIALOG

@@ -1,0 +1,256 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 中文(中华人民共和国) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
+    "LANGUAGE 4, 2\r\n"
+    "#pragma code_page(936)\r\n"
+    "#include ""res\\OSDEdit.rc2""  // 非 Microsoft Visual C++ 编辑的资源\r\n"
+    "#include ""l.CHS\\afxres.rc""      // 标准组件\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\OSDEdit.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "关于 OSDEdit"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
+    LTEXT           "OSDEdit，1.2 版",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2015",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "确定",IDOK,113,41,50,14,WS_GROUP
+END
+
+IDD_OSDEDIT_DIALOG DIALOGEX 0, 0, 471, 375
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "OSDEdit v1.2"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_PIC_ALPHA,421,258,29,14,ES_UPPERCASE
+    PUSHBUTTON      "浏览",IDC_BUT_DIR,431,21,22,14
+    EDITTEXT        IDC_EDIT_CUSTOM_R,421,57,29,14,ES_UPPERCASE | ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_CUSTOM_G,421,73,29,14,ES_UPPERCASE | ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_CUSTOM_B,421,89,29,14,ES_UPPERCASE | ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_CUSTOM_ALPHA,421,105,29,14,ES_UPPERCASE | ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_CUSTOM_COMMENT,282,160,128,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "修改",IDC_BUTTON_CUSTOM_MODIFY,376,141,36,14
+    PUSHBUTTON      "添加",IDC_BUTTON_CUSTOM_ADD,417,141,36,14
+    PUSHBUTTON      "删除",IDC_BUTTON_CUSTOM_DEL,417,160,36,14
+    LISTBOX         IDC_LIST_PIC_PALETTE,252,196,115,122,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT_DIR,52,20,371,14,ES_AUTOHSCROLL | ES_READONLY
+    LISTBOX         IDC_LIST_PIC,18,57,205,93,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "图片（仅接受8位色BMP图片）",IDC_STATIC,11,46,221,278
+    GROUPBOX        "自定义调色板",IDC_STATIC,245,47,214,133
+    PUSHBUTTON      "生成",IDC_BUTTON_GEN,401,342,50,14
+    LISTBOX         IDC_LIST_PALETTE,252,57,115,94,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP,WS_EX_LEFTSCROLLBAR
+    LTEXT           "红(Red)",IDC_STATIC,376,60,26,8
+    LTEXT           "蓝(Blue)",IDC_STATIC,376,93,27,8
+    LTEXT           "透明度(Alpha)",IDC_STATIC,376,108,44,8
+    LTEXT           "绿(Green)",IDC_STATIC,376,77,32,8
+    LTEXT           "图片预览",IDC_STATIC,21,154,28,8
+    LTEXT           "",IDC_STATIC_PREVIEW_RGB,85,304,100,8
+    LTEXT           "",IDC_STATIC_CUSTOM_COLOR,421,125,29,10
+    LTEXT           "",IDC_STATIC_PREVIEW_COLOR,192,302,29,10
+    LTEXT           "",IDC_PIC_PREVIEW,16,165,210,134
+    LTEXT           "",IDC_HORIZONTAL,16,304,29,8
+    LTEXT           "",IDC_VERTICAL,51,304,29,8
+    GROUPBOX        "图片调色板",IDC_STATIC,244,184,214,140
+    EDITTEXT        IDC_EDIT_PIC_R,421,202,29,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "红(Red)",IDC_STATIC,376,206,26,8
+    LTEXT           "蓝(Blue)",IDC_STATIC,376,243,27,8
+    LTEXT           "透明度(Alpha)",IDC_STATIC,376,261,44,8
+    LTEXT           "绿(Green)",IDC_STATIC,376,224,32,8
+    EDITTEXT        IDC_EDIT_PIC_G,421,220,29,14,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_EDIT_PIC_B,421,239,29,14,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "修改",IDC_BUTTON_PIC_MODIFY,374,297,36,14
+    PUSHBUTTON      "全部修改",IDC_BUTTON_ALLPIC_MODIFY,417,297,36,14
+    LTEXT           "",IDC_STATIC_PALETTE_COLOR,422,279,29,10
+    LTEXT           "颜色注释",IDC_STATIC,250,163,28,8
+    EDITTEXT        IDC_EDIT_OUTPUT_DIR,60,342,305,14,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "浏览",IDC_BUTTON_OUTDIR,372,342,22,14
+    GROUPBOX        "输出",IDC_STATIC,12,330,445,32
+    LTEXT           "输出文件目录",IDC_STATIC,16,345,42,8
+    GROUPBOX        "输入",IDC_STATIC,12,9,447,32
+    LTEXT           "源文件目录",IDC_STATIC,15,23,35,8
+    LTEXT           "颜色",IDC_STATIC,379,126,15,8
+    LTEXT           "颜色",IDC_STATIC,378,279,15,8
+    CONTROL         "",IDC_PROGRESS_OSD,"msctls_progress32",WS_DISABLED | WS_BORDER,16,315,212,7
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080403a8"
+        BEGIN
+            VALUE "CompanyName", "TODO: <公司名>"
+            VALUE "FileDescription", "TODO: <文件说明>"
+            VALUE "FileVersion", "1.0.0.1"
+            VALUE "InternalName", "OSDEdit.exe"
+            VALUE "LegalCopyright", "TODO: (C) <公司名>。保留所有权利。"
+            VALUE "OriginalFilename", "OSDEdit.exe"
+            VALUE "ProductName", "TODO: <产品名>"
+            VALUE "ProductVersion", "1.0.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 936
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 163
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    IDD_OSDEDIT_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 464
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 368
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP1             BITMAP                  "res\\VIDEO.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_ABOUTBOX            "关于 OSDEdit(&A)..."
+END
+
+#endif    // 中文(中华人民共和国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE 4, 2
+#pragma code_page(936)
+#include "res\OSDEdit.rc2"  // 非 Microsoft Visual C++ 编辑的资源
+#include "l.CHS\afxres.rc"      // 标准组件
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

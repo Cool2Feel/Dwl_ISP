@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>false</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>TimeUpdater</AssemblyName>
+    <RootNamespace>TimeUpdater</RootNamespace>
+    <ApplicationIcon>Resources\timeUpdater.ico</ApplicationIcon>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.0.1</FileVersion>
+    <Description>TimeUpdater - USB Device Time Synchronization Tool</Description>
+    <Copyright>Copyright (C) 2012-2025</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\timeUpdater.ico" />
+  </ItemGroup>
+
+</Project>
